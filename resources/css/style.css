@@ -1,0 +1,41 @@
+body {
+    background-color: #f2a0a0;
+}
+
+.colCard {
+    height: 100vh;
+    min-height: 973px;
+}
+
+.colSection {
+    margin-top: 20px;
+    margin-left: 20px;
+    background-color: #f2c49b;
+    box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
+    -webkit-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
+    -moz-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
+    border-radius: 10px;
+    padding-top: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+}
+
+.colPersonalDates {
+    height: 20vh;
+    min-height: 194px;
+
+}
+.colLocation {
+    height: 40vh;
+    min-height: 389.2px;
+}
+
+label {
+    font-size: 16px;
+}
+
+h4 {
+    font-weight: bold;
+    line-height: 0.5;
+}

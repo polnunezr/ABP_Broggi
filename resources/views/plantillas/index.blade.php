@@ -11,13 +11,14 @@
 <body>
 
     <div id="app">
+        <finish-section></finish-section>
         <div class="container-fluid">
             @yield("container")
         </div>
     </div>
 
 
-
+    <script src="https://kit.fontawesome.com/7fae944b38.js" crossorigin="anonymous"></script>
     <script src="{{ asset("js/app.js") }}"></script>
 </body>
 </html>

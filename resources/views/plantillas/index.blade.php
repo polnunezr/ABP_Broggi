@@ -11,10 +11,8 @@
 <body>
 
     <div id="app">
-        <finish-section></finish-section>
-        <div class="container-fluid">
-            @yield("container")
-        </div>
+        @yield("container")
+
     </div>
 
 

@@ -6,10 +6,10 @@
         </div>
         <div class="col d-flex justify-content-center align-items-center"
             v-bind:class="colBig">
-            <select v-on:click="startTime" class="form-select" id="id_select">
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+            <select ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" id="id_select">
+                <option  v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">{{arrayElement.nom}}</option>
+                <!-- <option value="2">Two</option>
+                <option value="3">Three</option> -->
             </select>
         </div>
     </div>
@@ -24,6 +24,10 @@
             },
             id_select: {
                 type:[String],
+                require: true
+            },
+            arrayElements: {
+                type:[Array],
                 require: true
             },
             small: Boolean
@@ -53,6 +57,15 @@
         methods: {
             startTime() {
                 this.$eventTime.$emit("start-time","message");
+            },
+            changeSelect() {
+                if(this.name == "Provincia") {
+                    this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
+                }
+                else if(this.name == "Comarca") {
+                    this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
+                }
+
             }
         }
     }

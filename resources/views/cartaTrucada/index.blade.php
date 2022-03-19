@@ -4,7 +4,7 @@
 
 @section("container")
     <div>
-        {{-- <finish-section  v-if="selectSection != interactiveVideo"></finish-section> --}}
+        <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
         <div class="container-fluid">
             <div class="row">
 
@@ -41,26 +41,6 @@
 
                 <time-section v-if="selectSection != interactiveVideo"></time-section>
 
-
-
-
-
-                {{-- <div class="col col-6 colCard">
-
-                    <personal-section></personal-section>
-
-                    <location-section></location-section>
-
-                    <agency-section></agency-section>
-
-                </div>
-                <div class="col col-6 colCard">
-                    <emergency-section></emergency-section>
-                    <commune-note-section></commune-note-section>
-                    <relation-section></relation-section>
-                    <finish-section></finish-section>
-
-                </div> --}}
 
             </div>
         </div>

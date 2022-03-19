@@ -38,9 +38,13 @@ Vue.prototype.$qv11 = "¿Sistema de aviso especial?"
 
 Vue.prototype.$v111="#t=59,73"
 
+
 Vue.prototype.$eventTime = new Vue()
 
 Vue.prototype.$eventVideo = new Vue()
+
+Vue.prototype.$eventSelect = new Vue()
+
 
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
@@ -73,6 +77,8 @@ Vue.component("backdrop-video-refresh-button", require("./components/sections/vi
 
 Vue.component("backdrop-refresh", require("./components/sections/videoSection/BackdropRefresh.vue").default);
 
+Vue.component("finish-section", require("./components/sections/FinishSection.vue").default);
+
 Vue.component("data-input", require("./components/forms/DataInput.vue").default);
 
 Vue.component("data-time", require("./components/forms/DataTime.vue").default);
@@ -80,6 +86,8 @@ Vue.component("data-time", require("./components/forms/DataTime.vue").default);
 Vue.component("data-check", require("./components/forms/DataCheck.vue").default);
 
 Vue.component("data-select", require("./components/forms/DataSelect.vue").default);
+
+
 
 
 

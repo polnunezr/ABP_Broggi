@@ -5,7 +5,8 @@
             <label class="form-check-label" :for="id_check">
                 {{ name }}
             </label>
-            <input class="form-check-input" type="checkbox" value="" :id="id_check">
+            <input ref="checkBox" v-on:click="clickCheck" v-if="checked" class="form-check-input" type="checkbox" value="" :id="id_check" checked>
+            <input v-else class="form-check-input" type="checkbox" value="" :id="id_check">
             </div>
         </div>
     </div>
@@ -21,7 +22,20 @@
             id_check: {
                 type:[String],
                 require: true
+            },
+            checked: Boolean
+        },
+        methods: {
+            clickCheck() {
+                if(this.name == this.$checkCatalonia) {
+                    this.$eventCheck.$emit("change-check-box-catalonia",Boolean(this.$refs.checkBox.checked))
+                }
             }
+        },
+        mounted() {
+            this.$eventCheck.$on("change-check-box-catalonia-false", checkValor => {
+                this.$refs.checkBox.checked = false
+            })
         }
     }
 </script>

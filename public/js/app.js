@@ -5552,6 +5552,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
@@ -5561,7 +5562,22 @@ __webpack_require__.r(__webpack_exports__);
     id_check: {
       type: [String],
       require: true
+    },
+    checked: Boolean
+  },
+  methods: {
+    clickCheck: function clickCheck() {
+      if (this.name == this.$checkCatalonia) {
+        this.$eventCheck.$emit("change-check-box-catalonia", Boolean(this.$refs.checkBox.checked));
+      }
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventCheck.$on("change-check-box-catalonia-false", function (checkValor) {
+      _this.$refs.checkBox.checked = false;
+    });
   }
 });
 
@@ -5665,6 +5681,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
@@ -5688,7 +5717,11 @@ __webpack_require__.r(__webpack_exports__);
       if (this.small == true) {
         response = "col-3 justify-content-center align-items-center";
       } else {
-        response = "col-5 align-items-center";
+        if (this.name == this.$tipusLocalitzacio) {
+          response = "col-2 align-items-center";
+        } else {
+          response = "col-5 align-items-center";
+        }
       }
 
       return response;
@@ -5699,7 +5732,11 @@ __webpack_require__.r(__webpack_exports__);
       if (this.small == true) {
         response = "col-9";
       } else {
-        response = "col-7";
+        if (this.name == this.$tipusLocalitzacio) {
+          response = "col-10";
+        } else {
+          response = "col-7";
+        }
       }
 
       return response;
@@ -5710,12 +5747,43 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventTime.$emit("start-time", "message");
     },
     changeSelect: function changeSelect() {
-      if (this.name == "Provincia") {
-        this.$eventSelect.$emit("change-select-provincia", parseInt(this.$refs.select.value));
-      } else if (this.name == "Comarca") {
-        this.$eventSelect.$emit("change-select-comarca", parseInt(this.$refs.select.value));
-      }
+      switch (this.name) {
+        case this.$provincia:
+          this.$eventSelect.$emit("change-select-provincia", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$comarca:
+          this.$eventSelect.$emit("change-select-comarca", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$tipusEmergencia:
+          this.$eventSelect.$emit("change-select-incident", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$tipusLocalitzacio:
+          this.$eventSelect.$emit("change-select-localitzacio", parseInt(this.$refs.select.value));
+          break;
+      } // if(this.name == this.$provincia) {
+      //     this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
+      // }
+      // else if(this.name == this.$comarca) {
+      //     this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
+      // }
+
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventSelect.$on("change-select-localitzacio-provincia", function (selectValor) {
+      _this.$refs.select.value = selectValor;
+
+      if (selectValor != 1) {
+        _this.$refs.select.disabled = true;
+      } else {
+        _this.$refs.select.disabled = false;
+      }
+    });
   }
 });
 
@@ -5982,11 +6050,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      title: "Tipus d'emergencia"
+      title: "Tipus d'emergencia",
+      tipusEmergencia: [],
+      incidents: [],
+      incidentSelect: 0
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    var meThis = this;
+    axios.get("/tipus_incidents").then(function (response) {
+      meThis.tipusEmergencia = response.data;
+      meThis.incidents = response.data[_this.incidentSelect].incidents;
+    })["catch"](function (error) {
+      console.log(error);
+    })["finally"](function () {
+      return _this.loading = false;
+    });
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    this.$eventSelect.$on("change-select-incident", function (idSelect) {
+      for (var i = 0; i < _this2.tipusEmergencia.length; i++) {
+        if (_this2.tipusEmergencia[i].id == idSelect) {
+          _this2.incidents = _this2.tipusEmergencia[i].incidents;
+        }
+      }
+    });
   }
 });
 
@@ -6065,15 +6162,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      title: "Localitzacióa",
+      title: "Localització",
       provincies: [],
       comarques: [],
       municipis: [],
       provinciesSelect: 0,
-      comarcaSelect: 0
+      comarcaSelect: 0,
+      checkedCataluna: true,
+      tipusLocalitzacioSelect: 1,
+      tipusLocalitzacio: []
     };
   },
   created: function created() {
@@ -6088,15 +6215,14 @@ __webpack_require__.r(__webpack_exports__);
       console.log(error);
     })["finally"](function () {
       return _this.loading = false;
-    }); // axios
-    //     .get("/comarques/" + meThis.provinciesSelect)
-    //     .then(response => {
-    //         meThis.comarques = response.data
-    //     })
-    //     .catch(error => {
-    //         console.log(error)
-    //     })
-    //     .finally(() => this.loading = false)
+    });
+    axios.get("/tipus_localitzacions").then(function (response) {
+      meThis.tipusLocalitzacio = response.data;
+    })["catch"](function (error) {
+      console.log(error);
+    })["finally"](function () {
+      return _this.loading = false;
+    });
   },
   methods: {
     startTime: function startTime() {
@@ -6132,6 +6258,30 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
     });
+    this.$eventSelect.$on("change-select-localitzacio", function (idSelect) {
+      _this2.tipusLocalitzacioSelect = idSelect;
+
+      if (idSelect == 5) {
+        _this2.checkedCataluna = false;
+
+        _this2.$eventCheck.$emit("change-check-box-catalonia-false", false);
+
+        _this2.$eventSelect.$emit("change-select-localitzacio-provincia", 5);
+      }
+    });
+    this.$eventCheck.$on("change-check-box-catalonia", function (checkValor) {
+      _this2.checkedCataluna = checkValor;
+
+      if (!_this2.checkedCataluna) {
+        _this2.$eventSelect.$emit("change-select-localitzacio-provincia", 5);
+
+        _this2.tipusLocalitzacioSelect = 5;
+      } else {
+        _this2.$eventSelect.$emit("change-select-localitzacio-provincia", 1);
+
+        _this2.tipusLocalitzacioSelect = 1;
+      }
+    });
   }
 });
 
@@ -6148,6 +6298,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6649,6 +6805,13 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+Vue.prototype.$checkCatalonia = "Catalunya";
+Vue.prototype.$provincia = "Provincia";
+Vue.prototype.$comarca = "Comarca";
+Vue.prototype.$municipi = "Municipi";
+Vue.prototype.$tipusLocalitzacio = "Tipus localització";
+Vue.prototype.$tipusEmergencia = "Tipus d'emergencia general";
+Vue.prototype.$incidents = "Tipus d'emergencia específica";
 Vue.prototype.$noVideo = "NO";
 Vue.prototype.$yesVideo = "YES";
 Vue.prototype.$refreshVideo = "refresh";
@@ -6662,7 +6825,8 @@ Vue.prototype.$qv11 = "¿Sistema de aviso especial?";
 Vue.prototype.$v111 = "#t=59,73";
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
-Vue.prototype.$eventSelect = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventSelect = new Vue();
+Vue.prototype.$eventCheck = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('tab-apart', (__webpack_require__(/*! ./components/nav/TabApart.vue */ "./resources/js/components/nav/TabApart.vue")["default"]));
 Vue.component('apart-navbar', (__webpack_require__(/*! ./components/nav/ApartNavbar.vue */ "./resources/js/components/nav/ApartNavbar.vue")["default"]));
@@ -33112,10 +33276,22 @@ var render = function () {
             [_vm._v("\n            " + _vm._s(_vm.name) + "\n        ")]
           ),
           _vm._v(" "),
-          _c("input", {
-            staticClass: "form-check-input",
-            attrs: { type: "checkbox", value: "", id: _vm.id_check },
-          }),
+          _vm.checked
+            ? _c("input", {
+                ref: "checkBox",
+                staticClass: "form-check-input",
+                attrs: {
+                  type: "checkbox",
+                  value: "",
+                  id: _vm.id_check,
+                  checked: "",
+                },
+                on: { click: _vm.clickCheck },
+              })
+            : _c("input", {
+                staticClass: "form-check-input",
+                attrs: { type: "checkbox", value: "", id: _vm.id_check },
+              }),
         ]),
       ]),
     ]
@@ -33150,10 +33326,7 @@ var render = function () {
     [
       _c(
         "div",
-        {
-          staticClass: "col d-flex justify-content-center align-items-center",
-          class: _vm.colSmall,
-        },
+        { staticClass: "col d-flex align-items-center", class: _vm.colSmall },
         [
           _c("label", { attrs: { for: _vm.id_input } }, [
             _vm._v(_vm._s(_vm.name)),
@@ -33211,23 +33384,70 @@ var render = function () {
           class: _vm.colBig,
         },
         [
-          _c(
-            "select",
-            {
-              ref: "select",
-              staticClass: "form-select",
-              attrs: { id: "id_select" },
-              on: { change: _vm.changeSelect, click: _vm.startTime },
-            },
-            _vm._l(_vm.arrayElements, function (arrayElement) {
-              return _c(
-                "option",
-                { key: arrayElement.id, domProps: { value: arrayElement.id } },
-                [_vm._v(_vm._s(arrayElement.nom))]
+          _vm.name == this.$comarca ||
+          _vm.name == this.$provincia ||
+          _vm.name == this.$municipi
+            ? _c(
+                "select",
+                {
+                  ref: "select",
+                  staticClass: "form-select",
+                  attrs: { id: _vm.id_select },
+                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                },
+                _vm._l(_vm.arrayElements, function (arrayElement) {
+                  return _c(
+                    "option",
+                    {
+                      key: arrayElement.id,
+                      domProps: { value: arrayElement.id },
+                    },
+                    [_vm._v("\n            " + _vm._s(arrayElement.nom))]
+                  )
+                }),
+                0
               )
-            }),
-            0
-          ),
+            : _vm.name == this.$tipusLocalitzacio
+            ? _c(
+                "select",
+                {
+                  ref: "select",
+                  staticClass: "form-select",
+                  attrs: { id: _vm.id_select },
+                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                },
+                _vm._l(_vm.arrayElements, function (arrayElement) {
+                  return _c(
+                    "option",
+                    {
+                      key: arrayElement.id,
+                      domProps: { value: arrayElement.id },
+                    },
+                    [_vm._v("\n            " + _vm._s(arrayElement.tipus))]
+                  )
+                }),
+                0
+              )
+            : _c(
+                "select",
+                {
+                  ref: "select",
+                  staticClass: "form-select",
+                  attrs: { id: _vm.id_select },
+                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                },
+                _vm._l(_vm.arrayElements, function (arrayElement) {
+                  return _c(
+                    "option",
+                    {
+                      key: arrayElement.id,
+                      domProps: { value: arrayElement.id },
+                    },
+                    [_vm._v("\n            " + _vm._s(arrayElement.descripcio))]
+                  )
+                }),
+                0
+              ),
         ]
       ),
     ]
@@ -33612,8 +33832,9 @@ var render = function () {
           [
             _c("data-select", {
               attrs: {
-                name: "Tipus d'emergencia general",
+                name: this.$tipusEmergencia,
                 id_select: "selectEmergencyGeneral",
+                arrayElements: _vm.tipusEmergencia,
               },
             }),
           ],
@@ -33628,8 +33849,9 @@ var render = function () {
           [
             _c("data-select", {
               attrs: {
-                name: "Tipus d'emergencia específica",
+                name: this.$incidents,
                 id_select: "selectEmergencySpecific",
+                arrayElements: _vm.incidents,
               },
             }),
           ],
@@ -33711,75 +33933,186 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-10 colSection colLocation" },
+      { staticClass: "col col-11 colSection colLocation" },
       [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
+          _c("div", { staticClass: "col colTitle" }, [
             _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
           ]),
         ]),
         _vm._v(" "),
         _c("data-check", {
-          attrs: { name: "Catalunya", id_check: "checkCatalunya" },
+          attrs: {
+            name: this.$checkCatalonia,
+            id_check: "checkCatalunya",
+            checked: "",
+          },
         }),
         _vm._v(" "),
-        _c("div", { staticClass: "row" }, [
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: "Provincia",
-                  id_select: "provinciaSelect",
-                  arrayElements: _vm.provincies,
-                  small: "",
-                },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: "Comarca",
-                  id_select: "comarcaSelect",
-                  arrayElements: _vm.comarques,
-                  small: "",
-                },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: "Municipi",
-                  id_select: "municipiSelect",
-                  arrayElements: _vm.municipis,
-                  small: "",
-                },
-              }),
-            ],
-            1
-          ),
-        ]),
+        _vm.checkedCataluna
+          ? _c("div", { staticClass: "row" }, [
+              _c(
+                "div",
+                { staticClass: "col" },
+                [
+                  _c("data-select", {
+                    attrs: {
+                      name: this.$provincia,
+                      id_select: "provinciaSelect",
+                      arrayElements: _vm.provincies,
+                      small: "",
+                    },
+                  }),
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col" },
+                [
+                  _c("data-select", {
+                    attrs: {
+                      name: this.$comarca,
+                      id_select: "comarcaSelect",
+                      arrayElements: _vm.comarques,
+                      small: "",
+                    },
+                  }),
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "col" },
+                [
+                  _c("data-select", {
+                    attrs: {
+                      name: this.$municipi,
+                      id_select: "municipiSelect",
+                      arrayElements: _vm.municipis,
+                      small: "",
+                    },
+                  }),
+                ],
+                1
+              ),
+            ])
+          : _vm._e(),
         _vm._v(" "),
-        _c("data-input", {
-          attrs: { name: "Direccio", id_input: "inputDireccio" },
+        _c("data-select", {
+          staticStyle: { "margin-top": "30px", marginBottom: "20px" },
+          attrs: {
+            name: this.$tipusLocalitzacio,
+            id_select: "tipusLocalitzacioSelect",
+            arrayElements: _vm.tipusLocalitzacio,
+          },
         }),
+        _vm._v(" "),
+        _vm.checkedCataluna == false
+          ? _c(
+              "div",
+              [
+                _c("data-input", {
+                  attrs: {
+                    name: "Provincia",
+                    id_input: "inputProvincia",
+                    small: "",
+                  },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: {
+                    name: "Municipi",
+                    id_input: "inputMunicipi",
+                    small: "",
+                  },
+                }),
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.tipusLocalitzacioSelect == 1
+          ? _c(
+              "div",
+              [
+                _c("data-input", {
+                  attrs: {
+                    name: "Tipus de via",
+                    id_input: "inputTipusDeVia",
+                    small: "",
+                  },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Nom", id_input: "inputNom", small: "" },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Número", id_input: "inputNumero", small: "" },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Escala", id_input: "inputEscala", small: "" },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Pis", id_input: "inputPis", small: "" },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Porta", id_input: "inputPorta", small: "" },
+                }),
+              ],
+              1
+            )
+          : _vm.tipusLocalitzacioSelect == 4
+          ? _c(
+              "div",
+              [
+                _c("data-input", {
+                  attrs: {
+                    name: "Nom carretera",
+                    id_input: "inputNomCarretera",
+                    small: "",
+                  },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: {
+                    name: "Punt kilomètric ",
+                    id_input: "inputPuntKilometric",
+                    small: "",
+                  },
+                }),
+                _vm._v(" "),
+                _c("data-input", {
+                  attrs: { name: "Sentit", id_input: "inputSentit", small: "" },
+                }),
+              ],
+              1
+            )
+          : _vm.tipusLocalitzacioSelect == 2
+          ? _c(
+              "div",
+              [
+                _c("data-input", {
+                  attrs: {
+                    name: "Nom",
+                    id_input: "inputNomPuntSingular",
+                    small: "",
+                  },
+                }),
+              ],
+              1
+            )
+          : _vm._e(),
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
+          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
           [
             _c("div", { staticClass: "col" }, [
               _c("div", { staticClass: "form-floating" }, [
@@ -33828,25 +34161,37 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-8 colSection colPersonalDates" },
+      { staticClass: "col col-10 colSection colPersonalDates" },
       [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
+          _c("div", { staticClass: "col colTitle" }, [
             _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
           ]),
         ]),
         _vm._v(" "),
         _c("data-input", {
-          attrs: { name: "Telefon", id_input: "inputTelefon" },
+          attrs: { name: "Telefon", id_input: "inputTelefon", small: "" },
         }),
         _vm._v(" "),
         _c("data-input", {
-          attrs: { name: "Direcció", id_input: "inputDireccion" },
+          attrs: {
+            name: "Procedencia",
+            id_input: "inputProcedencia",
+            small: "",
+          },
+        }),
+        _vm._v(" "),
+        _c("data-input", {
+          attrs: { name: "Municipi", id_input: "inputMunicipi", small: "" },
+        }),
+        _vm._v(" "),
+        _c("data-input", {
+          attrs: { name: "Adreça", id_input: "inputAdresa", small: "" },
         }),
         _vm._v(" "),
         _c(
           "div",
-          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
+          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
           [
             _c("div", { staticClass: "col" }, [
               _c("div", { staticClass: "form-floating" }, [
@@ -33864,6 +34209,13 @@ var render = function () {
             ]),
           ]
         ),
+        _vm._v(" "),
+        _c("data-check", {
+          attrs: {
+            name: "Guardar informació",
+            id_check: "checkSaveInformation",
+          },
+        }),
       ],
       1
     ),

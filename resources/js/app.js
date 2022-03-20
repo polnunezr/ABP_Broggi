@@ -21,6 +21,20 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+
+Vue.prototype.$checkCatalonia="Catalunya"
+
+
+Vue.prototype.$provincia="Provincia"
+Vue.prototype.$comarca="Comarca"
+Vue.prototype.$municipi="Municipi"
+
+Vue.prototype.$tipusLocalitzacio="Tipus localització"
+
+Vue.prototype.$tipusEmergencia="Tipus d'emergencia general"
+Vue.prototype.$incidents="Tipus d'emergencia específica"
+
+
 Vue.prototype.$noVideo = "NO"
 Vue.prototype.$yesVideo= "YES"
 Vue.prototype.$refreshVideo = "refresh"
@@ -44,6 +58,8 @@ Vue.prototype.$eventTime = new Vue()
 Vue.prototype.$eventVideo = new Vue()
 
 Vue.prototype.$eventSelect = new Vue()
+
+Vue.prototype.$eventCheck = new Vue()
 
 
 

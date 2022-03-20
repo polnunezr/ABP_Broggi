@@ -6,10 +6,23 @@
         </div>
         <div class="col d-flex justify-content-center align-items-center"
             v-bind:class="colBig">
-            <select ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" id="id_select">
-                <option  v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">{{arrayElement.nom}}</option>
-                <!-- <option value="2">Two</option>
-                <option value="3">Three</option> -->
+
+            <select v-if="name == this.$comarca || name == this.$provincia || name == this.$municipi"
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="id_select">
+                <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
+                {{arrayElement.nom}}</option>
+            </select>
+
+            <select v-else-if="name == this.$tipusLocalitzacio"
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="id_select">
+                <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
+                {{arrayElement.tipus}}</option>
+            </select>
+
+            <select v-else
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="id_select">
+                <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
+                {{arrayElement.descripcio}}</option>
             </select>
         </div>
     </div>
@@ -39,7 +52,13 @@
                     response = "col-3 justify-content-center align-items-center"
                 }
                 else {
-                    response = "col-5 align-items-center"
+                    if(this.name == this.$tipusLocalitzacio) {
+                        response = "col-2 align-items-center"
+                    }
+                    else {
+                        response = "col-5 align-items-center"
+                    }
+
                 }
                 return response;
             },
@@ -49,7 +68,13 @@
                     response = "col-9"
                 }
                 else {
-                    response = "col-7"
+                    if(this.name == this.$tipusLocalitzacio) {
+                        response = "col-10"
+                    }
+                    else {
+                         response = "col-7"
+                    }
+
                 }
                 return response;
             }
@@ -59,14 +84,43 @@
                 this.$eventTime.$emit("start-time","message");
             },
             changeSelect() {
-                if(this.name == "Provincia") {
-                    this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
-                }
-                else if(this.name == "Comarca") {
-                    this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
+
+                switch(this.name) {
+                    case this.$provincia:
+                        this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
+                        break;
+                    case this.$comarca:
+                        this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
+                    break;
+                    case this.$tipusEmergencia:
+                        this.$eventSelect.$emit("change-select-incident",parseInt(this.$refs.select.value))
+                    break;
+                    case this.$tipusLocalitzacio:
+                        this.$eventSelect.$emit("change-select-localitzacio",parseInt(this.$refs.select.value))
+                    break;
                 }
 
+                // if(this.name == this.$provincia) {
+                //     this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
+                // }
+                // else if(this.name == this.$comarca) {
+                //     this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
+                // }
+
+
             }
+        },
+        mounted() {
+            this.$eventSelect.$on("change-select-localitzacio-provincia", selectValor => {
+                this.$refs.select.value = selectValor;
+                if(selectValor != 1) {
+                    this.$refs.select.disabled = true;
+                }
+                else {
+                    this.$refs.select.disabled = false;
+                }
+
+            })
         }
     }
 </script>

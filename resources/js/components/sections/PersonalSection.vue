@@ -1,17 +1,21 @@
 <template>
     <div class="row d-flex justify-content-center">
-        <div class="col col-8 colSection colPersonalDates">
+        <div class="col col-10 colSection colPersonalDates">
             <div class="row">
-                <div class="col">
+                <div class="col colTitle">
                     <h4 v-text="title"></h4>
                 </div>
             </div>
 
-            <data-input name="Telefon" id_input="inputTelefon" ></data-input>
+            <data-input name="Telefon" id_input="inputTelefon" small></data-input>
 
-            <data-input name="Direcció" id_input="inputDireccion" ></data-input>
+            <data-input name="Procedencia" id_input="inputProcedencia" small></data-input>
 
-            <div class="row" style="margin-top: 20px">
+            <data-input name="Municipi" id_input="inputMunicipi" small></data-input>
+
+            <data-input name="Adreça" id_input="inputAdresa" small></data-input>
+
+            <div class="row" style="margin-top: 40px">
                 <div class="col">
                     <div class="form-floating">
                         <textarea class="form-control" id="textAreaAntecedents"
@@ -20,6 +24,8 @@
                     </div>
                 </div>
             </div>
+
+            <data-check name="Guardar informació" id_check="checkSaveInformation"></data-check>
 
 
         </div>

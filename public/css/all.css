@@ -78,8 +78,8 @@ body {
 }
 
 .colEmergency {
-    height: 24vh;
-    min-height: 220px;
+    /* height: 24vh;
+    min-height: 220px; */
     margin-right: 20px;
 }
 .colTime {
@@ -116,6 +116,13 @@ input, textarea {
 
 label {
     font-size: 16px;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+p {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
@@ -210,5 +217,17 @@ h4 {
     z-index: 500;
     color: white;
     cursor: pointer;
+}
+
+.noFlechaNumber {
+-moz-appearance: textfield;
+}
+.noFlechaNumber::-webkit-inner-spin-button {
+display: none;
+}
+.noFlechaNumber::-webkit-outer-spin-button,
+.noFlechaNumber::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
 }
 

@@ -9,15 +9,21 @@
             <div class="row">
                 <div class="col">
                     <data-select :name="this.$tipusEmergencia"
-                    id_select="selectEmergencyGeneral" :arrayElements="tipusEmergencia"></data-select>
+                    :idSelect="this.$tipusEmergenciaId" :arrayElements="tipusEmergencia"
+                   ></data-select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-bottom: 50px">
                 <div class="col">
                     <data-select :name="this.$incidents"
-                    id_select="selectEmergencySpecific" :arrayElements="incidents"></data-select>
+                    :idSelect="this.$incidentsId" :arrayElements="incidents"
+                    ></data-select>
                 </div>
             </div>
+            <data-emergency firstText="Codi" :secondText="incident.codi"></data-emergency>
+            <data-emergency firstText="Descripcio" :secondText="incident.descripcio"></data-emergency>
+            <data-emergency firstText="Definicio" :secondText="incident.definicio"></data-emergency>
+            <data-emergency firstText="Instrucions" :secondText="incident.instrucions"></data-emergency>
         </div>
     </div>
 </template>
@@ -29,7 +35,8 @@
                 title: "Tipus d'emergencia",
                 tipusEmergencia: [],
                 incidents: [],
-                incidentSelect: 0
+                incidentSelect: 0,
+                incident: {}
             }
         },
         created() {
@@ -39,6 +46,7 @@
             .then(response => {
                 meThis.tipusEmergencia = response.data
                 meThis.incidents = response.data[this.incidentSelect].incidents
+                meThis.incident = response.data[this.incidentSelect].incidents[0]
             })
             .catch(error => {
                     console.log(error)
@@ -46,10 +54,19 @@
             .finally(() => this.loading = false)
         },
         mounted() {
-            this.$eventSelect.$on("change-select-incident", idSelect => {
+            this.$eventSelect.$on("change-select-emergencia", idSelect => {
                 for(let i = 0; i < this.tipusEmergencia.length; i++) {
                     if(this.tipusEmergencia[i].id == idSelect) {
-                      this.incidents =   this.tipusEmergencia[i].incidents
+                      this.incidents = this.tipusEmergencia[i].incidents
+                      this.incident = this.tipusEmergencia[i].incidents[0]
+                    }
+                }
+            })
+
+            this.$eventSelect.$on("change-select-incident", idSelect => {
+                for(let i = 0; i < this.incidents.length; i++) {
+                    if(this.incidents[i].id == idSelect) {
+                      this.incident = this.incidents[i]
                     }
                 }
             })

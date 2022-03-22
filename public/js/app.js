@@ -5528,6 +5528,86 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      selectSection: "Dades Personals",
+      personalData: "Dades Personals",
+      locate: "Localitzacio",
+      agency: "Agencies",
+      emergency: "Emergencia",
+      communeNote: "Nota comuna",
+      relationExpedient: "Relacionar Expedient",
+      interactiveVideo: "video"
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventTime.$on("change-section", function (section) {
+      _this.selectSection = section;
+    });
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js& ***!
@@ -5583,6 +5663,43 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    firstText: {
+      type: [String],
+      require: true
+    },
+    secondText: {
+      type: [String],
+      require: true
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js& ***!
@@ -5608,17 +5725,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
       type: [String],
       require: true
     },
-    id_input: {
+    idInput: {
       type: [String],
       require: true
     },
-    small: Boolean
+    small: Boolean,
+    number: Boolean
+  },
+  data: function data() {
+    return {
+      text: null
+    };
   },
   computed: {
     colSmall: function colSmall() {
@@ -5648,6 +5772,15 @@ __webpack_require__.r(__webpack_exports__);
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventFinal.$on("obtener-telefono", function (message) {
+      if (_this.idInput == _this.$inputTelefon) {
+        _this.$eventFinal.$emit("recojer-telefono", _this.text);
+      }
+    });
   }
 });
 
@@ -5694,13 +5827,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
       type: [String],
       require: true
     },
-    id_select: {
+    idSelect: {
       type: [String],
       require: true
     },
@@ -5709,6 +5848,11 @@ __webpack_require__.r(__webpack_exports__);
       require: true
     },
     small: Boolean
+  },
+  data: function data() {
+    return {
+      selectSelected: 0
+    };
   },
   computed: {
     colSmall: function colSmall() {
@@ -5747,41 +5891,87 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventTime.$emit("start-time", "message");
     },
     changeSelect: function changeSelect() {
-      switch (this.name) {
-        case this.$provincia:
-          this.$eventSelect.$emit("change-select-provincia", parseInt(this.$refs.select.value));
+      switch (this.idSelect) {
+        case this.$provinciaPersonal:
+          this.$eventSelect.$emit("change-select-provincia-personal", parseInt(this.$refs.select.value));
           break;
 
-        case this.$comarca:
-          this.$eventSelect.$emit("change-select-comarca", parseInt(this.$refs.select.value));
+        case this.$comarcaPersonal:
+          this.$eventSelect.$emit("change-select-comarca-personal", parseInt(this.$refs.select.value));
           break;
 
-        case this.$tipusEmergencia:
-          this.$eventSelect.$emit("change-select-incident", parseInt(this.$refs.select.value));
+        case this.$municipiPersonal:
+          this.$eventSelect.$emit("change-select-municipi-personal", parseInt(this.$refs.select.value));
           break;
 
-        case this.$tipusLocalitzacio:
+        case this.$provinciaLocation:
+          this.$eventSelect.$emit("change-select-provincia-location", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$comarcaLocation:
+          this.$eventSelect.$emit("change-select-comarca-location", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$municipiLocation:
+          this.$eventSelect.$emit("change-select-municipi-location", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$tipusLocalitzacioId:
           this.$eventSelect.$emit("change-select-localitzacio", parseInt(this.$refs.select.value));
           break;
-      } // if(this.name == this.$provincia) {
-      //     this.$eventSelect.$emit("change-select-provincia",parseInt(this.$refs.select.value))
-      // }
-      // else if(this.name == this.$comarca) {
-      //     this.$eventSelect.$emit("change-select-comarca",parseInt(this.$refs.select.value))
-      // }
 
+        case this.$tipusEmergenciaId:
+          this.$eventSelect.$emit("change-select-emergencia", parseInt(this.$refs.select.value));
+          break;
+
+        case this.$incidentsId:
+          this.$eventSelect.$emit("change-select-incident", parseInt(this.$refs.select.value));
+          break;
+      }
     }
   },
   mounted: function mounted() {
     var _this = this;
 
     this.$eventSelect.$on("change-select-localitzacio-provincia", function (selectValor) {
-      _this.$refs.select.value = selectValor;
+      if (_this.name == _this.$tipusLocalitzacio) {
+        _this.$refs.select.value = selectValor;
 
-      if (selectValor != 1) {
-        _this.$refs.select.disabled = true;
-      } else {
-        _this.$refs.select.disabled = false;
+        if (selectValor != 1) {
+          _this.$refs.select.disabled = true;
+        } else {
+          _this.$refs.select.disabled = false;
+        }
+      }
+    });
+    this.$eventSelect.$on("change-select-option-provincia-personal", function (option) {
+      if (_this.idSelect == _this.$provinciaPersonal) {
+        _this.selectSelected = option;
+      }
+    });
+    this.$eventSelect.$on("change-select-option-comarca-personal", function (option) {
+      if (_this.idSelect == _this.$comarcaPersonal) {
+        _this.selectSelected = option;
+      }
+    });
+    this.$eventSelect.$on("change-select-option-municipi-personal", function (option) {
+      if (_this.idSelect == _this.$municipiPersonal) {
+        _this.selectSelected = option;
+      }
+    });
+    this.$eventSelect.$on("change-select-option-provincia-location", function (option) {
+      if (_this.idSelect == _this.$provinciaLocation) {
+        _this.selectSelected = option;
+      }
+    });
+    this.$eventSelect.$on("change-select-option-comarca-location", function (option) {
+      if (_this.idSelect == _this.$comarcaLocation) {
+        _this.selectSelected = option;
+      }
+    });
+    this.$eventSelect.$on("change-select-option-municipi-location", function (option) {
+      if (_this.idSelect == _this.$municipiLocation) {
+        _this.selectSelected = option;
       }
     });
   }
@@ -6052,13 +6242,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       title: "Tipus d'emergencia",
       tipusEmergencia: [],
       incidents: [],
-      incidentSelect: 0
+      incidentSelect: 0,
+      incident: {}
     };
   },
   created: function created() {
@@ -6068,6 +6265,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get("/tipus_incidents").then(function (response) {
       meThis.tipusEmergencia = response.data;
       meThis.incidents = response.data[_this.incidentSelect].incidents;
+      meThis.incident = response.data[_this.incidentSelect].incidents[0];
     })["catch"](function (error) {
       console.log(error);
     })["finally"](function () {
@@ -6077,10 +6275,18 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this2 = this;
 
-    this.$eventSelect.$on("change-select-incident", function (idSelect) {
+    this.$eventSelect.$on("change-select-emergencia", function (idSelect) {
       for (var i = 0; i < _this2.tipusEmergencia.length; i++) {
         if (_this2.tipusEmergencia[i].id == idSelect) {
           _this2.incidents = _this2.tipusEmergencia[i].incidents;
+          _this2.incident = _this2.tipusEmergencia[i].incidents[0];
+        }
+      }
+    });
+    this.$eventSelect.$on("change-select-incident", function (idSelect) {
+      for (var i = 0; i < _this2.incidents.length; i++) {
+        if (_this2.incidents[i].id == idSelect) {
+          _this2.incident = _this2.incidents[i];
         }
       }
     });
@@ -6107,7 +6313,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      finalDates: {
+        telefono: null
+      }
+    };
+  },
+  methods: {
+    clickFinish: function clickFinish() {
+      this.$eventFinal.$emit("obtener-telefono", "telefono");
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventFinal.$on("recojer-telefono", function (telefono) {
+      if (telefono != "" && telefono != null) {
+        _this.finalDates.telefono = telefono;
+      } else {
+        _this.finalDates.telefono = null;
+      }
+    });
+  }
+});
 
 /***/ }),
 
@@ -6122,6 +6352,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
 //
 //
 //
@@ -6236,26 +6470,63 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this2 = this;
 
-    this.$eventSelect.$on("change-select-provincia", function (idSelect) {
+    this.$eventSelect.$on("change-select-provincia-location", function (idSelect) {
+      var idComarcaSelect = 0;
+      var idMunicipiSelect = 0;
       _this2.provinciesSelect = idSelect;
 
       for (var i = 0; i < _this2.provincies.length; i++) {
         if (_this2.provincies[i].id == _this2.provinciesSelect) {
           _this2.comarques = _this2.provincies[i].comarques;
+          idComarcaSelect = _this2.provincies[i].comarques[0].id;
           _this2.municipis = _this2.provincies[i].comarques[0].municipis;
+          idMunicipiSelect = _this2.provincies[i].comarques[0].municipis[0].id;
         }
-      } // this.provinciesSelect = idSelect - 1;
-      // this.comarques = this.provincies[this.provinciesSelect].comarques
-      // this.municipis = this.provincies[this.provinciesSelect].comarques[this.comarcaSelect].municipis
+      }
 
+      _this2.$eventSelect.$emit("change-select-option-comarca-location", idComarcaSelect);
+
+      _this2.$eventSelect.$emit("change-select-option-municipi-location", idMunicipiSelect);
     });
-    this.$eventSelect.$on("change-select-comarca", function (idSelect) {
+    this.$eventSelect.$on("change-select-comarca-location", function (idSelect) {
+      var idProvincia = 0;
+      var idMunicipiSelect = 0;
       _this2.comarcaSelect = idSelect;
 
       for (var i = 0; i < _this2.comarques.length; i++) {
         if (_this2.comarques[i].id == _this2.comarcaSelect) {
           _this2.municipis = _this2.comarques[i].municipis;
+          idMunicipiSelect = _this2.comarques[i].municipis[0].id;
+          idProvincia = _this2.comarques[i].provincies_id;
         }
+      }
+
+      if (idSelect != 0) {
+        _this2.$eventSelect.$emit("change-select-option-provincia-location", idProvincia);
+      }
+
+      _this2.$eventSelect.$emit("change-select-option-municipi-location", idMunicipiSelect);
+    });
+    this.$eventSelect.$on("change-select-municipi-location", function (idSelect) {
+      var idProvincia = 0;
+      var idComarcaSelect = 0; // console.log(idSelect)
+
+      for (var i = 0; i < _this2.municipis.length; i++) {
+        if (_this2.municipis[i].id == idSelect) {
+          idComarcaSelect = _this2.municipis[i].comarques_id;
+        }
+      }
+
+      for (var _i = 0; _i < _this2.comarques.length; _i++) {
+        if (_this2.comarques[_i].id == idComarcaSelect) {
+          idProvincia = _this2.comarques[_i].provincies_id;
+        }
+      }
+
+      if (idSelect != 0) {
+        _this2.$eventSelect.$emit("change-select-option-comarca-location", idComarcaSelect);
+
+        _this2.$eventSelect.$emit("change-select-option-provincia-location", idProvincia);
       }
     });
     this.$eventSelect.$on("change-select-localitzacio", function (idSelect) {
@@ -6332,16 +6603,112 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      title: "Dades personals"
+      title: "Dades personals",
+      provincies: [],
+      comarques: [],
+      municipis: [],
+      provinciesSelect: 0,
+      comarcaSelect: 0
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    var meThis = this;
+    axios.get("/provincies").then(function (response) {
+      meThis.provincies = response.data;
+      meThis.comarques = response.data[_this.provinciesSelect].comarques;
+      meThis.municipis = response.data[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis; // meThis.firstProvincia = meThis.provincies[0]
+      // meThis.firstComarques = meThis.comarques[0]
+      // meThis.firstMunicipis = meThis.municipis[0]
+      // meThis.provincies.shift();
+      // meThis.comarques.shift();
+      // meThis.municipis.shift();
+    })["catch"](function (error) {
+      console.log(error);
+    })["finally"](function () {
+      return _this.loading = false;
+    });
   },
   methods: {
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
     }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    this.$eventSelect.$on("change-select-provincia-personal", function (idSelect) {
+      var idComarcaSelect = 0;
+      var idMunicipiSelect = 0;
+      _this2.provinciesSelect = idSelect;
+
+      for (var i = 0; i < _this2.provincies.length; i++) {
+        if (_this2.provincies[i].id == _this2.provinciesSelect) {
+          _this2.comarques = _this2.provincies[i].comarques;
+          idComarcaSelect = _this2.provincies[i].comarques[0].id;
+          _this2.municipis = _this2.provincies[i].comarques[0].municipis;
+          idMunicipiSelect = _this2.provincies[i].comarques[0].municipis[0].id;
+        }
+      }
+
+      _this2.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
+
+      _this2.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
+    });
+    this.$eventSelect.$on("change-select-comarca-personal", function (idSelect) {
+      var idProvincia = 0;
+      var idMunicipiSelect = 0;
+      _this2.comarcaSelect = idSelect;
+
+      for (var i = 0; i < _this2.comarques.length; i++) {
+        if (_this2.comarques[i].id == _this2.comarcaSelect) {
+          _this2.municipis = _this2.comarques[i].municipis;
+          idMunicipiSelect = _this2.comarques[i].municipis[0].id;
+          idProvincia = _this2.comarques[i].provincies_id;
+        }
+      }
+
+      _this2.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
+
+      _this2.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
+    });
+    this.$eventSelect.$on("change-select-municipi-personal", function (idSelect) {
+      var idProvincia = 0;
+      var idComarcaSelect = 0; // console.log(idSelect)
+
+      for (var i = 0; i < _this2.municipis.length; i++) {
+        if (_this2.municipis[i].id == idSelect) {
+          idComarcaSelect = _this2.municipis[i].comarques_id;
+        }
+      }
+
+      for (var _i = 0; _i < _this2.comarques.length; _i++) {
+        if (_this2.comarques[_i].id == idComarcaSelect) {
+          idProvincia = _this2.comarques[_i].provincies_id;
+        }
+      }
+
+      _this2.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
+
+      _this2.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
+    });
   }
 });
 
@@ -6809,9 +7176,19 @@ Vue.prototype.$checkCatalonia = "Catalunya";
 Vue.prototype.$provincia = "Provincia";
 Vue.prototype.$comarca = "Comarca";
 Vue.prototype.$municipi = "Municipi";
+Vue.prototype.$provinciaPersonal = "provinciaSelectPersonal";
+Vue.prototype.$comarcaPersonal = "comarcaSelectPersonal";
+Vue.prototype.$municipiPersonal = "municipiSelectPersonal";
+Vue.prototype.$provinciaLocation = "ProvinciaSelectLocation";
+Vue.prototype.$comarcaLocation = "ComarcaSelectLocation";
+Vue.prototype.$municipiLocation = "MunicipiSelectLocation";
+Vue.prototype.$nullLoclaitzacio = "";
 Vue.prototype.$tipusLocalitzacio = "Tipus localització";
+Vue.prototype.$tipusLocalitzacioId = "tipusLocalitzacioSelect";
 Vue.prototype.$tipusEmergencia = "Tipus d'emergencia general";
+Vue.prototype.$tipusEmergenciaId = "selectEmergencyGeneral";
 Vue.prototype.$incidents = "Tipus d'emergencia específica";
+Vue.prototype.$incidentsId = "selectEmergencySpecific";
 Vue.prototype.$noVideo = "NO";
 Vue.prototype.$yesVideo = "YES";
 Vue.prototype.$refreshVideo = "refresh";
@@ -6823,11 +7200,14 @@ Vue.prototype.$v10 = "#t=25,32";
 Vue.prototype.$v11 = "#t=33,53";
 Vue.prototype.$qv11 = "¿Sistema de aviso especial?";
 Vue.prototype.$v111 = "#t=59,73";
+Vue.prototype.$inputTelefon = "inputTelefon";
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
-Vue.prototype.$eventCheck = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventCheck = new Vue();
+Vue.prototype.$eventFinal = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
 Vue.component('tab-apart', (__webpack_require__(/*! ./components/nav/TabApart.vue */ "./resources/js/components/nav/TabApart.vue")["default"]));
 Vue.component('apart-navbar', (__webpack_require__(/*! ./components/nav/ApartNavbar.vue */ "./resources/js/components/nav/ApartNavbar.vue")["default"]));
 Vue.component("time-section", (__webpack_require__(/*! ./components/sections/TimeSection.vue */ "./resources/js/components/sections/TimeSection.vue")["default"]));
@@ -6845,6 +7225,7 @@ Vue.component("backdrop-refresh", (__webpack_require__(/*! ./components/sections
 Vue.component("finish-section", (__webpack_require__(/*! ./components/sections/FinishSection.vue */ "./resources/js/components/sections/FinishSection.vue")["default"]));
 Vue.component("data-input", (__webpack_require__(/*! ./components/forms/DataInput.vue */ "./resources/js/components/forms/DataInput.vue")["default"]));
 Vue.component("data-time", (__webpack_require__(/*! ./components/forms/DataTime.vue */ "./resources/js/components/forms/DataTime.vue")["default"]));
+Vue.component("data-emergency", (__webpack_require__(/*! ./components/forms/DataEmergency.vue */ "./resources/js/components/forms/DataEmergency.vue")["default"]));
 Vue.component("data-check", (__webpack_require__(/*! ./components/forms/DataCheck.vue */ "./resources/js/components/forms/DataCheck.vue")["default"]));
 Vue.component("data-select", (__webpack_require__(/*! ./components/forms/DataSelect.vue */ "./resources/js/components/forms/DataSelect.vue")["default"]));
 /**
@@ -7537,24 +7918,7 @@ Vue.component("data-select", (__webpack_require__(/*! ./components/forms/DataSel
 // })
 
 var app = new Vue({
-  el: '#app',
-  data: {
-    selectSection: "Dades Personals",
-    personalData: "Dades Personals",
-    locate: "Localitzacio",
-    agency: "Agencies",
-    emergency: "Emergencia",
-    communeNote: "Nota comuna",
-    relationExpedient: "Relacionar Expedient",
-    interactiveVideo: "video"
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    this.$eventTime.$on("change-section", function (section) {
-      _this.selectSection = section;
-    });
-  }
+  el: '#app'
 });
 
 /***/ }),
@@ -31880,6 +32244,45 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./resources/js/components/CartaTrucada.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/CartaTrucada.vue ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CartaTrucada.vue?vue&type=template&id=d9780308& */ "./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&");
+/* harmony import */ var _CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CartaTrucada.vue?vue&type=script&lang=js& */ "./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.render,
+  _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/CartaTrucada.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/forms/DataCheck.vue":
 /*!*****************************************************!*\
   !*** ./resources/js/components/forms/DataCheck.vue ***!
@@ -31915,6 +32318,45 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/js/components/forms/DataCheck.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/forms/DataEmergency.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/forms/DataEmergency.vue ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataEmergency.vue?vue&type=template&id=e5063ce8& */ "./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&");
+/* harmony import */ var _DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataEmergency.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.render,
+  _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/forms/DataEmergency.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -32621,6 +33063,22 @@ component.options.__file = "resources/js/components/sections/videoSection/VideoS
 
 /***/ }),
 
+/***/ "./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CartaTrucada.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&":
 /*!******************************************************************************!*\
   !*** ./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js& ***!
@@ -32634,6 +33092,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataCheck.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataEmergency.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -32925,6 +33399,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308& ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CartaTrucada.vue?vue&type=template&id=d9780308& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&":
 /*!************************************************************************************!*\
   !*** ./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703& ***!
@@ -32938,6 +33429,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataCheck.vue?vue&type=template&id=39b3d703& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8& ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataEmergency.vue?vue&type=template&id=e5063ce8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&");
 
 
 /***/ }),
@@ -33248,6 +33756,154 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _vm.selectSection != _vm.interactiveVideo
+        ? _c("finish-section")
+        : _vm._e(),
+      _vm._v(" "),
+      _c("div", { staticClass: "container-fluid" }, [
+        _c(
+          "div",
+          { staticClass: "row" },
+          [
+            _c(
+              "div",
+              { staticClass: "col col-2 colCard colNavBarHorizontal" },
+              [_c("tab-apart")],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                class:
+                  _vm.selectSection != _vm.interactiveVideo
+                    ? "col col-7 colCard"
+                    : "col col-10 colCard",
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.personalData
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("personal-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.locate
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("location-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.agency
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("agency-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.emergency
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("emergency-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.communeNote
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("commune-note-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.relationExpedient
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("relation-section")],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    style:
+                      _vm.selectSection == _vm.interactiveVideo
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [_c("video-section")],
+                  1
+                ),
+              ]
+            ),
+            _vm._v(" "),
+            _vm.selectSection != _vm.interactiveVideo
+              ? _c("time-section")
+              : _vm._e(),
+          ],
+          1
+        ),
+      ]),
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&":
 /*!***************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703& ***!
@@ -33304,6 +33960,43 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "row form-row", staticStyle: { "margin-top": "25px" } },
+    [
+      _c("div", { staticClass: "col col-5 align-items-center" }, [
+        _c("p", [_vm._v(_vm._s(_vm.firstText))]),
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col col-7" }, [
+        _c("p", [_vm._v(_vm._s(_vm.secondText))]),
+      ]),
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76&":
 /*!***************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76& ***!
@@ -33328,18 +34021,58 @@ var render = function () {
         "div",
         { staticClass: "col d-flex align-items-center", class: _vm.colSmall },
         [
-          _c("label", { attrs: { for: _vm.id_input } }, [
+          _c("label", { attrs: { for: _vm.idInput } }, [
             _vm._v(_vm._s(_vm.name)),
           ]),
         ]
       ),
       _vm._v(" "),
       _c("div", { staticClass: "col", class: _vm.colBig }, [
-        _c("input", {
-          staticClass: "form-control",
-          attrs: { type: "text", id: _vm.id_input },
-          on: { click: _vm.startTime },
-        }),
+        _vm.number == false
+          ? _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.text,
+                  expression: "text",
+                },
+              ],
+              staticClass: "form-control",
+              attrs: { type: "text", id: _vm.idInput },
+              domProps: { value: _vm.text },
+              on: {
+                click: _vm.startTime,
+                input: function ($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.text = $event.target.value
+                },
+              },
+            })
+          : _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.text,
+                  expression: "text",
+                },
+              ],
+              staticClass: "form-control noFlechaNumber",
+              attrs: { maxlength: "12", type: "number", id: _vm.idInput },
+              domProps: { value: _vm.text },
+              on: {
+                click: _vm.startTime,
+                input: function ($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.text = $event.target.value
+                },
+              },
+            }),
       ]),
     ]
   )
@@ -33372,7 +34105,7 @@ var render = function () {
     { staticClass: "row form-row", staticStyle: { "margin-top": "20px" } },
     [
       _c("div", { staticClass: "col d-flex", class: _vm.colSmall }, [
-        _c("label", { attrs: { for: _vm.id_select } }, [
+        _c("label", { attrs: { for: _vm.idSelect } }, [
           _vm._v(_vm._s(_vm.name)),
         ]),
       ]),
@@ -33390,22 +34123,52 @@ var render = function () {
             ? _c(
                 "select",
                 {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectSelected,
+                      expression: "selectSelected",
+                    },
+                  ],
                   ref: "select",
                   staticClass: "form-select",
-                  attrs: { id: _vm.id_select },
-                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                  attrs: { id: _vm.idSelect },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.selectSelected = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                      _vm.changeSelect,
+                    ],
+                    click: _vm.startTime,
+                  },
                 },
-                _vm._l(_vm.arrayElements, function (arrayElement) {
-                  return _c(
-                    "option",
-                    {
-                      key: arrayElement.id,
-                      domProps: { value: arrayElement.id },
-                    },
-                    [_vm._v("\n            " + _vm._s(arrayElement.nom))]
-                  )
-                }),
-                0
+                [
+                  _c("option", { attrs: { value: "0" } }),
+                  _vm._v(" "),
+                  _vm._l(_vm.arrayElements, function (arrayElement) {
+                    return _c(
+                      "option",
+                      {
+                        key: arrayElement.id,
+                        domProps: { value: arrayElement.id },
+                      },
+                      [_vm._v("\n            " + _vm._s(arrayElement.nom))]
+                    )
+                  }),
+                ],
+                2
               )
             : _vm.name == this.$tipusLocalitzacio
             ? _c(
@@ -33413,7 +34176,7 @@ var render = function () {
                 {
                   ref: "select",
                   staticClass: "form-select",
-                  attrs: { id: _vm.id_select },
+                  attrs: { id: _vm.idSelect },
                   on: { change: _vm.changeSelect, click: _vm.startTime },
                 },
                 _vm._l(_vm.arrayElements, function (arrayElement) {
@@ -33433,7 +34196,7 @@ var render = function () {
                 {
                   ref: "select",
                   staticClass: "form-select",
-                  attrs: { id: _vm.id_select },
+                  attrs: { id: _vm.idSelect },
                   on: { change: _vm.changeSelect, click: _vm.startTime },
                 },
                 _vm._l(_vm.arrayElements, function (arrayElement) {
@@ -33818,47 +34581,78 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c("div", { staticClass: "col col-8 colSection colEmergency" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
-          _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
+    _c(
+      "div",
+      { staticClass: "col col-8 colSection colEmergency" },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col" }, [
+            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
+          ]),
         ]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
+        _vm._v(" "),
+        _c("div", { staticClass: "row" }, [
+          _c(
+            "div",
+            { staticClass: "col" },
+            [
+              _c("data-select", {
+                attrs: {
+                  name: this.$tipusEmergencia,
+                  idSelect: this.$tipusEmergenciaId,
+                  arrayElements: _vm.tipusEmergencia,
+                },
+              }),
+            ],
+            1
+          ),
+        ]),
+        _vm._v(" "),
         _c(
           "div",
-          { staticClass: "col" },
+          { staticClass: "row", staticStyle: { "margin-bottom": "50px" } },
           [
-            _c("data-select", {
-              attrs: {
-                name: this.$tipusEmergencia,
-                id_select: "selectEmergencyGeneral",
-                arrayElements: _vm.tipusEmergencia,
-              },
-            }),
-          ],
-          1
+            _c(
+              "div",
+              { staticClass: "col" },
+              [
+                _c("data-select", {
+                  attrs: {
+                    name: this.$incidents,
+                    idSelect: this.$incidentsId,
+                    arrayElements: _vm.incidents,
+                  },
+                }),
+              ],
+              1
+            ),
+          ]
         ),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c(
-          "div",
-          { staticClass: "col" },
-          [
-            _c("data-select", {
-              attrs: {
-                name: this.$incidents,
-                id_select: "selectEmergencySpecific",
-                arrayElements: _vm.incidents,
-              },
-            }),
-          ],
-          1
-        ),
-      ]),
-    ]),
+        _vm._v(" "),
+        _c("data-emergency", {
+          attrs: { firstText: "Codi", secondText: _vm.incident.codi },
+        }),
+        _vm._v(" "),
+        _c("data-emergency", {
+          attrs: {
+            firstText: "Descripcio",
+            secondText: _vm.incident.descripcio,
+          },
+        }),
+        _vm._v(" "),
+        _c("data-emergency", {
+          attrs: { firstText: "Definicio", secondText: _vm.incident.definicio },
+        }),
+        _vm._v(" "),
+        _c("data-emergency", {
+          attrs: {
+            firstText: "Instrucions",
+            secondText: _vm.incident.instrucions,
+          },
+        }),
+      ],
+      1
+    ),
   ])
 }
 var staticRenderFns = []
@@ -33884,30 +34678,24 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { attrs: { id: "finishSection" } }, [
+    _c("button", { staticClass: "button", attrs: { type: "button" } }, [
+      _vm._v("Cancelar"),
+    ]),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        staticClass: "button",
+        staticStyle: { "margin-left": "10px" },
+        attrs: { type: "button" },
+        on: { click: _vm.clickFinish },
+      },
+      [_vm._v("Finalitzar")]
+    ),
+  ])
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { attrs: { id: "finishSection" } }, [
-      _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-        _vm._v("Cancelar"),
-      ]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "button",
-          staticStyle: { "margin-left": "10px" },
-          attrs: { type: "button" },
-        },
-        [_vm._v("Finalitzar")]
-      ),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -33958,7 +34746,7 @@ var render = function () {
                   _c("data-select", {
                     attrs: {
                       name: this.$provincia,
-                      id_select: "provinciaSelect",
+                      idSelect: this.$provinciaLocation,
                       arrayElements: _vm.provincies,
                       small: "",
                     },
@@ -33974,7 +34762,7 @@ var render = function () {
                   _c("data-select", {
                     attrs: {
                       name: this.$comarca,
-                      id_select: "comarcaSelect",
+                      idSelect: this.$comarcaLocation,
                       arrayElements: _vm.comarques,
                       small: "",
                     },
@@ -33990,7 +34778,7 @@ var render = function () {
                   _c("data-select", {
                     attrs: {
                       name: this.$municipi,
-                      id_select: "municipiSelect",
+                      idSelect: this.$municipiLocation,
                       arrayElements: _vm.municipis,
                       small: "",
                     },
@@ -34005,7 +34793,7 @@ var render = function () {
           staticStyle: { "margin-top": "30px", marginBottom: "20px" },
           attrs: {
             name: this.$tipusLocalitzacio,
-            id_select: "tipusLocalitzacioSelect",
+            idSelect: this.$tipusLocalitzacioId,
             arrayElements: _vm.tipusLocalitzacio,
           },
         }),
@@ -34017,7 +34805,7 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Provincia",
-                    id_input: "inputProvincia",
+                    idInput: "inputProvincia",
                     small: "",
                   },
                 }),
@@ -34025,7 +34813,7 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Municipi",
-                    id_input: "inputMunicipi",
+                    idInput: "inputMunicipi",
                     small: "",
                   },
                 }),
@@ -34041,29 +34829,29 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Tipus de via",
-                    id_input: "inputTipusDeVia",
+                    idInput: "inputTipusDeVia",
                     small: "",
                   },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Nom", id_input: "inputNom", small: "" },
+                  attrs: { name: "Nom", idInput: "inputNom", small: "" },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Número", id_input: "inputNumero", small: "" },
+                  attrs: { name: "Número", idInput: "inputNumero", small: "" },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Escala", id_input: "inputEscala", small: "" },
+                  attrs: { name: "Escala", idInput: "inputEscala", small: "" },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Pis", id_input: "inputPis", small: "" },
+                  attrs: { name: "Pis", idInput: "inputPis", small: "" },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Porta", id_input: "inputPorta", small: "" },
+                  attrs: { name: "Porta", idInput: "inputPorta", small: "" },
                 }),
               ],
               1
@@ -34075,7 +34863,7 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Nom carretera",
-                    id_input: "inputNomCarretera",
+                    idInput: "inputNomCarretera",
                     small: "",
                   },
                 }),
@@ -34083,13 +34871,13 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Punt kilomètric ",
-                    id_input: "inputPuntKilometric",
+                    idInput: "inputPuntKilometric",
                     small: "",
                   },
                 }),
                 _vm._v(" "),
                 _c("data-input", {
-                  attrs: { name: "Sentit", id_input: "inputSentit", small: "" },
+                  attrs: { name: "Sentit", idInput: "inputSentit", small: "" },
                 }),
               ],
               1
@@ -34101,7 +34889,7 @@ var render = function () {
                 _c("data-input", {
                   attrs: {
                     name: "Nom",
-                    id_input: "inputNomPuntSingular",
+                    idInput: "inputNomPuntSingular",
                     small: "",
                   },
                 }),
@@ -34161,7 +34949,7 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-10 colSection colPersonalDates" },
+      { staticClass: "col col-11 colSection colPersonalDates" },
       [
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col colTitle" }, [
@@ -34170,23 +34958,71 @@ var render = function () {
         ]),
         _vm._v(" "),
         _c("data-input", {
-          attrs: { name: "Telefon", id_input: "inputTelefon", small: "" },
+          attrs: {
+            name: "Telefon",
+            idInput: this.$inputTelefon,
+            small: "",
+            number: "",
+          },
         }),
         _vm._v(" "),
         _c("data-input", {
           attrs: {
             name: "Procedencia",
-            id_input: "inputProcedencia",
+            idInput: "inputProcedencia",
             small: "",
           },
         }),
         _vm._v(" "),
-        _c("data-input", {
-          attrs: { name: "Municipi", id_input: "inputMunicipi", small: "" },
-        }),
+        _c("div", { staticClass: "row" }, [
+          _c(
+            "div",
+            { staticClass: "col" },
+            [
+              _c("data-select", {
+                attrs: {
+                  name: this.$provincia,
+                  idSelect: this.$provinciaPersonal,
+                  arrayElements: _vm.provincies,
+                },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "col" },
+            [
+              _c("data-select", {
+                attrs: {
+                  name: this.$comarca,
+                  idSelect: this.$comarcaPersonal,
+                  arrayElements: _vm.comarques,
+                },
+              }),
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "col" },
+            [
+              _c("data-select", {
+                attrs: {
+                  name: this.$municipi,
+                  idSelect: this.$municipiPersonal,
+                  arrayElements: _vm.municipis,
+                },
+              }),
+            ],
+            1
+          ),
+        ]),
         _vm._v(" "),
         _c("data-input", {
-          attrs: { name: "Adreça", id_input: "inputAdresa", small: "" },
+          attrs: { name: "Adreça", idInput: "inputAdresa", small: "" },
         }),
         _vm._v(" "),
         _c(

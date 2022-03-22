@@ -24,16 +24,28 @@ window.Vue = require('vue').default;
 
 Vue.prototype.$checkCatalonia="Catalunya"
 
-
 Vue.prototype.$provincia="Provincia"
 Vue.prototype.$comarca="Comarca"
 Vue.prototype.$municipi="Municipi"
 
+Vue.prototype.$provinciaPersonal="provinciaSelectPersonal"
+Vue.prototype.$comarcaPersonal="comarcaSelectPersonal"
+Vue.prototype.$municipiPersonal="municipiSelectPersonal"
+
+Vue.prototype.$provinciaLocation="ProvinciaSelectLocation"
+Vue.prototype.$comarcaLocation="ComarcaSelectLocation"
+Vue.prototype.$municipiLocation="MunicipiSelectLocation"
+
+Vue.prototype.$nullLoclaitzacio = ""
+
 Vue.prototype.$tipusLocalitzacio="Tipus localització"
+Vue.prototype.$tipusLocalitzacioId="tipusLocalitzacioSelect"
 
 Vue.prototype.$tipusEmergencia="Tipus d'emergencia general"
-Vue.prototype.$incidents="Tipus d'emergencia específica"
+Vue.prototype.$tipusEmergenciaId="selectEmergencyGeneral"
 
+Vue.prototype.$incidents="Tipus d'emergencia específica"
+Vue.prototype.$incidentsId="selectEmergencySpecific"
 
 Vue.prototype.$noVideo = "NO"
 Vue.prototype.$yesVideo= "YES"
@@ -52,6 +64,8 @@ Vue.prototype.$qv11 = "¿Sistema de aviso especial?"
 
 Vue.prototype.$v111="#t=59,73"
 
+Vue.prototype.$inputTelefon="inputTelefon"
+
 
 Vue.prototype.$eventTime = new Vue()
 
@@ -61,9 +75,13 @@ Vue.prototype.$eventSelect = new Vue()
 
 Vue.prototype.$eventCheck = new Vue()
 
+Vue.prototype.$eventFinal = new Vue()
+
 
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+Vue.component('carta-trucada', require('./components/CartaTrucada.vue').default);
 
 Vue.component('tab-apart', require('./components/nav/TabApart.vue').default);
 
@@ -98,6 +116,8 @@ Vue.component("finish-section", require("./components/sections/FinishSection.vue
 Vue.component("data-input", require("./components/forms/DataInput.vue").default);
 
 Vue.component("data-time", require("./components/forms/DataTime.vue").default);
+
+Vue.component("data-emergency", require("./components/forms/DataEmergency.vue").default);
 
 Vue.component("data-check", require("./components/forms/DataCheck.vue").default);
 
@@ -899,21 +919,5 @@ Vue.component("data-select", require("./components/forms/DataSelect.vue").defaul
 // })
 
 const app = new Vue({
-    el: '#app',
-    data: {
-        selectSection: "Dades Personals",
-        personalData: "Dades Personals",
-        locate: "Localitzacio",
-        agency: "Agencies",
-        emergency: "Emergencia",
-        communeNote: "Nota comuna",
-        relationExpedient: "Relacionar Expedient",
-        interactiveVideo: "video"
-    },
-    mounted() {
-        this.$eventTime.$on("change-section", section => {
-            this.selectSection = section
-
-        })
-    }
+    el: '#app'
 });

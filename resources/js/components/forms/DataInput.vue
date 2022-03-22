@@ -3,11 +3,12 @@
 
         <div class="col d-flex align-items-center"
             v-bind:class="colSmall">
-            <label :for="id_input">{{ name }}</label>
+            <label :for="idInput">{{ name }}</label>
         </div>
         <div class="col"
             v-bind:class="colBig">
-            <input type="text" class="form-control" :id="id_input" v-on:click="startTime">
+            <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text">
+            <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime" v-model="text" >
         </div>
     </div>
 </template>
@@ -19,11 +20,17 @@
                 type:[String],
                 require: true
             },
-            id_input: {
+            idInput: {
                 type:[String],
                 require: true
             },
-            small: Boolean
+            small: Boolean,
+            number: Boolean
+        },
+        data() {
+            return {
+                text: null
+            }
         },
         computed: {
             colSmall() {
@@ -51,6 +58,16 @@
             startTime() {
                 this.$eventTime.$emit("start-time","message");
             }
+        },
+        mounted() {
+            this.$eventFinal.$on("obtener-telefono", message => {
+
+                if(this.idInput == this.$inputTelefon) {
+                    this.$eventFinal.$emit("recojer-telefono",this.text);
+                }
+
+
+            })
         }
     }
 </script>

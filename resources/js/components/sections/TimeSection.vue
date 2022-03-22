@@ -6,11 +6,13 @@
             </div>
             <div class="col-6 colSection colTime">
 
-                <data-time titleData="Data" data="08/03/2022" first></data-time>
+                <data-time titleData="Data" :data="data" first></data-time>
 
-                <data-time titleData="Hora" data="16:28"></data-time>
+                <data-time titleData="Hora" :data="hora"></data-time>
 
                 <data-time titleData="Temps" :data="time"></data-time>
+
+                <data-time titleData="Operador" :data="operador"></data-time>
 
             </div>
         </div>
@@ -23,6 +25,31 @@
             return {
                 time:"00:00",
                 start: false,
+                data: "08/03/2022",
+                hora: "16:28:00",
+                operador: "Pau"
+            }
+        },
+        created() {
+            let today = new Date();
+            let dia = today.getDate();
+            let mes = today.getMonth() + 1;
+            let year = today.getFullYear();
+
+            this.data = dia +"/"+ mes +"/"+year;
+
+            this.updateHour();
+
+            setInterval(this.updateHour,1000)
+
+        },
+        methods: {
+            updateHour() {
+                let today = new Date();
+                let hour = today.getHours().toString();
+                let minut = today.getMinutes().toString();
+                let second = today.getSeconds().toString();
+                this.hora = hour + ":" + minut+":"+second
             }
         },
         mounted() {

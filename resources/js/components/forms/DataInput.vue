@@ -128,6 +128,24 @@
                     this.$eventFinal.$emit("recojer-carretera-nom",this.text);
                 }
             })
+
+            this.$eventFinal.$on("obtener-carretera-punt-kilometric", message => {
+                if(this.idInput == this.$inputPuntKilometric) {
+                    this.$eventFinal.$emit("recojer-carretera-punt-kilometric",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carretera-sentit", message => {
+                if(this.idInput == this.$inputSentit) {
+                    this.$eventFinal.$emit("recojer-carretera-sentit",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-provincia-municipi", message => {
+                if(this.idInput == this.$inputProvinciaMunicipi) {
+                    this.$eventFinal.$emit("recojer-provincia-municipi",this.text);
+                }
+            })
         }
     }
 </script>

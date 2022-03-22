@@ -5850,6 +5850,21 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-carretera-nom", _this.text);
       }
     });
+    this.$eventFinal.$on("obtener-carretera-punt-kilometric", function (message) {
+      if (_this.idInput == _this.$inputPuntKilometric) {
+        _this.$eventFinal.$emit("recojer-carretera-punt-kilometric", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carretera-sentit", function (message) {
+      if (_this.idInput == _this.$inputSentit) {
+        _this.$eventFinal.$emit("recojer-carretera-sentit", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-provincia-municipi", function (message) {
+      if (_this.idInput == _this.$inputProvinciaMunicipi) {
+        _this.$eventFinal.$emit("recojer-provincia-municipi", _this.text);
+      }
+    });
   }
 });
 
@@ -5866,6 +5881,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5922,7 +5945,9 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       selectSelected: 0,
-      selectSelectedTipusLocation: 1
+      selectSelectedTipusLocation: 1,
+      selectSelectedTipusIncident: 1,
+      selectSelectedIncident: 1
     };
   },
   computed: {
@@ -5932,7 +5957,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.small == true) {
         response = "col-3 justify-content-center align-items-center";
       } else {
-        if (this.name == this.$tipusLocalitzacio) {
+        if (this.name == this.$tipusLocalitzacio || this.idSelect == this.$provinciaSelectProvincia) {
           response = "col-2 align-items-center";
         } else {
           response = "col-5 align-items-center";
@@ -5947,7 +5972,7 @@ __webpack_require__.r(__webpack_exports__);
       if (this.small == true) {
         response = "col-9";
       } else {
-        if (this.name == this.$tipusLocalitzacio) {
+        if (this.name == this.$tipusLocalitzacio || this.idSelect == this.$provinciaSelectProvincia) {
           response = "col-10";
         } else {
           response = "col-7";
@@ -5992,7 +6017,7 @@ __webpack_require__.r(__webpack_exports__);
           break;
 
         case this.$tipusEmergenciaId:
-          this.$eventSelect.$emit("change-select-emergencia", parseInt(this.$refs.select.value));
+          this.$eventSelect.$emit("change-select-emergencia", this.selectSelectedTipusIncident);
           break;
 
         case this.$incidentsId:
@@ -6045,6 +6070,11 @@ __webpack_require__.r(__webpack_exports__);
         _this.selectSelected = option;
       }
     });
+    this.$eventSelect.$on("change-select-option-incident", function (option) {
+      if (_this.idSelect == _this.$incidentsId) {
+        _this.selectSelectedIncident = option;
+      }
+    });
     this.$eventFinal.$on("obtener-id-municipi-trucada", function (message) {
       if (_this.idSelect == _this.$municipiPersonal) {
         _this.$eventFinal.$emit("recojer-id-municipi-trucada", _this.selectSelected);
@@ -6068,6 +6098,21 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-id-municipi-location", function (message) {
       if (_this.idSelect == _this.$municipiLocation) {
         _this.$eventFinal.$emit("recojer-id-municipi-location", _this.selectSelected);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-otra-provincia", function (message) {
+      if (_this.idSelect == _this.$provinciaSelectProvincia) {
+        _this.$eventFinal.$emit("recojer-id-otra-provincia", _this.selectSelected);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-tipo-incident", function (message) {
+      if (_this.idSelect == _this.$tipusEmergenciaId) {
+        _this.$eventFinal.$emit("recojer-id-tipo-incident", _this.selectSelectedTipusIncident);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-incident", function (message) {
+      if (_this.idSelect == _this.$incidentsId) {
+        _this.$eventFinal.$emit("recojer-id-incident", _this.selectSelectedIncident);
       }
     });
   }
@@ -6288,16 +6333,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      title: "Nota comuna"
+      title: "Nota comuna",
+      notaComuna: null
     };
   },
   methods: {
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventFinal.$on("obtener-nota-comuna", function (message) {
+      _this.$eventFinal.$emit("recojer-nota-comuna", _this.notaComuna);
+    });
   }
 });
 
@@ -6378,6 +6432,8 @@ __webpack_require__.r(__webpack_exports__);
           _this2.incident = _this2.tipusEmergencia[i].incidents[0];
         }
       }
+
+      _this2.$eventSelect.$emit("change-select-option-incident", _this2.incident.id);
     });
     this.$eventSelect.$on("change-select-incident", function (idSelect) {
       for (var i = 0; i < _this2.incidents.length; i++) {
@@ -6431,7 +6487,19 @@ __webpack_require__.r(__webpack_exports__);
         carrerPis: null,
         carrerPorta: null,
         puntSingularNom: null,
-        carreteraNom: null
+        carreteraNom: null,
+        carreteraPuntKilometric: null,
+        carreteraSentit: null,
+        idAltreProvincia: null,
+        provinciaMunicipi: null,
+        detallsLocation: null,
+        idTipoIncident: 1,
+        idIncident: 1,
+        notaComuna: null,
+        fecha: null,
+        hora: null,
+        tiempo: null,
+        operador: null
       }
     };
   },
@@ -6471,8 +6539,23 @@ __webpack_require__.r(__webpack_exports__);
         case 4:
           //Carretera
           this.$eventFinal.$emit("obtener-carretera-nom", "carreteraNom");
+          this.$eventFinal.$emit("obtener-carretera-punt-kilometric", "carreteraPuntKilometric");
+          this.$eventFinal.$emit("obtener-carretera-sentit", "carreteraSentit");
+          break;
+
+        case 5:
+          //Provincia
+          this.$eventFinal.$emit("obtener-id-otra-provincia", "idOtraProvincia");
+          this.$eventFinal.$emit("obtener-provincia-municipi", "provinciaMunicipi");
           break;
       }
+
+      this.$eventFinal.$emit("obtener-detalls-location", "detallsLocation"); //Tipus d'emergencia
+
+      this.$eventFinal.$emit("obtener-id-tipo-incident", "idTipoIncident");
+      this.$eventFinal.$emit("obtener-id-incident", "idIncident"); //Nota comuna
+
+      this.$eventFinal.$emit("obtener-nota-comuna", "notaComuna");
     }
   },
   mounted: function mounted() {
@@ -6616,6 +6699,66 @@ __webpack_require__.r(__webpack_exports__);
         _this.finalDates.carreteraNom = null;
       }
     });
+    this.$eventFinal.$on("recojer-carretera-punt-kilometric", function (carreteraPuntKilometric) {
+      if (carreteraPuntKilometric != "" && carreteraPuntKilometric != null) {
+        _this.finalDates.carreteraPuntKilometric = carreteraPuntKilometric;
+      } else {
+        _this.finalDates.carreteraPuntKilometric = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carretera-sentit", function (carreteraSentit) {
+      if (carreteraSentit != "" && carreteraSentit != null) {
+        _this.finalDates.carreteraSentit = carreteraSentit;
+      } else {
+        _this.finalDates.carreteraSentit = null;
+      }
+    }); //Provincia
+
+    this.$eventFinal.$on("recojer-id-otra-provincia", function (idAltreProvincia) {
+      if (idAltreProvincia == 0) {
+        _this.finalDates.idAltreProvincia = null;
+      } else {
+        _this.finalDates.idAltreProvincia = idAltreProvincia;
+      }
+    });
+    this.$eventFinal.$on("recojer-provincia-municipi", function (provinciaMunicipi) {
+      if (provinciaMunicipi != "" && provinciaMunicipi != null) {
+        _this.finalDates.provinciaMunicipi = provinciaMunicipi;
+      } else {
+        _this.finalDates.provinciaMunicipi = null;
+      }
+    }); //Otros
+
+    this.$eventFinal.$on("recojer-detalls-location", function (detallsLocation) {
+      if (detallsLocation != "" && detallsLocation != null) {
+        _this.finalDates.detallsLocation = detallsLocation;
+      } else {
+        _this.finalDates.detallsLocation = null;
+      }
+    }); //Emergencia
+
+    this.$eventFinal.$on("recojer-id-tipo-incident", function (idTipoIncident) {
+      if (idTipoIncident == 0) {
+        _this.finalDates.idTipoIncident = null;
+      } else {
+        _this.finalDates.idTipoIncident = idTipoIncident;
+      }
+    });
+    this.$eventFinal.$on("recojer-id-incident", function (idIncident) {
+      if (idIncident == 0) {
+        _this.finalDates.idIncident = null;
+      } else {
+        _this.finalDates.idIncident = idIncident;
+      }
+    }); //Nota Comuna
+
+    this.$eventFinal.$on("recojer-nota-comuna", function (notaComuna) {
+      if (notaComuna != "" && notaComuna != null) {
+        _this.finalDates.notaComuna = notaComuna;
+      } else {
+        _this.finalDates.notaComuna = null;
+      }
+    });
   }
 });
 
@@ -6703,6 +6846,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -6710,11 +6855,13 @@ __webpack_require__.r(__webpack_exports__);
       provincies: [],
       comarques: [],
       municipis: [],
+      otrasProvincias: [],
       provinciesSelect: 0,
       comarcaSelect: 0,
       checkedCataluna: true,
       tipusLocalitzacioSelect: 1,
-      tipusLocalitzacio: []
+      tipusLocalitzacio: [],
+      detalls: null
     };
   },
   created: function created() {
@@ -6722,9 +6869,16 @@ __webpack_require__.r(__webpack_exports__);
 
     var meThis = this;
     axios.get("/provincies").then(function (response) {
-      meThis.provincies = response.data;
-      meThis.comarques = response.data[_this.provinciesSelect].comarques;
-      meThis.municipis = response.data[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis;
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].id >= 1 && response.data[i].id <= 4) {
+          meThis.provincies.push(response.data[i]);
+        } else {
+          meThis.otrasProvincias.push(response.data[i]);
+        }
+      }
+
+      meThis.comarques = meThis.provincies[_this.provinciesSelect].comarques;
+      meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis;
     })["catch"](function (error) {
       console.log(error);
     })["finally"](function () {
@@ -6833,6 +6987,9 @@ __webpack_require__.r(__webpack_exports__);
         _this2.tipusLocalitzacioSelect = 1;
       }
     });
+    this.$eventFinal.$on("obtener-detalls-location", function (message) {
+      _this2.$eventFinal.$emit("recojer-detalls-location", _this2.detalls);
+    });
   }
 });
 
@@ -6914,9 +7071,14 @@ __webpack_require__.r(__webpack_exports__);
 
     var meThis = this;
     axios.get("/provincies").then(function (response) {
-      meThis.provincies = response.data;
-      meThis.comarques = response.data[_this.provinciesSelect].comarques;
-      meThis.municipis = response.data[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis; // meThis.firstProvincia = meThis.provincies[0]
+      for (var i = 0; i < response.data.length; i++) {
+        if (response.data[i].id >= 1 && response.data[i].id <= 4) {
+          meThis.provincies.push(response.data[i]);
+        }
+      }
+
+      meThis.comarques = meThis.provincies[_this.provinciesSelect].comarques;
+      meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis; // meThis.firstProvincia = meThis.provincies[0]
       // meThis.firstComarques = meThis.comarques[0]
       // meThis.firstMunicipis = meThis.municipis[0]
       // meThis.provincies.shift();
@@ -7053,12 +7215,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       time: "00:00",
-      start: false
+      start: false,
+      data: "08/03/2022",
+      hora: "16:28:00",
+      operador: "Pau"
     };
+  },
+  created: function created() {
+    var today = new Date();
+    var dia = today.getDate();
+    var mes = today.getMonth() + 1;
+    var year = today.getFullYear();
+    this.data = dia + "/" + mes + "/" + year;
+    this.updateHour();
+    setInterval(this.updateHour, 1000);
+  },
+  methods: {
+    updateHour: function updateHour() {
+      var today = new Date();
+      var hour = today.getHours().toString();
+      var minut = today.getMinutes().toString();
+      var second = today.getSeconds().toString();
+      this.hora = hour + ":" + minut + ":" + second;
+    }
   },
   mounted: function mounted() {
     var _this = this;
@@ -7500,6 +7685,9 @@ Vue.prototype.$inputNomPuntSingular = "inputNomPuntSingular";
 Vue.prototype.$inputNomCarretera = "inputNomCarretera";
 Vue.prototype.$inputPuntKilometric = "inputPuntKilometric";
 Vue.prototype.$inputSentit = "inputSentit";
+Vue.prototype.$provinciaSelectProvincia = "provinciaSelectProvincia";
+Vue.prototype.$inputProvinciaMunicipi = "inputProvinciaMunicipi";
+Vue.prototype.$textAreaDetalls = "textAreaDetalls";
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
@@ -34584,13 +34772,86 @@ var render = function () {
                 }),
                 0
               )
-            : _c(
+            : _vm.name == this.$tipusEmergencia
+            ? _c(
                 "select",
                 {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectSelectedTipusIncident,
+                      expression: "selectSelectedTipusIncident",
+                    },
+                  ],
                   ref: "select",
                   staticClass: "form-select",
                   attrs: { id: _vm.idSelect },
-                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.selectSelectedTipusIncident = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                      _vm.changeSelect,
+                    ],
+                    click: _vm.startTime,
+                  },
+                },
+                _vm._l(_vm.arrayElements, function (arrayElement) {
+                  return _c(
+                    "option",
+                    {
+                      key: arrayElement.id,
+                      domProps: { value: arrayElement.id },
+                    },
+                    [_vm._v("\n            " + _vm._s(arrayElement.descripcio))]
+                  )
+                }),
+                0
+              )
+            : _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectSelectedIncident,
+                      expression: "selectSelectedIncident",
+                    },
+                  ],
+                  ref: "select",
+                  staticClass: "form-select",
+                  attrs: { id: _vm.idSelect },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.selectSelectedIncident = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                      _vm.changeSelect,
+                    ],
+                    click: _vm.startTime,
+                  },
                 },
                 _vm._l(_vm.arrayElements, function (arrayElement) {
                   return _c(
@@ -34939,10 +35200,27 @@ var render = function () {
         _c("div", { staticClass: "col" }, [
           _c("div", { staticClass: "form-floating" }, [
             _c("textarea", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.notaComuna,
+                  expression: "notaComuna",
+                },
+              ],
               staticClass: "form-control",
               staticStyle: { height: "200px", resize: "none" },
               attrs: { id: "textAreaCommuneNote" },
-              on: { click: _vm.startTime },
+              domProps: { value: _vm.notaComuna },
+              on: {
+                click: _vm.startTime,
+                input: function ($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.notaComuna = $event.target.value
+                },
+              },
             }),
           ]),
         ]),
@@ -35200,16 +35478,20 @@ var render = function () {
                 : "display: none;",
           },
           [
-            _c("data-input", {
+            _c("data-select", {
               attrs: {
-                name: "Provincia",
-                idInput: "inputProvincia",
-                small: "",
+                name: this.$provincia,
+                idSelect: this.$provinciaSelectProvincia,
+                arrayElements: _vm.otrasProvincias,
               },
             }),
             _vm._v(" "),
             _c("data-input", {
-              attrs: { name: "Municipi", idInput: "inputMunicipi", small: "" },
+              attrs: {
+                name: "Municipi",
+                idInput: this.$inputProvinciaMunicipi,
+                small: "",
+              },
             }),
           ],
           1
@@ -35297,6 +35579,7 @@ var render = function () {
                 name: "Punt kilomètric ",
                 idInput: this.$inputPuntKilometric,
                 small: "",
+                number: "",
               },
             }),
             _vm._v(" "),
@@ -35334,13 +35617,30 @@ var render = function () {
             _c("div", { staticClass: "col" }, [
               _c("div", { staticClass: "form-floating" }, [
                 _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.detalls,
+                      expression: "detalls",
+                    },
+                  ],
                   staticClass: "form-control",
                   staticStyle: { height: "130px", resize: "none" },
-                  attrs: { id: "textAreaDetalls" },
-                  on: { click: _vm.startTime },
+                  attrs: { id: this.$textAreaDetalls },
+                  domProps: { value: _vm.detalls },
+                  on: {
+                    click: _vm.startTime,
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.detalls = $event.target.value
+                    },
+                  },
                 }),
                 _vm._v(" "),
-                _c("label", { attrs: { for: "textAreaDetalls" } }, [
+                _c("label", { attrs: { for: this.$textAreaDetalls } }, [
                   _vm._v("Detalls"),
                 ]),
               ]),
@@ -35580,12 +35880,16 @@ var render = function () {
         { staticClass: "col-6 colSection colTime" },
         [
           _c("data-time", {
-            attrs: { titleData: "Data", data: "08/03/2022", first: "" },
+            attrs: { titleData: "Data", data: _vm.data, first: "" },
           }),
           _vm._v(" "),
-          _c("data-time", { attrs: { titleData: "Hora", data: "16:28" } }),
+          _c("data-time", { attrs: { titleData: "Hora", data: _vm.hora } }),
           _vm._v(" "),
           _c("data-time", { attrs: { titleData: "Temps", data: _vm.time } }),
+          _vm._v(" "),
+          _c("data-time", {
+            attrs: { titleData: "Operador", data: _vm.operador },
+          }),
         ],
         1
       ),

@@ -84,6 +84,11 @@ Vue.prototype.$inputNomCarretera="inputNomCarretera"
 Vue.prototype.$inputPuntKilometric="inputPuntKilometric"
 Vue.prototype.$inputSentit="inputSentit"
 
+Vue.prototype.$provinciaSelectProvincia="provinciaSelectProvincia"
+Vue.prototype.$inputProvinciaMunicipi="inputProvinciaMunicipi"
+
+Vue.prototype.$textAreaDetalls="textAreaDetalls"
+
 
 
 

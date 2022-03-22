@@ -16,6 +16,7 @@
                     adreca: null,
                     antecedentes: null,
                     guardarInformacion: false,
+
                     idTipusLocation: 1,
                     catalonia: true,
                     idProvinciaLocation: null,
@@ -28,7 +29,22 @@
                     carrerPis: null,
                     carrerPorta: null,
                     puntSingularNom: null,
-                    carreteraNom: null
+                    carreteraNom: null,
+                    carreteraPuntKilometric: null,
+                    carreteraSentit: null,
+                    idAltreProvincia: null,
+                    provinciaMunicipi: null,
+                    detallsLocation: null,
+
+                    idTipoIncident: 1,
+                    idIncident: 1,
+
+                    notaComuna: null,
+
+                    fecha: null,
+                    hora: null,
+                    tiempo: null,
+                    operador: null
 
                 }
             }
@@ -65,8 +81,23 @@
                         break;
                     case 4: //Carretera
                         this.$eventFinal.$emit("obtener-carretera-nom","carreteraNom");
+                        this.$eventFinal.$emit("obtener-carretera-punt-kilometric","carreteraPuntKilometric");
+                        this.$eventFinal.$emit("obtener-carretera-sentit","carreteraSentit");
+                        break;
+                    case 5: //Provincia
+                        this.$eventFinal.$emit("obtener-id-otra-provincia","idOtraProvincia");
+                        this.$eventFinal.$emit("obtener-provincia-municipi","provinciaMunicipi");
                         break;
                 }
+
+                this.$eventFinal.$emit("obtener-detalls-location","detallsLocation");
+
+                //Tipus d'emergencia
+                this.$eventFinal.$emit("obtener-id-tipo-incident","idTipoIncident");
+                this.$eventFinal.$emit("obtener-id-incident","idIncident");
+
+                //Nota comuna
+                this.$eventFinal.$emit("obtener-nota-comuna","notaComuna");
             }
         },
         mounted() {
@@ -132,14 +163,12 @@
             //Tipus localització
 
             this.$eventFinal.$on("recojer-id-tipus-location", idTipusLocation => {
-
                 if(idTipusLocation == 0) {
                     this.finalDates.idTipusLocation = null
                 }
                 else {
                     this.finalDates.idTipusLocation = idTipusLocation
                 }
-
             })
 
             this.$eventFinal.$on("recojer-catalonia", catalonia => {
@@ -252,6 +281,86 @@
                 }
                 else {
                     this.finalDates.carreteraNom = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carretera-punt-kilometric", carreteraPuntKilometric => {
+                if(carreteraPuntKilometric != "" && carreteraPuntKilometric != null) {
+                    this.finalDates.carreteraPuntKilometric = carreteraPuntKilometric
+                }
+                else {
+                    this.finalDates.carreteraPuntKilometric = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carretera-sentit", carreteraSentit => {
+                if(carreteraSentit != "" && carreteraSentit != null) {
+                    this.finalDates.carreteraSentit = carreteraSentit
+                }
+                else {
+                    this.finalDates.carreteraSentit = null
+                }
+            })
+
+            //Provincia
+
+            this.$eventFinal.$on("recojer-id-otra-provincia", idAltreProvincia => {
+                if(idAltreProvincia == 0) {
+                    this.finalDates.idAltreProvincia = null
+                }
+                else {
+                    this.finalDates.idAltreProvincia = idAltreProvincia
+                }
+            })
+
+            this.$eventFinal.$on("recojer-provincia-municipi", provinciaMunicipi => {
+                if(provinciaMunicipi != "" && provinciaMunicipi != null) {
+                    this.finalDates.provinciaMunicipi = provinciaMunicipi
+                }
+                else {
+                    this.finalDates.provinciaMunicipi = null
+                }
+            })
+
+            //Otros
+
+            this.$eventFinal.$on("recojer-detalls-location", detallsLocation => {
+                if(detallsLocation != "" && detallsLocation != null) {
+                    this.finalDates.detallsLocation = detallsLocation
+                }
+                else {
+                    this.finalDates.detallsLocation = null
+                }
+            })
+
+            //Emergencia
+
+            this.$eventFinal.$on("recojer-id-tipo-incident", idTipoIncident => {
+                if(idTipoIncident == 0) {
+                    this.finalDates.idTipoIncident = null
+                }
+                else {
+                    this.finalDates.idTipoIncident = idTipoIncident
+                }
+            })
+
+            this.$eventFinal.$on("recojer-id-incident", idIncident => {
+                if(idIncident == 0) {
+                    this.finalDates.idIncident = null
+                }
+                else {
+                    this.finalDates.idIncident = idIncident
+                }
+            })
+
+            //Nota Comuna
+
+            this.$eventFinal.$on("recojer-nota-comuna", notaComuna => {
+                if(notaComuna != "" && notaComuna != null) {
+                    this.finalDates.notaComuna = notaComuna
+                }
+                else {
+                    this.finalDates.notaComuna = null
                 }
             })
 

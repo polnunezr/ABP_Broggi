@@ -61,6 +61,8 @@
                       this.incident = this.tipusEmergencia[i].incidents[0]
                     }
                 }
+
+                this.$eventSelect.$emit("change-select-option-incident",this.incident.id)
             })
 
             this.$eventSelect.$on("change-select-incident", idSelect => {
@@ -69,6 +71,7 @@
                       this.incident = this.incidents[i]
                     }
                 }
+
             })
         }
     }

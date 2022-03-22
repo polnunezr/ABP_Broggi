@@ -66,9 +66,13 @@
             axios
                 .get("/provincies")
                 .then(response => {
-                    meThis.provincies = response.data
-                    meThis.comarques = response.data[this.provinciesSelect].comarques
-                    meThis.municipis = response.data[this.provinciesSelect].comarques[this.comarcaSelect].municipis
+                    for(let i = 0; i < response.data.length; i++) {
+                        if(response.data[i].id >= 1 && response.data[i].id <=4) {
+                            meThis.provincies.push(response.data[i])
+                        }
+                    }
+                    meThis.comarques = meThis.provincies[this.provinciesSelect].comarques
+                    meThis.municipis = meThis.provincies[this.provinciesSelect].comarques[this.comarcaSelect].municipis
 
                     // meThis.firstProvincia = meThis.provincies[0]
                     // meThis.firstComarques = meThis.comarques[0]

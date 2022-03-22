@@ -26,8 +26,16 @@
                 {{arrayElement.tipus}}</option>
             </select>
 
+            <select v-else-if="name == this.$tipusEmergencia"
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
+                v-model="selectSelectedTipusIncident">
+                <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
+                {{arrayElement.descripcio}}</option>
+            </select>
+
             <select v-else
-                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect">
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
+                v-model="selectSelectedIncident">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.descripcio}}</option>
             </select>
@@ -56,6 +64,8 @@
             return {
                 selectSelected: 0,
                 selectSelectedTipusLocation: 1,
+                selectSelectedTipusIncident: 1,
+                selectSelectedIncident: 1
             }
         },
         computed: {
@@ -65,7 +75,7 @@
                     response = "col-3 justify-content-center align-items-center"
                 }
                 else {
-                    if(this.name == this.$tipusLocalitzacio) {
+                    if(this.name == this.$tipusLocalitzacio || this.idSelect == this.$provinciaSelectProvincia) {
                         response = "col-2 align-items-center"
                     }
                     else {
@@ -81,11 +91,11 @@
                     response = "col-9"
                 }
                 else {
-                    if(this.name == this.$tipusLocalitzacio) {
+                    if(this.name == this.$tipusLocalitzacio || this.idSelect == this.$provinciaSelectProvincia) {
                         response = "col-10"
                     }
                     else {
-                         response = "col-7"
+                        response = "col-7"
                     }
 
                 }
@@ -124,7 +134,7 @@
                     break;
 
                     case this.$tipusEmergenciaId:
-                        this.$eventSelect.$emit("change-select-emergencia",parseInt(this.$refs.select.value))
+                        this.$eventSelect.$emit("change-select-emergencia",this.selectSelectedTipusIncident)
                     break;
                     case this.$incidentsId:
                         this.$eventSelect.$emit("change-select-incident",parseInt(this.$refs.select.value))
@@ -183,6 +193,12 @@
                 }
             })
 
+            this.$eventSelect.$on("change-select-option-incident", option => {
+                if(this.idSelect == this.$incidentsId) {
+                    this.selectSelectedIncident = option
+                }
+            })
+
 
             this.$eventFinal.$on("obtener-id-municipi-trucada", message => {
                 if(this.idSelect == this.$municipiPersonal) {
@@ -214,7 +230,23 @@
                 }
             })
 
+            this.$eventFinal.$on("obtener-id-otra-provincia", message => {
+                if(this.idSelect == this.$provinciaSelectProvincia) {
+                    this.$eventFinal.$emit("recojer-id-otra-provincia",this.selectSelected);
+                }
+            })
 
+            this.$eventFinal.$on("obtener-id-tipo-incident", message => {
+                if(this.idSelect == this.$tipusEmergenciaId) {
+                    this.$eventFinal.$emit("recojer-id-tipo-incident",this.selectSelectedTipusIncident);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-id-incident", message => {
+                if(this.idSelect == this.$incidentsId) {
+                    this.$eventFinal.$emit("recojer-id-incident",this.selectSelectedIncident);
+                }
+            })
         }
     }
 </script>

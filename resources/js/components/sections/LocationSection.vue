@@ -31,8 +31,9 @@
             ></data-select>
 
             <div v-bind:style="checkedCataluna == false ? 'display: block;' : 'display: none;'" >
-                <data-input name="Provincia" idInput="inputProvincia" small></data-input>
-                <data-input name="Municipi" idInput="inputMunicipi" small></data-input>
+                <data-select :name="this.$provincia" :idSelect="this.$provinciaSelectProvincia"
+                :arrayElements = "otrasProvincias"></data-select>
+                <data-input name="Municipi" :idInput="this.$inputProvinciaMunicipi" small></data-input>
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 1 ? 'display: block;' : 'display: none;'">
@@ -46,7 +47,7 @@
 
             <div v-bind:style="tipusLocalitzacioSelect == 4 ? 'display: block;' : 'display: none;'">
                 <data-input name="Nom carretera" :idInput="this.$inputNomCarretera" small></data-input>
-                <data-input name="Punt kilomètric " :idInput="this.$inputPuntKilometric" small></data-input>
+                <data-input name="Punt kilomètric " :idInput="this.$inputPuntKilometric" small number></data-input>
                 <data-input name="Sentit" :idInput="this.$inputSentit" small></data-input>
             </div>
 
@@ -57,9 +58,10 @@
             <div class="row" style="margin-top: 40px">
                 <div class="col">
                     <div class="form-floating">
-                        <textarea class="form-control" id="textAreaDetalls"
-                        style="height: 130px; resize: none" v-on:click="startTime"></textarea>
-                        <label for="textAreaDetalls">Detalls</label>
+                        <textarea class="form-control" :id="this.$textAreaDetalls"
+                        style="height: 130px; resize: none" v-on:click="startTime"
+                        v-model="detalls"></textarea>
+                        <label :for="this.$textAreaDetalls">Detalls</label>
                     </div>
                 </div>
             </div>
@@ -77,11 +79,13 @@
                 provincies: [],
                 comarques: [],
                 municipis: [],
+                otrasProvincias: [],
                 provinciesSelect : 0,
                 comarcaSelect: 0,
                 checkedCataluna: true,
                 tipusLocalitzacioSelect: 1,
-                tipusLocalitzacio: []
+                tipusLocalitzacio: [],
+                detalls: null
             }
         },
         created() {
@@ -90,9 +94,16 @@
             axios
                 .get("/provincies")
                 .then(response => {
-                    meThis.provincies = response.data
-                    meThis.comarques = response.data[this.provinciesSelect].comarques
-                    meThis.municipis = response.data[this.provinciesSelect].comarques[this.comarcaSelect].municipis
+                    for(let i = 0; i < response.data.length; i++) {
+                        if(response.data[i].id >= 1 && response.data[i].id <=4) {
+                            meThis.provincies.push(response.data[i])
+                        }
+                        else {
+                            meThis.otrasProvincias.push(response.data[i])
+                        }
+                    }
+                    meThis.comarques = meThis.provincies[this.provinciesSelect].comarques
+                    meThis.municipis = meThis.provincies[this.provinciesSelect].comarques[this.comarcaSelect].municipis
                 })
                 .catch(error => {
                     console.log(error)
@@ -213,6 +224,10 @@
                     this.$eventSelect.$emit("change-select-localitzacio-provincia",1)
                     this.tipusLocalitzacioSelect = 1
                 }
+            })
+
+            this.$eventFinal.$on("obtener-detalls-location", message => {
+                this.$eventFinal.$emit("recojer-detalls-location",this.detalls);
             })
         }
     }

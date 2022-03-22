@@ -24,7 +24,11 @@
                     carrertipusDeVia: null,
                     carrerNom: null,
                     carrerNumero: null,
-                    carrerEscala: null
+                    carrerEscala: null,
+                    carrerPis: null,
+                    carrerPorta: null,
+                    puntSingularNom: null,
+                    carreteraNom: null
 
                 }
             }
@@ -51,7 +55,17 @@
                         this.$eventFinal.$emit("obtener-carrer-tipusDeVia","carrertipusDeVia");
                         this.$eventFinal.$emit("obtener-carrer-nom","carrerNom");
                         this.$eventFinal.$emit("obtener-carrer-numero","carrerNumero");
-                    break;
+                        this.$eventFinal.$emit("obtener-carrer-escala","carrerEscala");
+                        this.$eventFinal.$emit("obtener-carrer-pis","carrerPis");
+                        this.$eventFinal.$emit("obtener-carrer-porta","carrerPorta");
+                        break;
+                    case 2: //Punt
+                        // console.log(this.finalDates.idTipusLocation)
+                        this.$eventFinal.$emit("obtener-punt-singular-nom","puntSingularNom");
+                        break;
+                    case 4: //Carretera
+                        this.$eventFinal.$emit("obtener-carretera-nom","carreteraNom");
+                        break;
                 }
             }
         },
@@ -164,36 +178,82 @@
                 }
             })
 
-            switch(this.finalDates.idTipusLocation) {
-                case 1: //Carrers
-                    this.$eventFinal.$on("recojer-carrer-tipusDeVia", carrertipusDeVia => {
-                        if(carrertipusDeVia != "" && carrertipusDeVia != null) {
-                            this.finalDates.carrertipusDeVia = carrertipusDeVia
-                        }
-                        else {
-                            this.finalDates.carrertipusDeVia = null
-                        }
-                    })
+            //Carrers
 
-                    this.$eventFinal.$on("recojer-carrer-nom", carrerNom => {
-                        if(carrerNom != "" && carrerNom != null) {
-                            this.finalDates.carrerNom = carrerNom
-                        }
-                        else {
-                            this.finalDates.carrerNom = null
-                        }
-                    })
+            this.$eventFinal.$on("recojer-carrer-tipusDeVia", carrertipusDeVia => {
+                if(carrertipusDeVia != "" && carrertipusDeVia != null) {
+                    this.finalDates.carrertipusDeVia = carrertipusDeVia
+                }
+                else {
+                    this.finalDates.carrertipusDeVia = null
+                }
+            })
 
-                    this.$eventFinal.$on("recojer-carrer-numero", carrerNumero => {
-                        if(carrerNumero != "" && carrerNumero != null) {
-                            this.finalDates.carrerNumero = carrerNumero
-                        }
-                        else {
-                            this.finalDates.carrerNumero = null
-                        }
-                    })
-                break;
-            }
+            this.$eventFinal.$on("recojer-carrer-nom", carrerNom => {
+                if(carrerNom != "" && carrerNom != null) {
+                    this.finalDates.carrerNom = carrerNom
+                }
+                else {
+                    this.finalDates.carrerNom = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carrer-numero", carrerNumero => {
+                if(carrerNumero != "" && carrerNumero != null) {
+                    this.finalDates.carrerNumero = carrerNumero
+                }
+                else {
+                    this.finalDates.carrerNumero = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carrer-escala", carrerEscala => {
+                if(carrerEscala != "" && carrerEscala != null) {
+                    this.finalDates.carrerEscala = carrerEscala
+                }
+                else {
+                    this.finalDates.carrerEscala = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carrer-pis", carrerPis => {
+                if(carrerPis != "" && carrerPis != null) {
+                    this.finalDates.carrerPis = carrerPis
+                }
+                else {
+                    this.finalDates.carrerPis = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-carrer-porta", carrerPorta => {
+                if(carrerPorta != "" && carrerPorta != null) {
+                    this.finalDates.carrerPorta = carrerPorta
+                }
+                else {
+                    this.finalDates.carrerPorta = null
+                }
+            })
+
+            //Punt Singular
+            this.$eventFinal.$on("recojer-punt-singular-nom", puntSingularNom => {
+                if(puntSingularNom != "" && puntSingularNom != null) {
+                    this.finalDates.puntSingularNom = puntSingularNom
+                }
+                else {
+                    this.finalDates.puntSingularNom = null
+                }
+            })
+
+            //Carretera
+
+            this.$eventFinal.$on("recojer-carretera-nom", carreteraNom => {
+                if(carreteraNom != "" && carreteraNom != null) {
+                    this.finalDates.carreteraNom = carreteraNom
+                }
+                else {
+                    this.finalDates.carreteraNom = null
+                }
+            })
 
         }
     }

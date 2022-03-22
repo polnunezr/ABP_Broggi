@@ -78,6 +78,12 @@ Vue.prototype.$inputEscala="inputEscala"
 Vue.prototype.$inputPis="inputPis"
 Vue.prototype.$inputPorta="inputPorta"
 
+Vue.prototype.$inputNomPuntSingular="inputNomPuntSingular"
+
+Vue.prototype.$inputNomCarretera="inputNomCarretera"
+Vue.prototype.$inputPuntKilometric="inputPuntKilometric"
+Vue.prototype.$inputSentit="inputSentit"
+
 
 
 

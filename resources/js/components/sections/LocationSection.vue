@@ -45,13 +45,13 @@
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 4 ? 'display: block;' : 'display: none;'">
-                <data-input name="Nom carretera" idInput="inputNomCarretera" small></data-input>
-                <data-input name="Punt kilomètric " idInput="inputPuntKilometric" small></data-input>
-                <data-input name="Sentit" idInput="inputSentit" small></data-input>
+                <data-input name="Nom carretera" :idInput="this.$inputNomCarretera" small></data-input>
+                <data-input name="Punt kilomètric " :idInput="this.$inputPuntKilometric" small></data-input>
+                <data-input name="Sentit" :idInput="this.$inputSentit" small></data-input>
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 2 ? 'display: block;' : 'display: none;'">
-                <data-input name="Nom" idInput="inputNomPuntSingular" small></data-input>
+                <data-input name="Nom" :idInput="this.$inputNomPuntSingular" small></data-input>
             </div>
 
             <div class="row" style="margin-top: 40px">

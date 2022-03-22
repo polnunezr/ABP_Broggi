@@ -5663,7 +5663,8 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.$eventCheck.$on("change-check-box-catalonia-false", function (checkValor) {
-      _this.$refs.checkBox.checked = false;
+      // this.$refs.checkBox.checked = false
+      _this.checkValueChecked = false;
     });
     this.$eventFinal.$on("obtener-guardarInformacion", function (message) {
       if (_this.idCheck == _this.$checkSaveInformation) {
@@ -5822,6 +5823,31 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-carrer-numero", function (message) {
       if (_this.idInput == _this.$inputNumero) {
         _this.$eventFinal.$emit("recojer-carrer-numero", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-escala", function (message) {
+      if (_this.idInput == _this.$inputEscala) {
+        _this.$eventFinal.$emit("recojer-carrer-escala", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-pis", function (message) {
+      if (_this.idInput == _this.$inputPis) {
+        _this.$eventFinal.$emit("recojer-carrer-pis", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-porta", function (message) {
+      if (_this.idInput == _this.$inputPorta) {
+        _this.$eventFinal.$emit("recojer-carrer-porta", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-punt-singular-nom", function (message) {
+      if (_this.idInput == _this.$inputNomPuntSingular) {
+        _this.$eventFinal.$emit("recojer-punt-singular-nom", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carretera-nom", function (message) {
+      if (_this.idInput == _this.$inputNomCarretera) {
+        _this.$eventFinal.$emit("recojer-carretera-nom", _this.text);
       }
     });
   }
@@ -6401,7 +6427,11 @@ __webpack_require__.r(__webpack_exports__);
         carrertipusDeVia: null,
         carrerNom: null,
         carrerNumero: null,
-        carrerEscala: null
+        carrerEscala: null,
+        carrerPis: null,
+        carrerPorta: null,
+        puntSingularNom: null,
+        carreteraNom: null
       }
     };
   },
@@ -6427,6 +6457,20 @@ __webpack_require__.r(__webpack_exports__);
           this.$eventFinal.$emit("obtener-carrer-tipusDeVia", "carrertipusDeVia");
           this.$eventFinal.$emit("obtener-carrer-nom", "carrerNom");
           this.$eventFinal.$emit("obtener-carrer-numero", "carrerNumero");
+          this.$eventFinal.$emit("obtener-carrer-escala", "carrerEscala");
+          this.$eventFinal.$emit("obtener-carrer-pis", "carrerPis");
+          this.$eventFinal.$emit("obtener-carrer-porta", "carrerPorta");
+          break;
+
+        case 2:
+          //Punt
+          // console.log(this.finalDates.idTipusLocation)
+          this.$eventFinal.$emit("obtener-punt-singular-nom", "puntSingularNom");
+          break;
+
+        case 4:
+          //Carretera
+          this.$eventFinal.$emit("obtener-carretera-nom", "carreteraNom");
           break;
       }
     }
@@ -6512,34 +6556,66 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         _this.finalDates.idMunicipiLocation = idMunicipiLocation;
       }
-    });
+    }); //Carrers
 
-    switch (this.finalDates.idTipusLocation) {
-      case 1:
-        //Carrers
-        this.$eventFinal.$on("recojer-carrer-tipusDeVia", function (carrertipusDeVia) {
-          if (carrertipusDeVia != "" && carrertipusDeVia != null) {
-            _this.finalDates.carrertipusDeVia = carrertipusDeVia;
-          } else {
-            _this.finalDates.carrertipusDeVia = null;
-          }
-        });
-        this.$eventFinal.$on("recojer-carrer-nom", function (carrerNom) {
-          if (carrerNom != "" && carrerNom != null) {
-            _this.finalDates.carrerNom = carrerNom;
-          } else {
-            _this.finalDates.carrerNom = null;
-          }
-        });
-        this.$eventFinal.$on("recojer-carrer-numero", function (carrerNumero) {
-          if (carrerNumero != "" && carrerNumero != null) {
-            _this.finalDates.carrerNumero = carrerNumero;
-          } else {
-            _this.finalDates.carrerNumero = null;
-          }
-        });
-        break;
-    }
+    this.$eventFinal.$on("recojer-carrer-tipusDeVia", function (carrertipusDeVia) {
+      if (carrertipusDeVia != "" && carrertipusDeVia != null) {
+        _this.finalDates.carrertipusDeVia = carrertipusDeVia;
+      } else {
+        _this.finalDates.carrertipusDeVia = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carrer-nom", function (carrerNom) {
+      if (carrerNom != "" && carrerNom != null) {
+        _this.finalDates.carrerNom = carrerNom;
+      } else {
+        _this.finalDates.carrerNom = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carrer-numero", function (carrerNumero) {
+      if (carrerNumero != "" && carrerNumero != null) {
+        _this.finalDates.carrerNumero = carrerNumero;
+      } else {
+        _this.finalDates.carrerNumero = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carrer-escala", function (carrerEscala) {
+      if (carrerEscala != "" && carrerEscala != null) {
+        _this.finalDates.carrerEscala = carrerEscala;
+      } else {
+        _this.finalDates.carrerEscala = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carrer-pis", function (carrerPis) {
+      if (carrerPis != "" && carrerPis != null) {
+        _this.finalDates.carrerPis = carrerPis;
+      } else {
+        _this.finalDates.carrerPis = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-carrer-porta", function (carrerPorta) {
+      if (carrerPorta != "" && carrerPorta != null) {
+        _this.finalDates.carrerPorta = carrerPorta;
+      } else {
+        _this.finalDates.carrerPorta = null;
+      }
+    }); //Punt Singular
+
+    this.$eventFinal.$on("recojer-punt-singular-nom", function (puntSingularNom) {
+      if (puntSingularNom != "" && puntSingularNom != null) {
+        _this.finalDates.puntSingularNom = puntSingularNom;
+      } else {
+        _this.finalDates.puntSingularNom = null;
+      }
+    }); //Carretera
+
+    this.$eventFinal.$on("recojer-carretera-nom", function (carreteraNom) {
+      if (carreteraNom != "" && carreteraNom != null) {
+        _this.finalDates.carreteraNom = carreteraNom;
+      } else {
+        _this.finalDates.carreteraNom = null;
+      }
+    });
   }
 });
 
@@ -7420,6 +7496,10 @@ Vue.prototype.$inputNumero = "inputNumero";
 Vue.prototype.$inputEscala = "inputEscala";
 Vue.prototype.$inputPis = "inputPis";
 Vue.prototype.$inputPorta = "inputPorta";
+Vue.prototype.$inputNomPuntSingular = "inputNomPuntSingular";
+Vue.prototype.$inputNomCarretera = "inputNomCarretera";
+Vue.prototype.$inputPuntKilometric = "inputPuntKilometric";
+Vue.prototype.$inputSentit = "inputSentit";
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
@@ -35207,7 +35287,7 @@ var render = function () {
             _c("data-input", {
               attrs: {
                 name: "Nom carretera",
-                idInput: "inputNomCarretera",
+                idInput: this.$inputNomCarretera,
                 small: "",
               },
             }),
@@ -35215,13 +35295,13 @@ var render = function () {
             _c("data-input", {
               attrs: {
                 name: "Punt kilomètric ",
-                idInput: "inputPuntKilometric",
+                idInput: this.$inputPuntKilometric,
                 small: "",
               },
             }),
             _vm._v(" "),
             _c("data-input", {
-              attrs: { name: "Sentit", idInput: "inputSentit", small: "" },
+              attrs: { name: "Sentit", idInput: this.$inputSentit, small: "" },
             }),
           ],
           1
@@ -35239,7 +35319,7 @@ var render = function () {
             _c("data-input", {
               attrs: {
                 name: "Nom",
-                idInput: "inputNomPuntSingular",
+                idInput: this.$inputNomPuntSingular,
                 small: "",
               },
             }),

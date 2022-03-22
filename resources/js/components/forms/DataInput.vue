@@ -98,6 +98,36 @@
                     this.$eventFinal.$emit("recojer-carrer-numero",this.text);
                 }
             })
+
+            this.$eventFinal.$on("obtener-carrer-escala", message => {
+                if(this.idInput == this.$inputEscala) {
+                    this.$eventFinal.$emit("recojer-carrer-escala",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carrer-pis", message => {
+                if(this.idInput == this.$inputPis) {
+                    this.$eventFinal.$emit("recojer-carrer-pis",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carrer-porta", message => {
+                if(this.idInput == this.$inputPorta) {
+                    this.$eventFinal.$emit("recojer-carrer-porta",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-punt-singular-nom", message => {
+                if(this.idInput == this.$inputNomPuntSingular) {
+                    this.$eventFinal.$emit("recojer-punt-singular-nom",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carretera-nom", message => {
+                if(this.idInput == this.$inputNomCarretera) {
+                    this.$eventFinal.$emit("recojer-carretera-nom",this.text);
+                }
+            })
         }
     }
 </script>

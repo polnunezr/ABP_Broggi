@@ -41,7 +41,8 @@
         },
         mounted() {
             this.$eventCheck.$on("change-check-box-catalonia-false", checkValor => {
-                this.$refs.checkBox.checked = false
+                // this.$refs.checkBox.checked = false
+                this.checkValueChecked = false
             })
 
             this.$eventFinal.$on("obtener-guardarInformacion", message => {

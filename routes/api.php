@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CartaTrucadaController;
 use App\Http\Controllers\Api\TipusIncidentController;
 use App\Http\Controllers\Api\TipusLocalitzacioController;
 use App\Http\Controllers\Api\ExpedientController;
+use App\Http\Controllers\Api\DadaPersonalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResource("dades_personals", DadaPersonalController::class);
 
 Route::apiResource("expedients", ExpedientController::class);
 

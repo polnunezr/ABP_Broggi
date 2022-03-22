@@ -70,6 +70,12 @@
                     nota_comuna: null,
                     expedients_id: null,
                     usuaris_id: null
+                },
+                dades_personals: {
+                    id: 2,
+                    telefon: null,
+                    adreca: null,
+                    antecedents: null
                 }
             }
         },
@@ -129,7 +135,28 @@
                 this.$eventFinal.$emit("obtener-tiempo","tiempo");
                 this.$eventFinal.$emit("obtener-operador","operador");
 
+                //dades_personals
 
+                this.insertDadaPersonal();
+            },
+            insertDadaPersonal() {
+                //dades_personals
+
+                this.dades_personals.telefon = this.finalDates.telefono
+                this.dades_personals.adreca = this.finalDates.adreca
+                this.dades_personals.antecedents = this.finalDates.antecedentes
+
+                let vueThis = this
+
+                axios
+                    .post("/dades_personals", vueThis.dades_personals)
+                    .then(function(response) {
+                        console.log(response)
+                    })
+                    .catch(function(error) {
+                        console.log(error.response.status)
+                        console.log(error.response.data)
+                    })
             }
         },
         mounted() {

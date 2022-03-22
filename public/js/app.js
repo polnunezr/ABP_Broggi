@@ -6524,6 +6524,12 @@ __webpack_require__.r(__webpack_exports__);
         nota_comuna: null,
         expedients_id: null,
         usuaris_id: null
+      },
+      dades_personals: {
+        id: 2,
+        telefon: null,
+        adreca: null,
+        antecedents: null
       }
     };
   },
@@ -6584,7 +6590,22 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventFinal.$emit("obtener-fecha", "fecha");
       this.$eventFinal.$emit("obtener-hora", "hora");
       this.$eventFinal.$emit("obtener-tiempo", "tiempo");
-      this.$eventFinal.$emit("obtener-operador", "operador");
+      this.$eventFinal.$emit("obtener-operador", "operador"); //dades_personals
+
+      this.insertDadaPersonal();
+    },
+    insertDadaPersonal: function insertDadaPersonal() {
+      //dades_personals
+      this.dades_personals.telefon = this.finalDates.telefono;
+      this.dades_personals.adreca = this.finalDates.adreca;
+      this.dades_personals.antecedents = this.finalDates.antecedentes;
+      var vueThis = this;
+      axios.post("/dades_personals", vueThis.dades_personals).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error.response.status);
+        console.log(error.response.data);
+      });
     }
   },
   mounted: function mounted() {

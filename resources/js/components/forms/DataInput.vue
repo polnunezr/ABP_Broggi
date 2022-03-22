@@ -66,7 +66,37 @@
                     this.$eventFinal.$emit("recojer-telefono",this.text);
                 }
 
+            })
 
+            this.$eventFinal.$on("obtener-procedencia", message => {
+
+                if(this.idInput == this.$inputProcedencia) {
+                    this.$eventFinal.$emit("recojer-procedencia",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-adreca", message => {
+                if(this.idInput == this.$inputAdreca) {
+                    this.$eventFinal.$emit("recojer-adreca",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carrer-tipusDeVia", message => {
+                if(this.idInput == this.$inputTipusDeVia) {
+                    this.$eventFinal.$emit("recojer-carrer-tipusDeVia",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carrer-nom", message => {
+                if(this.idInput == this.$inputNom) {
+                    this.$eventFinal.$emit("recojer-carrer-nom",this.text);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-carrer-numero", message => {
+                if(this.idInput == this.$inputNumero) {
+                    this.$eventFinal.$emit("recojer-carrer-numero",this.text);
+                }
             })
         }
     }

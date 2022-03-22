@@ -20,7 +20,8 @@
             </select>
 
             <select v-else-if="name == this.$tipusLocalitzacio"
-                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect">
+                ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
+                v-model="selectSelectedTipusLocation">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.tipus}}</option>
             </select>
@@ -53,7 +54,8 @@
         },
         data() {
             return {
-                selectSelected: 0
+                selectSelected: 0,
+                selectSelectedTipusLocation: 1,
             }
         },
         computed: {
@@ -180,6 +182,39 @@
                     this.selectSelected = option
                 }
             })
+
+
+            this.$eventFinal.$on("obtener-id-municipi-trucada", message => {
+                if(this.idSelect == this.$municipiPersonal) {
+                    this.$eventFinal.$emit("recojer-id-municipi-trucada",this.selectSelected);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-id-tipus-location", message => {
+                if(this.idSelect == this.$tipusLocalitzacioId) {
+                    this.$eventFinal.$emit("recojer-id-tipus-location",this.selectSelectedTipusLocation);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-id-provincia-location", message => {
+                if(this.idSelect == this.$provinciaLocation) {
+                    this.$eventFinal.$emit("recojer-id-provincia-location",this.selectSelected);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-id-comarca-location", message => {
+                if(this.idSelect == this.$comarcaLocation) {
+                    this.$eventFinal.$emit("recojer-id-comarca-location",this.selectSelected);
+                }
+            })
+
+            this.$eventFinal.$on("obtener-id-municipi-location", message => {
+                if(this.idSelect == this.$municipiLocation) {
+                    this.$eventFinal.$emit("recojer-id-municipi-location",this.selectSelected);
+                }
+            })
+
+
         }
     }
 </script>

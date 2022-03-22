@@ -5633,17 +5633,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
       type: [String],
       require: true
     },
-    id_check: {
+    idCheck: {
       type: [String],
       require: true
     },
     checked: Boolean
+  },
+  data: function data() {
+    return {
+      checkValue: false,
+      checkValueChecked: true
+    };
   },
   methods: {
     clickCheck: function clickCheck() {
@@ -5657,6 +5664,17 @@ __webpack_require__.r(__webpack_exports__);
 
     this.$eventCheck.$on("change-check-box-catalonia-false", function (checkValor) {
       _this.$refs.checkBox.checked = false;
+    });
+    this.$eventFinal.$on("obtener-guardarInformacion", function (message) {
+      if (_this.idCheck == _this.$checkSaveInformation) {
+        // console.log(this.checkValue)
+        _this.$eventFinal.$emit("recojer-guardarInformacion", _this.checkValue);
+      }
+    });
+    this.$eventFinal.$on("obtener-catalonia", function (message) {
+      if (_this.idCheck == _this.$checkCatalunya) {
+        _this.$eventFinal.$emit("recojer-catalonia", _this.checkValueChecked);
+      }
     });
   }
 });
@@ -5781,6 +5799,31 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-telefono", _this.text);
       }
     });
+    this.$eventFinal.$on("obtener-procedencia", function (message) {
+      if (_this.idInput == _this.$inputProcedencia) {
+        _this.$eventFinal.$emit("recojer-procedencia", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-adreca", function (message) {
+      if (_this.idInput == _this.$inputAdreca) {
+        _this.$eventFinal.$emit("recojer-adreca", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-tipusDeVia", function (message) {
+      if (_this.idInput == _this.$inputTipusDeVia) {
+        _this.$eventFinal.$emit("recojer-carrer-tipusDeVia", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-nom", function (message) {
+      if (_this.idInput == _this.$inputNom) {
+        _this.$eventFinal.$emit("recojer-carrer-nom", _this.text);
+      }
+    });
+    this.$eventFinal.$on("obtener-carrer-numero", function (message) {
+      if (_this.idInput == _this.$inputNumero) {
+        _this.$eventFinal.$emit("recojer-carrer-numero", _this.text);
+      }
+    });
   }
 });
 
@@ -5797,6 +5840,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
 //
 //
 //
@@ -5851,7 +5895,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      selectSelected: 0
+      selectSelected: 0,
+      selectSelectedTipusLocation: 1
     };
   },
   computed: {
@@ -5972,6 +6017,31 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventSelect.$on("change-select-option-municipi-location", function (option) {
       if (_this.idSelect == _this.$municipiLocation) {
         _this.selectSelected = option;
+      }
+    });
+    this.$eventFinal.$on("obtener-id-municipi-trucada", function (message) {
+      if (_this.idSelect == _this.$municipiPersonal) {
+        _this.$eventFinal.$emit("recojer-id-municipi-trucada", _this.selectSelected);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-tipus-location", function (message) {
+      if (_this.idSelect == _this.$tipusLocalitzacioId) {
+        _this.$eventFinal.$emit("recojer-id-tipus-location", _this.selectSelectedTipusLocation);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-provincia-location", function (message) {
+      if (_this.idSelect == _this.$provinciaLocation) {
+        _this.$eventFinal.$emit("recojer-id-provincia-location", _this.selectSelected);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-comarca-location", function (message) {
+      if (_this.idSelect == _this.$comarcaLocation) {
+        _this.$eventFinal.$emit("recojer-id-comarca-location", _this.selectSelected);
+      }
+    });
+    this.$eventFinal.$on("obtener-id-municipi-location", function (message) {
+      if (_this.idSelect == _this.$municipiLocation) {
+        _this.$eventFinal.$emit("recojer-id-municipi-location", _this.selectSelected);
       }
     });
   }
@@ -6317,18 +6387,54 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       finalDates: {
-        telefono: null
+        telefono: null,
+        procedencia: null,
+        idMunicipiTrucada: null,
+        adreca: null,
+        antecedentes: null,
+        guardarInformacion: false,
+        idTipusLocation: 1,
+        catalonia: true,
+        idProvinciaLocation: null,
+        idComarcaLocation: null,
+        idMunicipiLocation: null,
+        carrertipusDeVia: null,
+        carrerNom: null,
+        carrerNumero: null,
+        carrerEscala: null
       }
     };
   },
   methods: {
     clickFinish: function clickFinish() {
+      //Datos Personales
       this.$eventFinal.$emit("obtener-telefono", "telefono");
+      this.$eventFinal.$emit("obtener-procedencia", "procedencia");
+      this.$eventFinal.$emit("obtener-id-municipi-trucada", "idMunicipiTrucada");
+      this.$eventFinal.$emit("obtener-adreca", "adreca");
+      this.$eventFinal.$emit("obtener-antecedentes", "antecedentes");
+      this.$eventFinal.$emit("obtener-guardarInformacion", "guardarInformacion"); //Tipus localització
+
+      this.$eventFinal.$emit("obtener-id-tipus-location", "idTipusLocation");
+      this.$eventFinal.$emit("obtener-catalonia", "catalonia");
+      this.$eventFinal.$emit("obtener-id-provincia-location", "idProvinciaLocation");
+      this.$eventFinal.$emit("obtener-id-comarca-location", "idComarcaLocation");
+      this.$eventFinal.$emit("obtener-id-municipi-location", "idMunicipiLocation");
+
+      switch (this.finalDates.idTipusLocation) {
+        case 1:
+          //Carrers
+          this.$eventFinal.$emit("obtener-carrer-tipusDeVia", "carrertipusDeVia");
+          this.$eventFinal.$emit("obtener-carrer-nom", "carrerNom");
+          this.$eventFinal.$emit("obtener-carrer-numero", "carrerNumero");
+          break;
+      }
     }
   },
   mounted: function mounted() {
     var _this = this;
 
+    //Datos Personales
     this.$eventFinal.$on("recojer-telefono", function (telefono) {
       if (telefono != "" && telefono != null) {
         _this.finalDates.telefono = telefono;
@@ -6336,6 +6442,104 @@ __webpack_require__.r(__webpack_exports__);
         _this.finalDates.telefono = null;
       }
     });
+    this.$eventFinal.$on("recojer-procedencia", function (procedencia) {
+      if (procedencia != "" && procedencia != null) {
+        _this.finalDates.procedencia = procedencia;
+      } else {
+        _this.finalDates.procedencia = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-id-municipi-trucada", function (idMunicipiTrucada) {
+      if (idMunicipiTrucada == 0) {
+        _this.finalDates.idMunicipiTrucada = null;
+      } else {
+        _this.finalDates.idMunicipiTrucada = idMunicipiTrucada;
+      }
+    });
+    this.$eventFinal.$on("recojer-adreca", function (adreca) {
+      if (adreca != "" && adreca != null) {
+        _this.finalDates.adreca = adreca;
+      } else {
+        _this.finalDates.adreca = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-antecedentes", function (antecedentes) {
+      if (antecedentes != "" && antecedentes != null) {
+        _this.finalDates.antecedentes = antecedentes;
+      } else {
+        _this.finalDates.antecedentes = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-guardarInformacion", function (guardarInformacion) {
+      if (guardarInformacion == null) {
+        _this.finalDates.guardarInformacion = false;
+      } else {
+        _this.finalDates.guardarInformacion = guardarInformacion;
+      }
+    }); //Tipus localització
+
+    this.$eventFinal.$on("recojer-id-tipus-location", function (idTipusLocation) {
+      if (idTipusLocation == 0) {
+        _this.finalDates.idTipusLocation = null;
+      } else {
+        _this.finalDates.idTipusLocation = idTipusLocation;
+      }
+    });
+    this.$eventFinal.$on("recojer-catalonia", function (catalonia) {
+      if (catalonia == null) {
+        _this.finalDates.catalonia = false;
+      } else {
+        _this.finalDates.catalonia = catalonia;
+      }
+    });
+    this.$eventFinal.$on("recojer-id-provincia-location", function (idProvinciaLocation) {
+      if (idProvinciaLocation == 0) {
+        _this.finalDates.idProvinciaLocation = null;
+      } else {
+        _this.finalDates.idProvinciaLocation = idProvinciaLocation;
+      }
+    });
+    this.$eventFinal.$on("recojer-id-comarca-location", function (idComarcaLocation) {
+      if (idComarcaLocation == 0) {
+        _this.finalDates.idComarcaLocation = null;
+      } else {
+        _this.finalDates.idComarcaLocation = idComarcaLocation;
+      }
+    });
+    this.$eventFinal.$on("recojer-id-municipi-location", function (idMunicipiLocation) {
+      if (idMunicipiLocation == 0) {
+        _this.finalDates.idMunicipiLocation = null;
+      } else {
+        _this.finalDates.idMunicipiLocation = idMunicipiLocation;
+      }
+    });
+
+    switch (this.finalDates.idTipusLocation) {
+      case 1:
+        //Carrers
+        this.$eventFinal.$on("recojer-carrer-tipusDeVia", function (carrertipusDeVia) {
+          if (carrertipusDeVia != "" && carrertipusDeVia != null) {
+            _this.finalDates.carrertipusDeVia = carrertipusDeVia;
+          } else {
+            _this.finalDates.carrertipusDeVia = null;
+          }
+        });
+        this.$eventFinal.$on("recojer-carrer-nom", function (carrerNom) {
+          if (carrerNom != "" && carrerNom != null) {
+            _this.finalDates.carrerNom = carrerNom;
+          } else {
+            _this.finalDates.carrerNom = null;
+          }
+        });
+        this.$eventFinal.$on("recojer-carrer-numero", function (carrerNumero) {
+          if (carrerNumero != "" && carrerNumero != null) {
+            _this.finalDates.carrerNumero = carrerNumero;
+          } else {
+            _this.finalDates.carrerNumero = null;
+          }
+        });
+        break;
+    }
   }
 });
 
@@ -6616,6 +6820,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -6624,7 +6829,8 @@ __webpack_require__.r(__webpack_exports__);
       comarques: [],
       municipis: [],
       provinciesSelect: 0,
-      comarcaSelect: 0
+      comarcaSelect: 0,
+      antecedentes: null
     };
   },
   created: function created() {
@@ -6708,6 +6914,9 @@ __webpack_require__.r(__webpack_exports__);
       _this2.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
 
       _this2.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
+    });
+    this.$eventFinal.$on("obtener-antecedentes", function (message) {
+      _this2.$eventFinal.$emit("recojer-antecedentes", _this2.antecedentes);
     });
   }
 });
@@ -7201,6 +7410,16 @@ Vue.prototype.$v11 = "#t=33,53";
 Vue.prototype.$qv11 = "¿Sistema de aviso especial?";
 Vue.prototype.$v111 = "#t=59,73";
 Vue.prototype.$inputTelefon = "inputTelefon";
+Vue.prototype.$inputProcedencia = "inputProcedencia";
+Vue.prototype.$inputAdreca = "inputAdreca";
+Vue.prototype.$checkSaveInformation = "checkSaveInformation";
+Vue.prototype.$checkCatalunya = "checkCatalunya";
+Vue.prototype.$inputTipusDeVia = "inputTipusDeVia";
+Vue.prototype.$inputNom = "inputNom";
+Vue.prototype.$inputNumero = "inputNumero";
+Vue.prototype.$inputEscala = "inputEscala";
+Vue.prototype.$inputPis = "inputPis";
+Vue.prototype.$inputPorta = "inputPorta";
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
@@ -33928,25 +34147,93 @@ var render = function () {
         _c("div", { staticClass: "form-check" }, [
           _c(
             "label",
-            { staticClass: "form-check-label", attrs: { for: _vm.id_check } },
+            { staticClass: "form-check-label", attrs: { for: _vm.idCheck } },
             [_vm._v("\n            " + _vm._s(_vm.name) + "\n        ")]
           ),
           _vm._v(" "),
           _vm.checked
             ? _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.checkValueChecked,
+                    expression: "checkValueChecked",
+                  },
+                ],
                 ref: "checkBox",
                 staticClass: "form-check-input",
                 attrs: {
                   type: "checkbox",
                   value: "",
-                  id: _vm.id_check,
+                  id: _vm.idCheck,
                   checked: "",
                 },
-                on: { click: _vm.clickCheck },
+                domProps: {
+                  checked: Array.isArray(_vm.checkValueChecked)
+                    ? _vm._i(_vm.checkValueChecked, "") > -1
+                    : _vm.checkValueChecked,
+                },
+                on: {
+                  click: _vm.clickCheck,
+                  change: function ($event) {
+                    var $$a = _vm.checkValueChecked,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = "",
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.checkValueChecked = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.checkValueChecked = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
+                    } else {
+                      _vm.checkValueChecked = $$c
+                    }
+                  },
+                },
               })
             : _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.checkValue,
+                    expression: "checkValue",
+                  },
+                ],
                 staticClass: "form-check-input",
-                attrs: { type: "checkbox", value: "", id: _vm.id_check },
+                attrs: { type: "checkbox", value: "", id: _vm.idCheck },
+                domProps: {
+                  checked: Array.isArray(_vm.checkValue)
+                    ? _vm._i(_vm.checkValue, "") > -1
+                    : _vm.checkValue,
+                },
+                on: {
+                  change: function ($event) {
+                    var $$a = _vm.checkValue,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = "",
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 && (_vm.checkValue = $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          (_vm.checkValue = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)))
+                      }
+                    } else {
+                      _vm.checkValue = $$c
+                    }
+                  },
+                },
               }),
         ]),
       ]),
@@ -34174,10 +34461,36 @@ var render = function () {
             ? _c(
                 "select",
                 {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectSelectedTipusLocation,
+                      expression: "selectSelectedTipusLocation",
+                    },
+                  ],
                   ref: "select",
                   staticClass: "form-select",
                   attrs: { id: _vm.idSelect },
-                  on: { change: _vm.changeSelect, click: _vm.startTime },
+                  on: {
+                    change: [
+                      function ($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function (o) {
+                            return o.selected
+                          })
+                          .map(function (o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.selectSelectedTipusLocation = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      },
+                      _vm.changeSelect,
+                    ],
+                    click: _vm.startTime,
+                  },
                 },
                 _vm._l(_vm.arrayElements, function (arrayElement) {
                   return _c(
@@ -34732,7 +35045,7 @@ var render = function () {
         _c("data-check", {
           attrs: {
             name: this.$checkCatalonia,
-            id_check: "checkCatalunya",
+            idCheck: this.$checkCatalunya,
             checked: "",
           },
         }),
@@ -34798,105 +35111,141 @@ var render = function () {
           },
         }),
         _vm._v(" "),
-        _vm.checkedCataluna == false
-          ? _c(
-              "div",
-              [
-                _c("data-input", {
-                  attrs: {
-                    name: "Provincia",
-                    idInput: "inputProvincia",
-                    small: "",
-                  },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: {
-                    name: "Municipi",
-                    idInput: "inputMunicipi",
-                    small: "",
-                  },
-                }),
-              ],
-              1
-            )
-          : _vm._e(),
+        _c(
+          "div",
+          {
+            style:
+              _vm.checkedCataluna == false
+                ? "display: block;"
+                : "display: none;",
+          },
+          [
+            _c("data-input", {
+              attrs: {
+                name: "Provincia",
+                idInput: "inputProvincia",
+                small: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: { name: "Municipi", idInput: "inputMunicipi", small: "" },
+            }),
+          ],
+          1
+        ),
         _vm._v(" "),
-        _vm.tipusLocalitzacioSelect == 1
-          ? _c(
-              "div",
-              [
-                _c("data-input", {
-                  attrs: {
-                    name: "Tipus de via",
-                    idInput: "inputTipusDeVia",
-                    small: "",
-                  },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Nom", idInput: "inputNom", small: "" },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Número", idInput: "inputNumero", small: "" },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Escala", idInput: "inputEscala", small: "" },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Pis", idInput: "inputPis", small: "" },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Porta", idInput: "inputPorta", small: "" },
-                }),
-              ],
-              1
-            )
-          : _vm.tipusLocalitzacioSelect == 4
-          ? _c(
-              "div",
-              [
-                _c("data-input", {
-                  attrs: {
-                    name: "Nom carretera",
-                    idInput: "inputNomCarretera",
-                    small: "",
-                  },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: {
-                    name: "Punt kilomètric ",
-                    idInput: "inputPuntKilometric",
-                    small: "",
-                  },
-                }),
-                _vm._v(" "),
-                _c("data-input", {
-                  attrs: { name: "Sentit", idInput: "inputSentit", small: "" },
-                }),
-              ],
-              1
-            )
-          : _vm.tipusLocalitzacioSelect == 2
-          ? _c(
-              "div",
-              [
-                _c("data-input", {
-                  attrs: {
-                    name: "Nom",
-                    idInput: "inputNomPuntSingular",
-                    small: "",
-                  },
-                }),
-              ],
-              1
-            )
-          : _vm._e(),
+        _c(
+          "div",
+          {
+            style:
+              _vm.tipusLocalitzacioSelect == 1
+                ? "display: block;"
+                : "display: none;",
+          },
+          [
+            _c("data-input", {
+              attrs: {
+                name: "Tipus de via",
+                idInput: this.$inputTipusDeVia,
+                small: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: { name: "Nom", idInput: this.$inputNom, small: "" },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: {
+                name: "Número",
+                idInput: this.$inputNumero,
+                small: "",
+                number: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: {
+                name: "Escala",
+                idInput: this.$inputEscala,
+                small: "",
+                number: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: {
+                name: "Pis",
+                idInput: this.$inputPis,
+                small: "",
+                number: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: {
+                name: "Porta",
+                idInput: this.$inputPorta,
+                small: "",
+                number: "",
+              },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            style:
+              _vm.tipusLocalitzacioSelect == 4
+                ? "display: block;"
+                : "display: none;",
+          },
+          [
+            _c("data-input", {
+              attrs: {
+                name: "Nom carretera",
+                idInput: "inputNomCarretera",
+                small: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: {
+                name: "Punt kilomètric ",
+                idInput: "inputPuntKilometric",
+                small: "",
+              },
+            }),
+            _vm._v(" "),
+            _c("data-input", {
+              attrs: { name: "Sentit", idInput: "inputSentit", small: "" },
+            }),
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            style:
+              _vm.tipusLocalitzacioSelect == 2
+                ? "display: block;"
+                : "display: none;",
+          },
+          [
+            _c("data-input", {
+              attrs: {
+                name: "Nom",
+                idInput: "inputNomPuntSingular",
+                small: "",
+              },
+            }),
+          ],
+          1
+        ),
         _vm._v(" "),
         _c(
           "div",
@@ -34969,7 +35318,7 @@ var render = function () {
         _c("data-input", {
           attrs: {
             name: "Procedencia",
-            idInput: "inputProcedencia",
+            idInput: this.$inputProcedencia,
             small: "",
           },
         }),
@@ -35022,7 +35371,7 @@ var render = function () {
         ]),
         _vm._v(" "),
         _c("data-input", {
-          attrs: { name: "Adreça", idInput: "inputAdresa", small: "" },
+          attrs: { name: "Adreça", idInput: this.$inputAdreca, small: "" },
         }),
         _vm._v(" "),
         _c(
@@ -35032,10 +35381,27 @@ var render = function () {
             _c("div", { staticClass: "col" }, [
               _c("div", { staticClass: "form-floating" }, [
                 _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.antecedentes,
+                      expression: "antecedentes",
+                    },
+                  ],
                   staticClass: "form-control",
                   staticStyle: { height: "130px", resize: "none" },
                   attrs: { id: "textAreaAntecedents" },
-                  on: { click: _vm.startTime },
+                  domProps: { value: _vm.antecedentes },
+                  on: {
+                    click: _vm.startTime,
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.antecedentes = $event.target.value
+                    },
+                  },
                 }),
                 _vm._v(" "),
                 _c("label", { attrs: { for: "textAreaAntecedents" } }, [
@@ -35049,7 +35415,7 @@ var render = function () {
         _c("data-check", {
           attrs: {
             name: "Guardar informació",
-            id_check: "checkSaveInformation",
+            idCheck: this.$checkSaveInformation,
           },
         }),
       ],

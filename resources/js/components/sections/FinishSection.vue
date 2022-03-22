@@ -10,16 +10,55 @@
         data() {
             return {
                 finalDates: {
-                    telefono: null
+                    telefono: null,
+                    procedencia: null,
+                    idMunicipiTrucada: null,
+                    adreca: null,
+                    antecedentes: null,
+                    guardarInformacion: false,
+                    idTipusLocation: 1,
+                    catalonia: true,
+                    idProvinciaLocation: null,
+                    idComarcaLocation: null,
+                    idMunicipiLocation: null,
+                    carrertipusDeVia: null,
+                    carrerNom: null,
+                    carrerNumero: null,
+                    carrerEscala: null
+
                 }
             }
         },
         methods: {
             clickFinish() {
+                //Datos Personales
                 this.$eventFinal.$emit("obtener-telefono","telefono");
+                this.$eventFinal.$emit("obtener-procedencia","procedencia");
+                this.$eventFinal.$emit("obtener-id-municipi-trucada","idMunicipiTrucada");
+                this.$eventFinal.$emit("obtener-adreca","adreca");
+                this.$eventFinal.$emit("obtener-antecedentes","antecedentes");
+                this.$eventFinal.$emit("obtener-guardarInformacion","guardarInformacion");
+
+                //Tipus localització
+                this.$eventFinal.$emit("obtener-id-tipus-location","idTipusLocation");
+                this.$eventFinal.$emit("obtener-catalonia","catalonia");
+                this.$eventFinal.$emit("obtener-id-provincia-location","idProvinciaLocation");
+                this.$eventFinal.$emit("obtener-id-comarca-location","idComarcaLocation");
+                this.$eventFinal.$emit("obtener-id-municipi-location","idMunicipiLocation");
+
+                switch(this.finalDates.idTipusLocation) {
+                    case 1: //Carrers
+                        this.$eventFinal.$emit("obtener-carrer-tipusDeVia","carrertipusDeVia");
+                        this.$eventFinal.$emit("obtener-carrer-nom","carrerNom");
+                        this.$eventFinal.$emit("obtener-carrer-numero","carrerNumero");
+                    break;
+                }
             }
         },
         mounted() {
+
+            //Datos Personales
+
             this.$eventFinal.$on("recojer-telefono", telefono => {
                 if(telefono != "" && telefono != null) {
                     this.finalDates.telefono = telefono
@@ -27,9 +66,135 @@
                 else {
                     this.finalDates.telefono = null
                 }
+            })
 
+
+            this.$eventFinal.$on("recojer-procedencia", procedencia => {
+                if(procedencia != "" && procedencia != null) {
+                    this.finalDates.procedencia = procedencia
+                }
+                else {
+                    this.finalDates.procedencia = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-id-municipi-trucada", idMunicipiTrucada => {
+                if(idMunicipiTrucada == 0) {
+                    this.finalDates.idMunicipiTrucada = null
+                }
+                else {
+                    this.finalDates.idMunicipiTrucada = idMunicipiTrucada
+                }
 
             })
+
+            this.$eventFinal.$on("recojer-adreca", adreca => {
+                if(adreca != "" && adreca != null) {
+                    this.finalDates.adreca = adreca
+                }
+                else {
+                    this.finalDates.adreca = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-antecedentes", antecedentes => {
+                if(antecedentes != "" && antecedentes != null) {
+                    this.finalDates.antecedentes = antecedentes
+                }
+                else {
+                    this.finalDates.antecedentes = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-guardarInformacion", guardarInformacion => {
+                if(guardarInformacion == null) {
+                    this.finalDates.guardarInformacion = false
+                }
+                else {
+                    this.finalDates.guardarInformacion = guardarInformacion
+                }
+            })
+
+            //Tipus localització
+
+            this.$eventFinal.$on("recojer-id-tipus-location", idTipusLocation => {
+
+                if(idTipusLocation == 0) {
+                    this.finalDates.idTipusLocation = null
+                }
+                else {
+                    this.finalDates.idTipusLocation = idTipusLocation
+                }
+
+            })
+
+            this.$eventFinal.$on("recojer-catalonia", catalonia => {
+                if(catalonia == null) {
+                    this.finalDates.catalonia = false
+                }
+                else {
+                    this.finalDates.catalonia = catalonia
+                }
+            })
+
+            this.$eventFinal.$on("recojer-id-provincia-location", idProvinciaLocation => {
+                if(idProvinciaLocation == 0) {
+                    this.finalDates.idProvinciaLocation = null
+                }
+                else {
+                    this.finalDates.idProvinciaLocation = idProvinciaLocation
+                }
+            })
+
+            this.$eventFinal.$on("recojer-id-comarca-location", idComarcaLocation => {
+                if(idComarcaLocation == 0) {
+                    this.finalDates.idComarcaLocation = null
+                }
+                else {
+                    this.finalDates.idComarcaLocation = idComarcaLocation
+                }
+            })
+
+            this.$eventFinal.$on("recojer-id-municipi-location", idMunicipiLocation => {
+                if(idMunicipiLocation == 0) {
+                    this.finalDates.idMunicipiLocation = null
+                }
+                else {
+                    this.finalDates.idMunicipiLocation = idMunicipiLocation
+                }
+            })
+
+            switch(this.finalDates.idTipusLocation) {
+                case 1: //Carrers
+                    this.$eventFinal.$on("recojer-carrer-tipusDeVia", carrertipusDeVia => {
+                        if(carrertipusDeVia != "" && carrertipusDeVia != null) {
+                            this.finalDates.carrertipusDeVia = carrertipusDeVia
+                        }
+                        else {
+                            this.finalDates.carrertipusDeVia = null
+                        }
+                    })
+
+                    this.$eventFinal.$on("recojer-carrer-nom", carrerNom => {
+                        if(carrerNom != "" && carrerNom != null) {
+                            this.finalDates.carrerNom = carrerNom
+                        }
+                        else {
+                            this.finalDates.carrerNom = null
+                        }
+                    })
+
+                    this.$eventFinal.$on("recojer-carrer-numero", carrerNumero => {
+                        if(carrerNumero != "" && carrerNumero != null) {
+                            this.finalDates.carrerNumero = carrerNumero
+                        }
+                        else {
+                            this.finalDates.carrerNumero = null
+                        }
+                    })
+                break;
+            }
+
         }
     }
 </script>

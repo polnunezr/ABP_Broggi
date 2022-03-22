@@ -7,7 +7,7 @@
                 </div>
             </div>
 
-            <data-check :name="this.$checkCatalonia" id_check="checkCatalunya" checked></data-check>
+            <data-check :name="this.$checkCatalonia" :idCheck="this.$checkCatalunya" checked></data-check>
 
             <div class="row" v-if="checkedCataluna">
                 <div class="col">
@@ -30,27 +30,27 @@
             :arrayElements = "tipusLocalitzacio" style="margin-top: 30px; marginBottom: 20px;"
             ></data-select>
 
-            <div v-if="checkedCataluna == false">
+            <div v-bind:style="checkedCataluna == false ? 'display: block;' : 'display: none;'" >
                 <data-input name="Provincia" idInput="inputProvincia" small></data-input>
                 <data-input name="Municipi" idInput="inputMunicipi" small></data-input>
             </div>
 
-            <div v-if="tipusLocalitzacioSelect == 1">
-                <data-input name="Tipus de via" idInput="inputTipusDeVia" small></data-input>
-                <data-input name="Nom" idInput="inputNom" small></data-input>
-                <data-input name="Número" idInput="inputNumero" small></data-input>
-                <data-input name="Escala" idInput="inputEscala" small></data-input>
-                <data-input name="Pis" idInput="inputPis" small></data-input>
-                <data-input name="Porta" idInput="inputPorta" small></data-input>
+            <div v-bind:style="tipusLocalitzacioSelect == 1 ? 'display: block;' : 'display: none;'">
+                <data-input name="Tipus de via" :idInput="this.$inputTipusDeVia" small></data-input>
+                <data-input name="Nom" :idInput="this.$inputNom" small></data-input>
+                <data-input name="Número" :idInput="this.$inputNumero" small number></data-input>
+                <data-input name="Escala" :idInput="this.$inputEscala" small number></data-input>
+                <data-input name="Pis" :idInput="this.$inputPis" small number></data-input>
+                <data-input name="Porta" :idInput="this.$inputPorta" small number></data-input>
             </div>
 
-            <div v-else-if="tipusLocalitzacioSelect == 4">
+            <div v-bind:style="tipusLocalitzacioSelect == 4 ? 'display: block;' : 'display: none;'">
                 <data-input name="Nom carretera" idInput="inputNomCarretera" small></data-input>
                 <data-input name="Punt kilomètric " idInput="inputPuntKilometric" small></data-input>
                 <data-input name="Sentit" idInput="inputSentit" small></data-input>
             </div>
 
-            <div v-else-if="tipusLocalitzacioSelect == 2">
+            <div v-bind:style="tipusLocalitzacioSelect == 2 ? 'display: block;' : 'display: none;'">
                 <data-input name="Nom" idInput="inputNomPuntSingular" small></data-input>
             </div>
 

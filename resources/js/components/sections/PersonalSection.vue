@@ -9,7 +9,7 @@
 
             <data-input name="Telefon" :idInput="this.$inputTelefon" small number></data-input>
 
-            <data-input name="Procedencia" idInput="inputProcedencia" small></data-input>
+            <data-input name="Procedencia" :idInput="this.$inputProcedencia" small></data-input>
 
 
 
@@ -26,19 +26,20 @@
             </div>
 
 
-            <data-input name="Adreça" idInput="inputAdresa" small></data-input>
+            <data-input name="Adreça" :idInput="this.$inputAdreca" small></data-input>
 
             <div class="row" style="margin-top: 40px">
                 <div class="col">
                     <div class="form-floating">
                         <textarea class="form-control" id="textAreaAntecedents"
-                        style="height: 130px; resize: none" v-on:click="startTime"></textarea>
+                        style="height: 130px; resize: none" v-on:click="startTime"
+                        v-model="antecedentes"></textarea>
                         <label for="textAreaAntecedents">Antecedents</label>
                     </div>
                 </div>
             </div>
 
-            <data-check name="Guardar informació" id_check="checkSaveInformation"></data-check>
+            <data-check name="Guardar informació" :idCheck="this.$checkSaveInformation"></data-check>
 
 
         </div>
@@ -54,7 +55,8 @@
                 comarques: [],
                 municipis: [],
                 provinciesSelect : 0,
-                comarcaSelect: 0
+                comarcaSelect: 0,
+                antecedentes: null
             }
         },
         created() {
@@ -154,6 +156,10 @@
 
                 this.$eventSelect.$emit("change-select-option-comarca-personal",idComarcaSelect);
                 this.$eventSelect.$emit("change-select-option-provincia-personal",idProvincia);
+            })
+
+            this.$eventFinal.$on("obtener-antecedentes", message => {
+                this.$eventFinal.$emit("recojer-antecedentes",this.antecedentes);
             })
 
         }

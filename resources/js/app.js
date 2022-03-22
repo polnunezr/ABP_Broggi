@@ -65,6 +65,20 @@ Vue.prototype.$qv11 = "¿Sistema de aviso especial?"
 Vue.prototype.$v111="#t=59,73"
 
 Vue.prototype.$inputTelefon="inputTelefon"
+Vue.prototype.$inputProcedencia="inputProcedencia"
+Vue.prototype.$inputAdreca="inputAdreca"
+Vue.prototype.$checkSaveInformation="checkSaveInformation"
+
+Vue.prototype.$checkCatalunya="checkCatalunya"
+
+Vue.prototype.$inputTipusDeVia="inputTipusDeVia"
+Vue.prototype.$inputNom="inputNom"
+Vue.prototype.$inputNumero="inputNumero"
+Vue.prototype.$inputEscala="inputEscala"
+Vue.prototype.$inputPis="inputPis"
+Vue.prototype.$inputPorta="inputPorta"
+
+
 
 
 Vue.prototype.$eventTime = new Vue()

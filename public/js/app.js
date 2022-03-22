@@ -6500,6 +6500,30 @@ __webpack_require__.r(__webpack_exports__);
         hora: null,
         tiempo: null,
         operador: null
+      },
+      cartesTrucada: {
+        id: null,
+        codi_trucada: null,
+        data_hora: null,
+        temps_trucada: null,
+        dades_personals_id: null,
+        telefon: null,
+        procedencia_trucada: null,
+        origen_trucada: null,
+        nom_trucada: null,
+        municipis_id_trucada: null,
+        adreca_trucada: null,
+        fora_catalunya: null,
+        provincies_id: null,
+        municipis_id: null,
+        tipus_localitzacions_id: null,
+        descripcio_localitzacio: null,
+        detall_localitzacio: null,
+        altres_ref_localitzacio: null,
+        incidents_id: null,
+        nota_comuna: null,
+        expedients_id: null,
+        usuaris_id: null
       }
     };
   },
@@ -6555,7 +6579,12 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventFinal.$emit("obtener-id-tipo-incident", "idTipoIncident");
       this.$eventFinal.$emit("obtener-id-incident", "idIncident"); //Nota comuna
 
-      this.$eventFinal.$emit("obtener-nota-comuna", "notaComuna");
+      this.$eventFinal.$emit("obtener-nota-comuna", "notaComuna"); //Section Time
+
+      this.$eventFinal.$emit("obtener-fecha", "fecha");
+      this.$eventFinal.$emit("obtener-hora", "hora");
+      this.$eventFinal.$emit("obtener-tiempo", "tiempo");
+      this.$eventFinal.$emit("obtener-operador", "operador");
     }
   },
   mounted: function mounted() {
@@ -6758,6 +6787,19 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         _this.finalDates.notaComuna = null;
       }
+    }); //Time Section
+
+    this.$eventFinal.$on("recojer-fecha", function (fecha) {
+      _this.finalDates.fecha = fecha;
+    });
+    this.$eventFinal.$on("recojer-hora", function (hora) {
+      _this.finalDates.hora = hora;
+    });
+    this.$eventFinal.$on("recojer-tiempo", function (tiempo) {
+      _this.finalDates.tiempo = tiempo;
+    });
+    this.$eventFinal.$on("recojer-operador", function (operador) {
+      _this.finalDates.operador = operador;
     });
   }
 });
@@ -7224,7 +7266,7 @@ __webpack_require__.r(__webpack_exports__);
       start: false,
       data: "08/03/2022",
       hora: "16:28:00",
-      operador: "Pau"
+      operador: "001"
     };
   },
   created: function created() {
@@ -7289,6 +7331,18 @@ __webpack_require__.r(__webpack_exports__);
           }
         }, 1000);
       }
+    });
+    this.$eventFinal.$on("obtener-fecha", function (message) {
+      _this.$eventFinal.$emit("recojer-fecha", _this.data);
+    });
+    this.$eventFinal.$on("obtener-hora", function (message) {
+      _this.$eventFinal.$emit("recojer-hora", _this.hora);
+    });
+    this.$eventFinal.$on("obtener-tiempo", function (message) {
+      _this.$eventFinal.$emit("recojer-tiempo", _this.time);
+    });
+    this.$eventFinal.$on("obtener-operador", function (message) {
+      _this.$eventFinal.$emit("recojer-operador", _this.operador);
     });
   }
 });

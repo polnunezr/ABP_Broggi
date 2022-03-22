@@ -46,6 +46,30 @@
                     tiempo: null,
                     operador: null
 
+                },
+                cartesTrucada: {
+                    id: null,
+                    codi_trucada: null,
+                    data_hora: null,
+                    temps_trucada: null,
+                    dades_personals_id: null,
+                    telefon: null,
+                    procedencia_trucada: null,
+                    origen_trucada: null,
+                    nom_trucada: null,
+                    municipis_id_trucada: null,
+                    adreca_trucada: null,
+                    fora_catalunya: null,
+                    provincies_id: null,
+                    municipis_id: null,
+                    tipus_localitzacions_id: null,
+                    descripcio_localitzacio: null,
+                    detall_localitzacio: null,
+                    altres_ref_localitzacio: null,
+                    incidents_id: null,
+                    nota_comuna: null,
+                    expedients_id: null,
+                    usuaris_id: null
                 }
             }
         },
@@ -98,6 +122,14 @@
 
                 //Nota comuna
                 this.$eventFinal.$emit("obtener-nota-comuna","notaComuna");
+
+                //Section Time
+                this.$eventFinal.$emit("obtener-fecha","fecha");
+                this.$eventFinal.$emit("obtener-hora","hora");
+                this.$eventFinal.$emit("obtener-tiempo","tiempo");
+                this.$eventFinal.$emit("obtener-operador","operador");
+
+
             }
         },
         mounted() {
@@ -362,6 +394,24 @@
                 else {
                     this.finalDates.notaComuna = null
                 }
+            })
+
+            //Time Section
+
+            this.$eventFinal.$on("recojer-fecha", fecha => {
+                this.finalDates.fecha = fecha
+            })
+
+            this.$eventFinal.$on("recojer-hora", hora => {
+                this.finalDates.hora = hora
+            })
+
+            this.$eventFinal.$on("recojer-tiempo", tiempo => {
+                this.finalDates.tiempo = tiempo
+            })
+
+            this.$eventFinal.$on("recojer-operador", operador => {
+                this.finalDates.operador = operador
             })
 
         }

@@ -27,7 +27,7 @@
                 start: false,
                 data: "08/03/2022",
                 hora: "16:28:00",
-                operador: "Pau"
+                operador: "001"
             }
         },
         created() {
@@ -95,6 +95,22 @@
 
                     },1000)
                 }
+            })
+
+            this.$eventFinal.$on("obtener-fecha", message => {
+                this.$eventFinal.$emit("recojer-fecha",this.data);
+            })
+
+            this.$eventFinal.$on("obtener-hora", message => {
+                this.$eventFinal.$emit("recojer-hora",this.hora);
+            })
+
+            this.$eventFinal.$on("obtener-tiempo", message => {
+                this.$eventFinal.$emit("recojer-tiempo",this.time);
+            })
+
+            this.$eventFinal.$on("obtener-operador", message => {
+                this.$eventFinal.$emit("recojer-operador",this.operador);
             })
         }
     }

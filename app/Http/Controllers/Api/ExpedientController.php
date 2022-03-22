@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\CartaTrucada;
+use App\Models\Expedient;
 use Illuminate\Http\Request;
+use App\Http\Resources\ExpedientResource;
 
-class CartaTrucadaController extends Controller
+class ExpedientController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +16,10 @@ class CartaTrucadaController extends Controller
      */
     public function index()
     {
-        //
+        $expedients = Expedient::all();
+
+        return ExpedientResource::collection($expedients);
+
     }
 
     /**
@@ -32,10 +36,10 @@ class CartaTrucadaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CartaTrucada  $cartaTrucada
+     * @param  \App\Models\ExpedientController  $expedientController
      * @return \Illuminate\Http\Response
      */
-    public function show(CartaTrucada $cartaTrucada)
+    public function show(ExpedientController $expedientController)
     {
         //
     }
@@ -44,10 +48,10 @@ class CartaTrucadaController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CartaTrucada  $cartaTrucada
+     * @param  \App\Models\ExpedientController  $expedientController
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CartaTrucada $cartaTrucada)
+    public function update(Request $request, ExpedientController $expedientController)
     {
         //
     }
@@ -55,10 +59,10 @@ class CartaTrucadaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CartaTrucada  $cartaTrucada
+     * @param  \App\Models\ExpedientController  $expedientController
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CartaTrucada $cartaTrucada)
+    public function destroy(ExpedientController $expedientController)
     {
         //
     }

@@ -27,13 +27,20 @@
                 start: false,
                 data: "08/03/2022",
                 hora: "16:28:00",
-                operador: "001"
+                operador: "001",
+                timeSeconds: 0
             }
         },
         created() {
             let today = new Date();
             let dia = today.getDate();
+            if(dia <= 9) {
+                dia = "0" + dia
+            }
             let mes = today.getMonth() + 1;
+            if(mes <= 9) {
+                mes = "0" + mes
+            }
             let year = today.getFullYear();
 
             this.data = dia +"/"+ mes +"/"+year;
@@ -49,6 +56,9 @@
                 let hour = today.getHours().toString();
                 let minut = today.getMinutes().toString();
                 let second = today.getSeconds().toString();
+                if(second <= 9) {
+                    second = "0" + second
+                }
                 this.hora = hour + ":" + minut+":"+second
             }
         },
@@ -93,6 +103,8 @@
                             vueThis.time = vueThis.time.concat(lastCharacterInt)
                         }
 
+                        vueThis.timeSeconds++
+
                     },1000)
                 }
             })
@@ -111,6 +123,10 @@
 
             this.$eventFinal.$on("obtener-operador", message => {
                 this.$eventFinal.$emit("recojer-operador",this.operador);
+            })
+
+            this.$eventFinal.$on("obtener-tiempo-segundos", message => {
+                this.$eventFinal.$emit("recojer-tiempo-segundos",this.timeSeconds);
             })
         }
     }

@@ -33,7 +33,7 @@ class DadaPersonalController extends Controller
 
         $dadaPersonal->telefon = $request->input("telefon");
         $dadaPersonal->adreca = $request->input("adreca");
-        $dadaPersonal->antecedents = $request->input("antecedentes");
+        $dadaPersonal->antecedents = $request->input("antecedents");
 
         try {
             $dadaPersonal->save();

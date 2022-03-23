@@ -81,6 +81,12 @@
                 }
             })
 
+            this.$eventFinal.$on("obtener-origen-llamada", message => {
+                if(this.idInput == this.$inputOrigen) {
+                    this.$eventFinal.$emit("recojer-origen-llamada",this.text);
+                }
+            })
+
             this.$eventFinal.$on("obtener-carrer-tipusDeVia", message => {
                 if(this.idInput == this.$inputTipusDeVia) {
                     this.$eventFinal.$emit("recojer-carrer-tipusDeVia",this.text);
@@ -146,6 +152,8 @@
                     this.$eventFinal.$emit("recojer-provincia-municipi",this.text);
                 }
             })
+
+
         }
     }
 </script>

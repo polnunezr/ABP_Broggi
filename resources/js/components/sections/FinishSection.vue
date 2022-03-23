@@ -1,7 +1,9 @@
 <template>
     <div id="finishSection">
-        <button type="button" class="button">Cancelar</button>
-        <button type="button" class="button" style="margin-left: 10px" v-on:click="clickFinish">Finalitzar</button>
+        <button type="button" class="button" :disabled="disabledButton"
+        v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Cancelar</button>
+        <button type="button" class="button" style="margin-left: 10px" v-on:click="clickFinish"
+        :disabled="disabledButton" v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Finalitzar</button>
     </div>
 </template>
 
@@ -15,6 +17,7 @@
                     idMunicipiTrucada: null,
                     adreca: null,
                     antecedentes: null,
+                    origenLlamada: null,
                     guardarInformacion: false,
 
                     idTipusLocation: 1,
@@ -44,40 +47,64 @@
                     fecha: null,
                     hora: null,
                     tiempo: null,
+                    timeSeconds: null,
                     operador: null
 
                 },
-                cartesTrucada: {
-                    id: null,
-                    codi_trucada: null,
-                    data_hora: null,
-                    temps_trucada: null,
-                    dades_personals_id: null,
-                    telefon: null,
-                    procedencia_trucada: null,
-                    origen_trucada: null,
-                    nom_trucada: null,
-                    municipis_id_trucada: null,
-                    adreca_trucada: null,
-                    fora_catalunya: null,
-                    provincies_id: null,
-                    municipis_id: null,
-                    tipus_localitzacions_id: null,
-                    descripcio_localitzacio: null,
-                    detall_localitzacio: null,
-                    altres_ref_localitzacio: null,
-                    incidents_id: null,
-                    nota_comuna: null,
-                    expedients_id: null,
-                    usuaris_id: null
+                objectPost: {
+                    cartes_trucades: {
+                        codi_trucada: null,
+                        data_hora: null,
+                        temps_trucada: null,
+                        dades_personals_id: null,
+                        telefon: null,
+                        procedencia_trucada: null,
+                        origen_trucada: null,
+                        nom_trucada: null,
+                        municipis_id_trucada: null,
+                        adreca_trucada: null,
+                        fora_catalunya: null,
+                        provincies_id: null,
+                        municipis_id: null,
+                        tipus_localitzacions_id: null,
+                        descripcio_localitzacio: null,
+                        detall_localitzacio: null,
+                        altres_ref_localitzacio: null,
+                        incidents_id: null,
+                        nota_comuna: null,
+                        expedients_id: null,
+                        usuaris_id: null
+                    },
+                    dades_personals: {
+                        id: null,
+                        telefon: null,
+                        adreca: null,
+                        antecedents: null
+                    },
+                    expedients: {
+                        id: null,
+                        data_creacio: null,
+                        data_ultima_modificacio: null,
+                        estats_expedients_id: null
+                    },
                 },
-                dades_personals: {
-                    id: 2,
-                    telefon: null,
-                    adreca: null,
-                    antecedents: null
-                }
+                cartesTrucadesArray: [],
+                disabledButton: true
             }
+        },
+        created() {
+            let vueThis = this
+
+                axios
+                .get("/cartes_trucades")
+                .then(response => {
+                    vueThis.cartesTrucadesArray = response.data;
+                    vueThis.disabledButton = false
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => this.loading = false)
         },
         methods: {
             clickFinish() {
@@ -87,6 +114,7 @@
                 this.$eventFinal.$emit("obtener-id-municipi-trucada","idMunicipiTrucada");
                 this.$eventFinal.$emit("obtener-adreca","adreca");
                 this.$eventFinal.$emit("obtener-antecedentes","antecedentes");
+                this.$eventFinal.$emit("obtener-origen-llamada","origenLlamada");
                 this.$eventFinal.$emit("obtener-guardarInformacion","guardarInformacion");
 
                 //Tipus localització
@@ -134,29 +162,178 @@
                 this.$eventFinal.$emit("obtener-hora","hora");
                 this.$eventFinal.$emit("obtener-tiempo","tiempo");
                 this.$eventFinal.$emit("obtener-operador","operador");
+                this.$eventFinal.$emit("obtener-tiempo-segundos","timeSeconds");
 
-                //dades_personals
-
-                this.insertDadaPersonal();
+                this.crearCartaTrucada()
             },
-            insertDadaPersonal() {
-                //dades_personals
+            crearCartaTrucada() {
 
-                this.dades_personals.telefon = this.finalDates.telefono
-                this.dades_personals.adreca = this.finalDates.adreca
-                this.dades_personals.antecedents = this.finalDates.antecedentes
+                //dades_personals
+                this.objectPost.dades_personals.telefon = this.finalDates.telefono
+                if(this.finalDates.guardarInformacion) {
+                    this.objectPost.dades_personals.adreca = this.finalDates.adreca
+                    this.objectPost.dades_personals.antecedents = this.finalDates.antecedentes
+                }
+                else {
+                    this.objectPost.dades_personals.adreca = null
+                    this.objectPost.dades_personals.antecedents = null
+                }
+
+
+
+                //expedients
+                //0000-00-00 00:00:00
+                let fecha = this.finalDates.fecha;
+                let fechaSplit = fecha.split("/")
+                fecha = fechaSplit[2] + "-" +fechaSplit[1] + "-" +fechaSplit[0]
+
+                this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora
+                this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora
+                this.objectPost.expedients.estats_expedients_id = 1
+
+                //cartes_trucades
+
+                //Personal dates
+
+                let codiTrucadaBig = 0,textCodiTrucadaSplit,codiTrucada;
+                if(this.cartesTrucadesArray.length > 0) {
+                    for(let i = 0; i < this.cartesTrucadesArray.length; i++) {
+                        textCodiTrucadaSplit = this.cartesTrucadesArray[i].codi_trucada.split("_")
+                        codiTrucada = parseInt(textCodiTrucadaSplit[1])
+                        if(codiTrucada > codiTrucadaBig) {
+                            codiTrucadaBig = codiTrucada
+                        }
+                    }
+                    codiTrucadaBig++
+                    this.objectPost.cartes_trucades.codi_trucada= "CT_"+codiTrucadaBig
+                }
+                else {
+                    this.objectPost.cartes_trucades.codi_trucada= "CT_1"
+                }
+
+                this.objectPost.cartes_trucades.data_hora= this.objectPost.expedients.data_creacio //Cuando creas solo
+                this.objectPost.cartes_trucades.temps_trucada= this.finalDates.timeSeconds
+                this.objectPost.cartes_trucades.dades_personals_id= null //Obtener response
+
+                this.objectPost.cartes_trucades.telefon = this.finalDates.telefono
+
+                if(this.finalDates.guardarInformacion) {
+                    this.objectPost.cartes_trucades.procedencia_trucada= this.finalDates.procedencia
+                    this.objectPost.cartes_trucades.origen_trucada= this.finalDates.origenLlamada
+                    this.objectPost.cartes_trucades.municipis_id_trucada= this.finalDates.idMunicipiTrucada
+                    this.objectPost.cartes_trucades.adreca_trucada= this.finalDates.adreca
+                }
+                else {
+                    this.objectPost.cartes_trucades.procedencia_trucada= null
+                    this.objectPost.cartes_trucades.origen_trucada= null
+                    this.objectPost.cartes_trucades.municipis_id_trucada= null
+                    this.objectPost.cartes_trucades.adreca_trucada= null
+                }
+
+                this.objectPost.cartes_trucades.nom_trucada = this.objectPost.cartes_trucades.codi_trucada //?
+
+
+                //Localització
+
+                this.objectPost.cartes_trucades.fora_catalunya= this.finalDates.catalonia
+                this.objectPost.cartes_trucades.provincies_id= this.finalDates.idProvinciaLocation
+                //id_comarca? base de datos
+                this.objectPost.cartes_trucades.municipis_id= this.finalDates.idMunicipiLocation
+                this.objectPost.cartes_trucades.tipus_localitzacions_id= this.finalDates.idTipusLocation
+
+                switch(this.objectPost.cartes_trucades.tipus_localitzacions_id) {
+                    case 1: //Carrers
+                        //tipus de via + nom
+                        this.objectPost.cartes_trucades.descripcio_localitzacio = ""
+                        let carrerDescripcio = [this.finalDates.carrertipusDeVia,this.finalDates.carrerNom]
+                        for(let i = 0; i < carrerDescripcio.length; i++) {
+                            if(this.objectPost.cartes_trucades.descripcio_localitzacio == "" && carrerDescripcio[i] != null) {
+                                this.objectPost.cartes_trucades.descripcio_localitzacio = carrerDescripcio[i]
+                            }
+                            else if(this.objectPost.cartes_trucades.descripcio_localitzacio != "" && carrerDescripcio[i] != null) {
+                                this.objectPost.cartes_trucades.descripcio_localitzacio = this.objectPost.cartes_trucades.descripcio_localitzacio + ", " + carrerDescripcio[i]
+                            }
+                        }
+
+                        //Numero + escala + pis + porta
+                        this.objectPost.cartes_trucades.detall_localitzacio = ""
+                        let carrerDetall = [this.finalDates.carrerNumero,this.finalDates.carrerEscala,this.finalDates.carrerPis,this.finalDates.carrerPorta]
+                        for(let i = 0; i < carrerDetall.length; i++) {
+                            if(this.objectPost.cartes_trucades.detall_localitzacio == "" && carrerDetall[i] != null) {
+                                this.objectPost.cartes_trucades.detall_localitzacio = carrerDetall[i]
+                            }
+                            else if(this.objectPost.cartes_trucades.detall_localitzacio != "" && carrerDetall[i] != null) {
+                                this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carrerDetall[i]
+                            }
+                        }
+
+                        break;
+                    case 2: //Punt Singular
+
+                        this.objectPost.cartes_trucades.descripcio_localitzacio  = this.finalDates.puntSingularNom
+                        this.objectPost.cartes_trucades.detall_localitzacio = null
+
+                        break;
+                    case 3: //Entitat Població
+
+                        this.objectPost.cartes_trucades.descripcio_localitzacio  = null
+                        this.objectPost.cartes_trucades.detall_localitzacio = null
+
+                        break;
+                    case 4: //Carretera
+                        //Nom carretera
+                        this.objectPost.cartes_trucades.descripcio_localitzacio  = this.finalDates.carreteraNom
+
+                        //Punt kilometric + sentit
+                        this.objectPost.cartes_trucades.detall_localitzacio = ""
+                        let carreteraDetall = [this.finalDates.carreteraPuntKilometric,this.finalDates.carreteraSentit]
+                        for(let i = 0; i < carreteraDetall.length; i++) {
+                            if(this.objectPost.cartes_trucades.detall_localitzacio == "" && carreteraDetall[i] != null) {
+                                this.objectPost.cartes_trucades.detall_localitzacio = carreteraDetall[i]
+                            }
+                            else if(this.objectPost.cartes_trucades.detall_localitzacio != "" && carreteraDetall[i] != null) {
+                                this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carreteraDetall[i]
+                            }
+                        }
+
+                        break;
+                    case 5: //Provincia
+                        this.objectPost.cartes_trucades.provincies_id= this.finalDates.idAltreProvincia
+                        //id_comarca? base de datos
+                        this.objectPost.cartes_trucades.municipis_id= null
+                        this.objectPost.cartes_trucades.descripcio_localitzacio  = this.finalDates.provinciaMunicipi
+                        this.objectPost.cartes_trucades.detall_localitzacio = null
+
+                        break;
+
+                }
+                this.objectPost.cartes_trucades.altres_ref_localitzacio= this.finalDates.detallsLocation
+
+                //Tipificacion emeregncia
+                this.objectPost.cartes_trucades.incidents_id = this.finalDates.idIncident
+
+                //Nota comuna
+                this.objectPost.cartes_trucades.nota_comuna = this.finalDates.notaComuna
+
+                // debugger;
+
+                this.objectPost.cartes_trucades.expedients_id = null//Obtener response | cuando se crea uno
+
+                this.objectPost.cartes_trucades.usuaris_id = 1 //Provisional
 
                 let vueThis = this
 
                 axios
-                    .post("/dades_personals", vueThis.dades_personals)
-                    .then(function(response) {
-                        console.log(response)
-                    })
-                    .catch(function(error) {
-                        console.log(error.response.status)
-                        console.log(error.response.data)
-                    })
+                .post("/cartes_trucades_view",vueThis.objectPost)
+                .then(function(response) {
+                    console.log(response)
+
+                }).catch(function(error) {
+                    console.log(error.response.status)
+                    console.log(error.response.data)
+                })
+
+                // debugger;
             }
         },
         mounted() {
@@ -198,6 +375,15 @@
                 }
                 else {
                     this.finalDates.adreca = null
+                }
+            })
+
+            this.$eventFinal.$on("recojer-origen-llamada", origenLlamada => {
+                if(origenLlamada != "" && origenLlamada != null) {
+                    this.finalDates.origenLlamada = origenLlamada
+                }
+                else {
+                    this.finalDates.origenLlamada = null
                 }
             })
 
@@ -436,6 +622,11 @@
             this.$eventFinal.$on("recojer-tiempo", tiempo => {
                 this.finalDates.tiempo = tiempo
             })
+
+            this.$eventFinal.$on("recojer-tiempo-segundos", timeSeconds => {
+                this.finalDates.timeSeconds = timeSeconds
+            })
+
 
             this.$eventFinal.$on("recojer-operador", operador => {
                 this.finalDates.operador = operador

@@ -5810,6 +5810,11 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-adreca", _this.text);
       }
     });
+    this.$eventFinal.$on("obtener-origen-llamada", function (message) {
+      if (_this.idInput == _this.$inputOrigen) {
+        _this.$eventFinal.$emit("recojer-origen-llamada", _this.text);
+      }
+    });
     this.$eventFinal.$on("obtener-carrer-tipusDeVia", function (message) {
       if (_this.idInput == _this.$inputTipusDeVia) {
         _this.$eventFinal.$emit("recojer-carrer-tipusDeVia", _this.text);
@@ -6465,6 +6470,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -6474,6 +6481,7 @@ __webpack_require__.r(__webpack_exports__);
         idMunicipiTrucada: null,
         adreca: null,
         antecedentes: null,
+        origenLlamada: null,
         guardarInformacion: false,
         idTipusLocation: 1,
         catalonia: true,
@@ -6499,39 +6507,62 @@ __webpack_require__.r(__webpack_exports__);
         fecha: null,
         hora: null,
         tiempo: null,
+        timeSeconds: null,
         operador: null
       },
-      cartesTrucada: {
-        id: null,
-        codi_trucada: null,
-        data_hora: null,
-        temps_trucada: null,
-        dades_personals_id: null,
-        telefon: null,
-        procedencia_trucada: null,
-        origen_trucada: null,
-        nom_trucada: null,
-        municipis_id_trucada: null,
-        adreca_trucada: null,
-        fora_catalunya: null,
-        provincies_id: null,
-        municipis_id: null,
-        tipus_localitzacions_id: null,
-        descripcio_localitzacio: null,
-        detall_localitzacio: null,
-        altres_ref_localitzacio: null,
-        incidents_id: null,
-        nota_comuna: null,
-        expedients_id: null,
-        usuaris_id: null
+      objectPost: {
+        cartes_trucades: {
+          codi_trucada: null,
+          data_hora: null,
+          temps_trucada: null,
+          dades_personals_id: null,
+          telefon: null,
+          procedencia_trucada: null,
+          origen_trucada: null,
+          nom_trucada: null,
+          municipis_id_trucada: null,
+          adreca_trucada: null,
+          fora_catalunya: null,
+          provincies_id: null,
+          municipis_id: null,
+          tipus_localitzacions_id: null,
+          descripcio_localitzacio: null,
+          detall_localitzacio: null,
+          altres_ref_localitzacio: null,
+          incidents_id: null,
+          nota_comuna: null,
+          expedients_id: null,
+          usuaris_id: null
+        },
+        dades_personals: {
+          id: null,
+          telefon: null,
+          adreca: null,
+          antecedents: null
+        },
+        expedients: {
+          id: null,
+          data_creacio: null,
+          data_ultima_modificacio: null,
+          estats_expedients_id: null
+        }
       },
-      dades_personals: {
-        id: 2,
-        telefon: null,
-        adreca: null,
-        antecedents: null
-      }
+      cartesTrucadesArray: [],
+      disabledButton: true
     };
+  },
+  created: function created() {
+    var _this = this;
+
+    var vueThis = this;
+    axios.get("/cartes_trucades").then(function (response) {
+      vueThis.cartesTrucadesArray = response.data;
+      vueThis.disabledButton = false;
+    })["catch"](function (error) {
+      console.log(error);
+    })["finally"](function () {
+      return _this.loading = false;
+    });
   },
   methods: {
     clickFinish: function clickFinish() {
@@ -6541,6 +6572,7 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventFinal.$emit("obtener-id-municipi-trucada", "idMunicipiTrucada");
       this.$eventFinal.$emit("obtener-adreca", "adreca");
       this.$eventFinal.$emit("obtener-antecedentes", "antecedentes");
+      this.$eventFinal.$emit("obtener-origen-llamada", "origenLlamada");
       this.$eventFinal.$emit("obtener-guardarInformacion", "guardarInformacion"); //Tipus localització
 
       this.$eventFinal.$emit("obtener-id-tipus-location", "idTipusLocation");
@@ -6590,237 +6622,391 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventFinal.$emit("obtener-fecha", "fecha");
       this.$eventFinal.$emit("obtener-hora", "hora");
       this.$eventFinal.$emit("obtener-tiempo", "tiempo");
-      this.$eventFinal.$emit("obtener-operador", "operador"); //dades_personals
-
-      this.insertDadaPersonal();
+      this.$eventFinal.$emit("obtener-operador", "operador");
+      this.$eventFinal.$emit("obtener-tiempo-segundos", "timeSeconds");
+      this.crearCartaTrucada();
     },
-    insertDadaPersonal: function insertDadaPersonal() {
+    crearCartaTrucada: function crearCartaTrucada() {
       //dades_personals
-      this.dades_personals.telefon = this.finalDates.telefono;
-      this.dades_personals.adreca = this.finalDates.adreca;
-      this.dades_personals.antecedents = this.finalDates.antecedentes;
+      this.objectPost.dades_personals.telefon = this.finalDates.telefono;
+
+      if (this.finalDates.guardarInformacion) {
+        this.objectPost.dades_personals.adreca = this.finalDates.adreca;
+        this.objectPost.dades_personals.antecedents = this.finalDates.antecedentes;
+      } else {
+        this.objectPost.dades_personals.adreca = null;
+        this.objectPost.dades_personals.antecedents = null;
+      } //expedients
+      //0000-00-00 00:00:00
+
+
+      var fecha = this.finalDates.fecha;
+      var fechaSplit = fecha.split("/");
+      fecha = fechaSplit[2] + "-" + fechaSplit[1] + "-" + fechaSplit[0];
+      this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora;
+      this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora;
+      this.objectPost.expedients.estats_expedients_id = 1; //cartes_trucades
+      //Personal dates
+
+      var codiTrucadaBig = 0,
+          textCodiTrucadaSplit,
+          codiTrucada;
+
+      if (this.cartesTrucadesArray.length > 0) {
+        for (var i = 0; i < this.cartesTrucadesArray.length; i++) {
+          textCodiTrucadaSplit = this.cartesTrucadesArray[i].codi_trucada.split("_");
+          codiTrucada = parseInt(textCodiTrucadaSplit[1]);
+
+          if (codiTrucada > codiTrucadaBig) {
+            codiTrucadaBig = codiTrucada;
+          }
+        }
+
+        codiTrucadaBig++;
+        this.objectPost.cartes_trucades.codi_trucada = "CT_" + codiTrucadaBig;
+      } else {
+        this.objectPost.cartes_trucades.codi_trucada = "CT_1";
+      }
+
+      this.objectPost.cartes_trucades.data_hora = this.objectPost.expedients.data_creacio; //Cuando creas solo
+
+      this.objectPost.cartes_trucades.temps_trucada = this.finalDates.timeSeconds;
+      this.objectPost.cartes_trucades.dades_personals_id = null; //Obtener response
+
+      this.objectPost.cartes_trucades.telefon = this.finalDates.telefono;
+
+      if (this.finalDates.guardarInformacion) {
+        this.objectPost.cartes_trucades.procedencia_trucada = this.finalDates.procedencia;
+        this.objectPost.cartes_trucades.origen_trucada = this.finalDates.origenLlamada;
+        this.objectPost.cartes_trucades.municipis_id_trucada = this.finalDates.idMunicipiTrucada;
+        this.objectPost.cartes_trucades.adreca_trucada = this.finalDates.adreca;
+      } else {
+        this.objectPost.cartes_trucades.procedencia_trucada = null;
+        this.objectPost.cartes_trucades.origen_trucada = null;
+        this.objectPost.cartes_trucades.municipis_id_trucada = null;
+        this.objectPost.cartes_trucades.adreca_trucada = null;
+      }
+
+      this.objectPost.cartes_trucades.nom_trucada = this.objectPost.cartes_trucades.codi_trucada; //?
+      //Localització
+
+      this.objectPost.cartes_trucades.fora_catalunya = this.finalDates.catalonia;
+      this.objectPost.cartes_trucades.provincies_id = this.finalDates.idProvinciaLocation; //id_comarca? base de datos
+
+      this.objectPost.cartes_trucades.municipis_id = this.finalDates.idMunicipiLocation;
+      this.objectPost.cartes_trucades.tipus_localitzacions_id = this.finalDates.idTipusLocation;
+
+      switch (this.objectPost.cartes_trucades.tipus_localitzacions_id) {
+        case 1:
+          //Carrers
+          //tipus de via + nom
+          this.objectPost.cartes_trucades.descripcio_localitzacio = "";
+          var carrerDescripcio = [this.finalDates.carrertipusDeVia, this.finalDates.carrerNom];
+
+          for (var _i = 0; _i < carrerDescripcio.length; _i++) {
+            if (this.objectPost.cartes_trucades.descripcio_localitzacio == "" && carrerDescripcio[_i] != null) {
+              this.objectPost.cartes_trucades.descripcio_localitzacio = carrerDescripcio[_i];
+            } else if (this.objectPost.cartes_trucades.descripcio_localitzacio != "" && carrerDescripcio[_i] != null) {
+              this.objectPost.cartes_trucades.descripcio_localitzacio = this.objectPost.cartes_trucades.descripcio_localitzacio + ", " + carrerDescripcio[_i];
+            }
+          } //Numero + escala + pis + porta
+
+
+          this.objectPost.cartes_trucades.detall_localitzacio = "";
+          var carrerDetall = [this.finalDates.carrerNumero, this.finalDates.carrerEscala, this.finalDates.carrerPis, this.finalDates.carrerPorta];
+
+          for (var _i2 = 0; _i2 < carrerDetall.length; _i2++) {
+            if (this.objectPost.cartes_trucades.detall_localitzacio == "" && carrerDetall[_i2] != null) {
+              this.objectPost.cartes_trucades.detall_localitzacio = carrerDetall[_i2];
+            } else if (this.objectPost.cartes_trucades.detall_localitzacio != "" && carrerDetall[_i2] != null) {
+              this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carrerDetall[_i2];
+            }
+          }
+
+          break;
+
+        case 2:
+          //Punt Singular
+          this.objectPost.cartes_trucades.descripcio_localitzacio = this.finalDates.puntSingularNom;
+          this.objectPost.cartes_trucades.detall_localitzacio = null;
+          break;
+
+        case 3:
+          //Entitat Població
+          this.objectPost.cartes_trucades.descripcio_localitzacio = null;
+          this.objectPost.cartes_trucades.detall_localitzacio = null;
+          break;
+
+        case 4:
+          //Carretera
+          //Nom carretera
+          this.objectPost.cartes_trucades.descripcio_localitzacio = this.finalDates.carreteraNom; //Punt kilometric + sentit
+
+          this.objectPost.cartes_trucades.detall_localitzacio = "";
+          var carreteraDetall = [this.finalDates.carreteraPuntKilometric, this.finalDates.carreteraSentit];
+
+          for (var _i3 = 0; _i3 < carreteraDetall.length; _i3++) {
+            if (this.objectPost.cartes_trucades.detall_localitzacio == "" && carreteraDetall[_i3] != null) {
+              this.objectPost.cartes_trucades.detall_localitzacio = carreteraDetall[_i3];
+            } else if (this.objectPost.cartes_trucades.detall_localitzacio != "" && carreteraDetall[_i3] != null) {
+              this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carreteraDetall[_i3];
+            }
+          }
+
+          break;
+
+        case 5:
+          //Provincia
+          this.objectPost.cartes_trucades.provincies_id = this.finalDates.idAltreProvincia; //id_comarca? base de datos
+
+          this.objectPost.cartes_trucades.municipis_id = null;
+          this.objectPost.cartes_trucades.descripcio_localitzacio = this.finalDates.provinciaMunicipi;
+          this.objectPost.cartes_trucades.detall_localitzacio = null;
+          break;
+      }
+
+      this.objectPost.cartes_trucades.altres_ref_localitzacio = this.finalDates.detallsLocation; //Tipificacion emeregncia
+
+      this.objectPost.cartes_trucades.incidents_id = this.finalDates.idIncident; //Nota comuna
+
+      this.objectPost.cartes_trucades.nota_comuna = this.finalDates.notaComuna; // debugger;
+
+      this.objectPost.cartes_trucades.expedients_id = null; //Obtener response | cuando se crea uno
+
+      this.objectPost.cartes_trucades.usuaris_id = 1; //Provisional
+
       var vueThis = this;
-      axios.post("/dades_personals", vueThis.dades_personals).then(function (response) {
+      axios.post("/cartes_trucades_view", vueThis.objectPost).then(function (response) {
         console.log(response);
       })["catch"](function (error) {
         console.log(error.response.status);
         console.log(error.response.data);
-      });
+      }); // debugger;
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     //Datos Personales
     this.$eventFinal.$on("recojer-telefono", function (telefono) {
       if (telefono != "" && telefono != null) {
-        _this.finalDates.telefono = telefono;
+        _this2.finalDates.telefono = telefono;
       } else {
-        _this.finalDates.telefono = null;
+        _this2.finalDates.telefono = null;
       }
     });
     this.$eventFinal.$on("recojer-procedencia", function (procedencia) {
       if (procedencia != "" && procedencia != null) {
-        _this.finalDates.procedencia = procedencia;
+        _this2.finalDates.procedencia = procedencia;
       } else {
-        _this.finalDates.procedencia = null;
+        _this2.finalDates.procedencia = null;
       }
     });
     this.$eventFinal.$on("recojer-id-municipi-trucada", function (idMunicipiTrucada) {
       if (idMunicipiTrucada == 0) {
-        _this.finalDates.idMunicipiTrucada = null;
+        _this2.finalDates.idMunicipiTrucada = null;
       } else {
-        _this.finalDates.idMunicipiTrucada = idMunicipiTrucada;
+        _this2.finalDates.idMunicipiTrucada = idMunicipiTrucada;
       }
     });
     this.$eventFinal.$on("recojer-adreca", function (adreca) {
       if (adreca != "" && adreca != null) {
-        _this.finalDates.adreca = adreca;
+        _this2.finalDates.adreca = adreca;
       } else {
-        _this.finalDates.adreca = null;
+        _this2.finalDates.adreca = null;
+      }
+    });
+    this.$eventFinal.$on("recojer-origen-llamada", function (origenLlamada) {
+      if (origenLlamada != "" && origenLlamada != null) {
+        _this2.finalDates.origenLlamada = origenLlamada;
+      } else {
+        _this2.finalDates.origenLlamada = null;
       }
     });
     this.$eventFinal.$on("recojer-antecedentes", function (antecedentes) {
       if (antecedentes != "" && antecedentes != null) {
-        _this.finalDates.antecedentes = antecedentes;
+        _this2.finalDates.antecedentes = antecedentes;
       } else {
-        _this.finalDates.antecedentes = null;
+        _this2.finalDates.antecedentes = null;
       }
     });
     this.$eventFinal.$on("recojer-guardarInformacion", function (guardarInformacion) {
       if (guardarInformacion == null) {
-        _this.finalDates.guardarInformacion = false;
+        _this2.finalDates.guardarInformacion = false;
       } else {
-        _this.finalDates.guardarInformacion = guardarInformacion;
+        _this2.finalDates.guardarInformacion = guardarInformacion;
       }
     }); //Tipus localització
 
     this.$eventFinal.$on("recojer-id-tipus-location", function (idTipusLocation) {
       if (idTipusLocation == 0) {
-        _this.finalDates.idTipusLocation = null;
+        _this2.finalDates.idTipusLocation = null;
       } else {
-        _this.finalDates.idTipusLocation = idTipusLocation;
+        _this2.finalDates.idTipusLocation = idTipusLocation;
       }
     });
     this.$eventFinal.$on("recojer-catalonia", function (catalonia) {
       if (catalonia == null) {
-        _this.finalDates.catalonia = false;
+        _this2.finalDates.catalonia = false;
       } else {
-        _this.finalDates.catalonia = catalonia;
+        _this2.finalDates.catalonia = catalonia;
       }
     });
     this.$eventFinal.$on("recojer-id-provincia-location", function (idProvinciaLocation) {
       if (idProvinciaLocation == 0) {
-        _this.finalDates.idProvinciaLocation = null;
+        _this2.finalDates.idProvinciaLocation = null;
       } else {
-        _this.finalDates.idProvinciaLocation = idProvinciaLocation;
+        _this2.finalDates.idProvinciaLocation = idProvinciaLocation;
       }
     });
     this.$eventFinal.$on("recojer-id-comarca-location", function (idComarcaLocation) {
       if (idComarcaLocation == 0) {
-        _this.finalDates.idComarcaLocation = null;
+        _this2.finalDates.idComarcaLocation = null;
       } else {
-        _this.finalDates.idComarcaLocation = idComarcaLocation;
+        _this2.finalDates.idComarcaLocation = idComarcaLocation;
       }
     });
     this.$eventFinal.$on("recojer-id-municipi-location", function (idMunicipiLocation) {
       if (idMunicipiLocation == 0) {
-        _this.finalDates.idMunicipiLocation = null;
+        _this2.finalDates.idMunicipiLocation = null;
       } else {
-        _this.finalDates.idMunicipiLocation = idMunicipiLocation;
+        _this2.finalDates.idMunicipiLocation = idMunicipiLocation;
       }
     }); //Carrers
 
     this.$eventFinal.$on("recojer-carrer-tipusDeVia", function (carrertipusDeVia) {
       if (carrertipusDeVia != "" && carrertipusDeVia != null) {
-        _this.finalDates.carrertipusDeVia = carrertipusDeVia;
+        _this2.finalDates.carrertipusDeVia = carrertipusDeVia;
       } else {
-        _this.finalDates.carrertipusDeVia = null;
+        _this2.finalDates.carrertipusDeVia = null;
       }
     });
     this.$eventFinal.$on("recojer-carrer-nom", function (carrerNom) {
       if (carrerNom != "" && carrerNom != null) {
-        _this.finalDates.carrerNom = carrerNom;
+        _this2.finalDates.carrerNom = carrerNom;
       } else {
-        _this.finalDates.carrerNom = null;
+        _this2.finalDates.carrerNom = null;
       }
     });
     this.$eventFinal.$on("recojer-carrer-numero", function (carrerNumero) {
       if (carrerNumero != "" && carrerNumero != null) {
-        _this.finalDates.carrerNumero = carrerNumero;
+        _this2.finalDates.carrerNumero = carrerNumero;
       } else {
-        _this.finalDates.carrerNumero = null;
+        _this2.finalDates.carrerNumero = null;
       }
     });
     this.$eventFinal.$on("recojer-carrer-escala", function (carrerEscala) {
       if (carrerEscala != "" && carrerEscala != null) {
-        _this.finalDates.carrerEscala = carrerEscala;
+        _this2.finalDates.carrerEscala = carrerEscala;
       } else {
-        _this.finalDates.carrerEscala = null;
+        _this2.finalDates.carrerEscala = null;
       }
     });
     this.$eventFinal.$on("recojer-carrer-pis", function (carrerPis) {
       if (carrerPis != "" && carrerPis != null) {
-        _this.finalDates.carrerPis = carrerPis;
+        _this2.finalDates.carrerPis = carrerPis;
       } else {
-        _this.finalDates.carrerPis = null;
+        _this2.finalDates.carrerPis = null;
       }
     });
     this.$eventFinal.$on("recojer-carrer-porta", function (carrerPorta) {
       if (carrerPorta != "" && carrerPorta != null) {
-        _this.finalDates.carrerPorta = carrerPorta;
+        _this2.finalDates.carrerPorta = carrerPorta;
       } else {
-        _this.finalDates.carrerPorta = null;
+        _this2.finalDates.carrerPorta = null;
       }
     }); //Punt Singular
 
     this.$eventFinal.$on("recojer-punt-singular-nom", function (puntSingularNom) {
       if (puntSingularNom != "" && puntSingularNom != null) {
-        _this.finalDates.puntSingularNom = puntSingularNom;
+        _this2.finalDates.puntSingularNom = puntSingularNom;
       } else {
-        _this.finalDates.puntSingularNom = null;
+        _this2.finalDates.puntSingularNom = null;
       }
     }); //Carretera
 
     this.$eventFinal.$on("recojer-carretera-nom", function (carreteraNom) {
       if (carreteraNom != "" && carreteraNom != null) {
-        _this.finalDates.carreteraNom = carreteraNom;
+        _this2.finalDates.carreteraNom = carreteraNom;
       } else {
-        _this.finalDates.carreteraNom = null;
+        _this2.finalDates.carreteraNom = null;
       }
     });
     this.$eventFinal.$on("recojer-carretera-punt-kilometric", function (carreteraPuntKilometric) {
       if (carreteraPuntKilometric != "" && carreteraPuntKilometric != null) {
-        _this.finalDates.carreteraPuntKilometric = carreteraPuntKilometric;
+        _this2.finalDates.carreteraPuntKilometric = carreteraPuntKilometric;
       } else {
-        _this.finalDates.carreteraPuntKilometric = null;
+        _this2.finalDates.carreteraPuntKilometric = null;
       }
     });
     this.$eventFinal.$on("recojer-carretera-sentit", function (carreteraSentit) {
       if (carreteraSentit != "" && carreteraSentit != null) {
-        _this.finalDates.carreteraSentit = carreteraSentit;
+        _this2.finalDates.carreteraSentit = carreteraSentit;
       } else {
-        _this.finalDates.carreteraSentit = null;
+        _this2.finalDates.carreteraSentit = null;
       }
     }); //Provincia
 
     this.$eventFinal.$on("recojer-id-otra-provincia", function (idAltreProvincia) {
       if (idAltreProvincia == 0) {
-        _this.finalDates.idAltreProvincia = null;
+        _this2.finalDates.idAltreProvincia = null;
       } else {
-        _this.finalDates.idAltreProvincia = idAltreProvincia;
+        _this2.finalDates.idAltreProvincia = idAltreProvincia;
       }
     });
     this.$eventFinal.$on("recojer-provincia-municipi", function (provinciaMunicipi) {
       if (provinciaMunicipi != "" && provinciaMunicipi != null) {
-        _this.finalDates.provinciaMunicipi = provinciaMunicipi;
+        _this2.finalDates.provinciaMunicipi = provinciaMunicipi;
       } else {
-        _this.finalDates.provinciaMunicipi = null;
+        _this2.finalDates.provinciaMunicipi = null;
       }
     }); //Otros
 
     this.$eventFinal.$on("recojer-detalls-location", function (detallsLocation) {
       if (detallsLocation != "" && detallsLocation != null) {
-        _this.finalDates.detallsLocation = detallsLocation;
+        _this2.finalDates.detallsLocation = detallsLocation;
       } else {
-        _this.finalDates.detallsLocation = null;
+        _this2.finalDates.detallsLocation = null;
       }
     }); //Emergencia
 
     this.$eventFinal.$on("recojer-id-tipo-incident", function (idTipoIncident) {
       if (idTipoIncident == 0) {
-        _this.finalDates.idTipoIncident = null;
+        _this2.finalDates.idTipoIncident = null;
       } else {
-        _this.finalDates.idTipoIncident = idTipoIncident;
+        _this2.finalDates.idTipoIncident = idTipoIncident;
       }
     });
     this.$eventFinal.$on("recojer-id-incident", function (idIncident) {
       if (idIncident == 0) {
-        _this.finalDates.idIncident = null;
+        _this2.finalDates.idIncident = null;
       } else {
-        _this.finalDates.idIncident = idIncident;
+        _this2.finalDates.idIncident = idIncident;
       }
     }); //Nota Comuna
 
     this.$eventFinal.$on("recojer-nota-comuna", function (notaComuna) {
       if (notaComuna != "" && notaComuna != null) {
-        _this.finalDates.notaComuna = notaComuna;
+        _this2.finalDates.notaComuna = notaComuna;
       } else {
-        _this.finalDates.notaComuna = null;
+        _this2.finalDates.notaComuna = null;
       }
     }); //Time Section
 
     this.$eventFinal.$on("recojer-fecha", function (fecha) {
-      _this.finalDates.fecha = fecha;
+      _this2.finalDates.fecha = fecha;
     });
     this.$eventFinal.$on("recojer-hora", function (hora) {
-      _this.finalDates.hora = hora;
+      _this2.finalDates.hora = hora;
     });
     this.$eventFinal.$on("recojer-tiempo", function (tiempo) {
-      _this.finalDates.tiempo = tiempo;
+      _this2.finalDates.tiempo = tiempo;
+    });
+    this.$eventFinal.$on("recojer-tiempo-segundos", function (timeSeconds) {
+      _this2.finalDates.timeSeconds = timeSeconds;
     });
     this.$eventFinal.$on("recojer-operador", function (operador) {
-      _this.finalDates.operador = operador;
+      _this2.finalDates.operador = operador;
     });
   }
 });
@@ -7117,6 +7303,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7287,13 +7475,24 @@ __webpack_require__.r(__webpack_exports__);
       start: false,
       data: "08/03/2022",
       hora: "16:28:00",
-      operador: "001"
+      operador: "001",
+      timeSeconds: 0
     };
   },
   created: function created() {
     var today = new Date();
     var dia = today.getDate();
+
+    if (dia <= 9) {
+      dia = "0" + dia;
+    }
+
     var mes = today.getMonth() + 1;
+
+    if (mes <= 9) {
+      mes = "0" + mes;
+    }
+
     var year = today.getFullYear();
     this.data = dia + "/" + mes + "/" + year;
     this.updateHour();
@@ -7305,6 +7504,11 @@ __webpack_require__.r(__webpack_exports__);
       var hour = today.getHours().toString();
       var minut = today.getMinutes().toString();
       var second = today.getSeconds().toString();
+
+      if (second <= 9) {
+        second = "0" + second;
+      }
+
       this.hora = hour + ":" + minut + ":" + second;
     }
   },
@@ -7350,6 +7554,8 @@ __webpack_require__.r(__webpack_exports__);
             vueThis.time = vueThis.time.substring(0, vueThis.time.length - 1);
             vueThis.time = vueThis.time.concat(lastCharacterInt);
           }
+
+          vueThis.timeSeconds++;
         }, 1000);
       }
     });
@@ -7364,6 +7570,9 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventFinal.$on("obtener-operador", function (message) {
       _this.$eventFinal.$emit("recojer-operador", _this.operador);
+    });
+    this.$eventFinal.$on("obtener-tiempo-segundos", function (message) {
+      _this.$eventFinal.$emit("recojer-tiempo-segundos", _this.timeSeconds);
     });
   }
 });
@@ -7748,6 +7957,7 @@ Vue.prototype.$v111 = "#t=59,73";
 Vue.prototype.$inputTelefon = "inputTelefon";
 Vue.prototype.$inputProcedencia = "inputProcedencia";
 Vue.prototype.$inputAdreca = "inputAdreca";
+Vue.prototype.$inputOrigen = "inputOrigen";
 Vue.prototype.$checkSaveInformation = "checkSaveInformation";
 Vue.prototype.$checkCatalunya = "checkCatalunya";
 Vue.prototype.$inputTipusDeVia = "inputTipusDeVia";
@@ -35425,16 +35635,23 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "finishSection" } }, [
-    _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-      _vm._v("Cancelar"),
-    ]),
+    _c(
+      "button",
+      {
+        staticClass: "button",
+        class: _vm.disabledButton == true ? "buttonDisabled" : "",
+        attrs: { type: "button", disabled: _vm.disabledButton },
+      },
+      [_vm._v("Cancelar")]
+    ),
     _vm._v(" "),
     _c(
       "button",
       {
         staticClass: "button",
+        class: _vm.disabledButton == true ? "buttonDisabled" : "",
         staticStyle: { "margin-left": "10px" },
-        attrs: { type: "button" },
+        attrs: { type: "button", disabled: _vm.disabledButton },
         on: { click: _vm.clickFinish },
       },
       [_vm._v("Finalitzar")]
@@ -35827,6 +36044,14 @@ var render = function () {
         _vm._v(" "),
         _c("data-input", {
           attrs: { name: "Adreça", idInput: this.$inputAdreca, small: "" },
+        }),
+        _vm._v(" "),
+        _c("data-input", {
+          attrs: {
+            name: "Origen llamada",
+            idInput: this.$inputOrigen,
+            small: "",
+          },
         }),
         _vm._v(" "),
         _c(

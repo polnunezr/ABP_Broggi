@@ -28,6 +28,8 @@
 
             <data-input name="Adreça" :idInput="this.$inputAdreca" small></data-input>
 
+            <data-input name="Origen llamada" :idInput="this.$inputOrigen" small></data-input>
+
             <div class="row" style="margin-top: 40px">
                 <div class="col">
                     <div class="form-floating">

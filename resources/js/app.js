@@ -67,6 +67,7 @@ Vue.prototype.$v111="#t=59,73"
 Vue.prototype.$inputTelefon="inputTelefon"
 Vue.prototype.$inputProcedencia="inputProcedencia"
 Vue.prototype.$inputAdreca="inputAdreca"
+Vue.prototype.$inputOrigen="inputOrigen"
 Vue.prototype.$checkSaveInformation="checkSaveInformation"
 
 Vue.prototype.$checkCatalunya="checkCatalunya"

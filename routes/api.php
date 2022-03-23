@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\Api\ProvinciaController;
 use App\Http\Controllers\Api\ComarcaController;
-use App\Http\Controllers\Api\CartaTrucadaController;
 use App\Http\Controllers\Api\TipusIncidentController;
 use App\Http\Controllers\Api\TipusLocalitzacioController;
 use App\Http\Controllers\Api\ExpedientController;
 use App\Http\Controllers\Api\DadaPersonalController;
+use App\Http\Controllers\Api\CartaTrucadaController;
+use App\Http\Controllers\Api\CartaTrucadaView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResource("cartes_trucades_view", CartaTrucadaView::class);
+
+Route::apiResource("cartes_trucades", CartaTrucadaController::class);
 
 Route::apiResource("dades_personals", DadaPersonalController::class);
 

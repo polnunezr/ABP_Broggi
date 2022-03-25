@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <data-check name="Guardar informació" :idCheck="this.$checkSaveInformation"></data-check>
+            <data-check name="Guardar informació" :idCheck="this.$checkSaveInformation" checked></data-check>
 
 
         </div>

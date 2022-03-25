@@ -50,10 +50,16 @@ body {
 }
 
 .colApart:hover{
-    border-radius: 0px 10px 10px 0px;
+    /* border-radius: 0px 10px 10px 0px;
     box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
 -webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
--moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+-moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75); */
+    /* box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
+    -webkit-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
+    -moz-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76); */
+    transform: scale(1.1);
+    transition: 0.5s;
+    cursor: pointer;
 }
 
 .pApart {
@@ -101,16 +107,64 @@ body {
     margin-right: 20px;
 }
 .colRelationSection {
-    height: 17vh;
-    min-height: 175px;
+    /* height: 17vh;
+    min-height: 175px; */
     margin-right: 20px;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding-top: 60px;
+    padding-bottom: 60px;
 }
 .colFinishSection {
     height: 150px;
     margin-right: 20px;
 }
+
+#backdropRelation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0,0,0,0.3);
+    z-index: 300;
+}
+
+#relationModal {
+    position: absolute;
+    width: 1400px;
+    height: 700px;
+    top: calc(50% - 350px);
+    left: calc(50% - 700px);
+    background-color: #f2c49b;
+    z-index: 400;
+    padding: 100px;
+
+}
+
+#closeModal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    z-index: 400;
+    cursor: pointer;
+}
+#closeModal:hover {
+    color: white;
+    background-color: #f29b9b;
+}
+
+
+#divTableExpedient {
+    overflow-y: scroll;
+    max-height: 500px;
+}
+
+
+.table, .table td{
+    border-color: black;
+}
+
 
 input, textarea {
     background-color: #f0f0f2;
@@ -145,11 +199,22 @@ h4 {
     color: #fff;
 
 }
+.buttonClick {
+    background-color: #D962A3;
+    border-color: #D962A3;
+}
+
+.buttonClick:hover{
+    box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+-webkit-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+-moz-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+}
+
 .buttonDisabled {
     background-color: gray;
 }
 
-.button:hover{
+.buttonNormal:hover{
     box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
 -webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
 -moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);

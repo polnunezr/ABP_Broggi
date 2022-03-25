@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CartaTrucada;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 class CartaTrucadaController extends Controller
 {
@@ -14,7 +15,8 @@ class CartaTrucadaController extends Controller
      */
     public function index()
     {
-        //
+        return view("cartaTrucada.index");
+        // Route::view('/cartes_trucades',"cartaTrucada.index");
     }
 
     /**

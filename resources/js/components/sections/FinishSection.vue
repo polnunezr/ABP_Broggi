@@ -1,8 +1,8 @@
 <template>
     <div id="finishSection">
-        <button type="button" class="button" :disabled="disabledButton"
+        <button type="button" class="button buttonNormal" :disabled="disabledButton"
         v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Cancelar</button>
-        <button type="button" class="button" style="margin-left: 10px" v-on:click="clickFinish"
+        <button type="button" class="button buttonNormal" style="margin-left: 10px" v-on:click="getCartesTrucada"
         :disabled="disabledButton" v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Finalitzar</button>
     </div>
 </template>
@@ -89,24 +89,41 @@
                     },
                 },
                 cartesTrucadesArray: [],
-                disabledButton: true
+                disabledButton: false
             }
         },
         created() {
-            let vueThis = this
+            // let vueThis = this
+
+            //     axios
+            //     .get("/cartes_trucades")
+            //     .then(response => {
+            //         vueThis.cartesTrucadesArray = response.data;
+            //         vueThis.disabledButton = false
+            //     })
+            //     .catch(error => {
+            //         console.log(error)
+            //     })
+            //     .finally(() => this.loading = false)
+        },
+        methods: {
+            getCartesTrucada() {
+                let vueThis = this
 
                 axios
                 .get("/cartes_trucades")
                 .then(response => {
+                    console.log(response)
                     vueThis.cartesTrucadesArray = response.data;
-                    vueThis.disabledButton = false
+                    // vueThis.disabledButton = false
+
+                    vueThis.clickFinish();
                 })
                 .catch(error => {
                     console.log(error)
                 })
                 .finally(() => this.loading = false)
-        },
-        methods: {
+            },
             clickFinish() {
                 //Datos Personales
                 this.$eventFinal.$emit("obtener-telefono","telefono");

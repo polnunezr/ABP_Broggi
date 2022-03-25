@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\CartesTrucadesResource;
+use App\Http\Resources\ExpedientEstatResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExpedientResource extends JsonResource
@@ -15,12 +15,21 @@ class ExpedientResource extends JsonResource
      */
     public function toArray($request)
     {
+
+        // return parent::toArray($request);
+        // return [
+        //     "id" => $this->id,
+        //     "data_creacio" => $this->data_creacio,
+        //     "data_ultima_modificacio" => $this->data_creacio,
+        //     "estats_expedients_id" => $this->estats_expedients_id,
+        //     "cartesTrucada" => CartesTrucadesResource::collection($this->cartesTrucada)
+        // ];
         return [
             "id" => $this->id,
             "data_creacio" => $this->data_creacio,
             "data_ultima_modificacio" => $this->data_creacio,
             "estats_expedients_id" => $this->estats_expedients_id,
-            "cartesTrucada" => CartesTrucadesResource::collection($this->cartesTrucada)
+            "estat_expedient" => $this->estatExpedient
         ];
     }
 }

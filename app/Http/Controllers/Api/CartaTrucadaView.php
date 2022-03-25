@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\CartesTrucadesResource;
+use App\Http\Controllers\CartaTrucadaController;
 
 class CartaTrucadaView extends Controller
 {
@@ -20,7 +21,7 @@ class CartaTrucadaView extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -57,9 +58,9 @@ class CartaTrucadaView extends Controller
         $dades_personals["telefon"] != null) {
             //Data personal no relacionada pero datos rellenados | insert dades_personals
             $dadaPersonal = new DadaPersonal();
-            $dadaPersonal["telefon"] = $dades_personals["telefon"];
-            $dadaPersonal["adreca"] = $dades_personals["adreca"];
-            $dadaPersonal["antecedents"] = $dades_personals["antecedents"];
+            $dadaPersonal->telefon = $dades_personals["telefon"];
+            $dadaPersonal->adreca = $dades_personals["adreca"];
+            $dadaPersonal->antecedents= $dades_personals["antecedents"];
 
             $insertDadaPersonal = true;
 
@@ -67,17 +68,17 @@ class CartaTrucadaView extends Controller
         }
         else {
             //Data personal relacionada
-            $cartaTrucada["dades_personals_id"] = $idDadaPersonal;
+            $cartaTrucada->dades_personals_id = $idDadaPersonal;
         }
 
         //Expedient
         $expedient = null;
         $insertExpedient = false;
-        if($expedients->id != null) {
+        if($expedients["id"] == null) {
             $expedient = new Expedient();
-            $expedient["data_creacio"] = $expedients["data_creacio"];
-            $expedient["data_ultima_modificacio"] = $expedients["data_ultima_modificacio"];
-            $expedient["estats_expedients_id"] = $expedients["estats_expedients_id"];
+            $expedient->data_creacio = $expedients["data_creacio"];
+            $expedient->data_ultima_modificacio = $expedients["data_ultima_modificacio"];
+            $expedient->estats_expedients_id = $expedients["estats_expedients_id"];
 
             //insert expedient
 
@@ -86,32 +87,32 @@ class CartaTrucadaView extends Controller
             //$cartaTrucada->expedients_id = idExpedient
         }
         else {
-            $cartaTrucada->expedients_id = $expedients->id;
+            $cartaTrucada->expedients_id = $expedients["id"];
         }
 
         // temps_trucada
 
-        $cartaTrucada["codi_trucada"] = $cartes_trucades["codi_trucada"];
-        $cartaTrucada["data_hora"] = $cartes_trucades["data_hora"];
-        $cartaTrucada["temps_trucada"] = $cartes_trucades["temps_trucada"];
+        $cartaTrucada->codi_trucada = $cartes_trucades["codi_trucada"];
+        $cartaTrucada->data_hora = $cartes_trucades["data_hora"];
+        $cartaTrucada->temps_trucada = $cartes_trucades["temps_trucada"];
         //dades personals id -> obtenido
-        $cartaTrucada["telefon"] = $cartes_trucades["telefon"];
-        $cartaTrucada->procedencia_trucada = $cartes_trucades->procedencia_trucada;
-        $cartaTrucada->origen_trucada = $cartes_trucades->origen_trucada;
-        $cartaTrucada->nom_trucada = $cartes_trucades->nom_trucada;
-        $cartaTrucada->municipis_id_trucada = $cartes_trucades->municipis_id_trucada;
-        $cartaTrucada->adreca_trucada = $cartes_trucades->adreca_trucada;
-        $cartaTrucada->fora_catalunya = $cartes_trucades->fora_catalunya;
-        $cartaTrucada->provincies_id = $cartes_trucades->provincies_id;
-        $cartaTrucada->municipis_id = $cartes_trucades->municipis_id;
-        $cartaTrucada->tipus_localitzacions_id = $cartes_trucades->tipus_localitzacions_id;
-        $cartaTrucada->descripcio_localitzacio = $cartes_trucades->descripcio_localitzacio;
-        $cartaTrucada->detall_localitzacio = $cartes_trucades->detall_localitzacio;
-        $cartaTrucada->altres_ref_localitzacio = $cartes_trucades->altres_ref_localitzacio;
-        $cartaTrucada->incidents_id = $cartes_trucades->incidents_id;
-        $cartaTrucada->nota_comuna = $cartes_trucades->nota_comuna;
+        $cartaTrucada->telefon = $cartes_trucades["telefon"];
+        $cartaTrucada->procedencia_trucada = $cartes_trucades["procedencia_trucada"];
+        $cartaTrucada->origen_trucada = $cartes_trucades["origen_trucada"];
+        $cartaTrucada->nom_trucada = $cartes_trucades["nom_trucada"];
+        $cartaTrucada->municipis_id_trucada = $cartes_trucades["municipis_id_trucada"];
+        $cartaTrucada->adreca_trucada = $cartes_trucades["adreca_trucada"];
+        $cartaTrucada->fora_catalunya = $cartes_trucades["fora_catalunya"];
+        $cartaTrucada->provincies_id = $cartes_trucades["provincies_id"];
+        $cartaTrucada->municipis_id = $cartes_trucades["municipis_id"];
+        $cartaTrucada->tipus_localitzacions_id = $cartes_trucades["tipus_localitzacions_id"];
+        $cartaTrucada->descripcio_localitzacio = $cartes_trucades["descripcio_localitzacio"];
+        $cartaTrucada->detall_localitzacio = $cartes_trucades["detall_localitzacio"];
+        $cartaTrucada->altres_ref_localitzacio = $cartes_trucades["altres_ref_localitzacio"];
+        $cartaTrucada->incidents_id = $cartes_trucades["incidents_id"];
+        $cartaTrucada->nota_comuna = $cartes_trucades["nota_comuna"];
         //expedients id -> obtenido
-        $cartaTrucada->usuaris_id = $cartes_trucades->usuaris_id;
+        $cartaTrucada->usuaris_id = $cartes_trucades["usuaris_id"];
 
         DB::beginTransaction();
 
@@ -127,9 +128,11 @@ class CartaTrucadaView extends Controller
             $cartaTrucada->save();
 
             DB::commit();
-            $response = (new CartesTrucadesResource($cartaTrucada))
-                    ->response()
-                    ->setStatusCode(201);
+            // $response = (new CartesTrucadesResource($cartaTrucada))
+            //         ->response()
+            //         ->setStatusCode(201);
+            $response = redirect()->action([CartaTrucadaController::class,"index"]);
+
         }
         catch(QueryException $ex) {
             DB::rollBack();

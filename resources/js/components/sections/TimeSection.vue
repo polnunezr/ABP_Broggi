@@ -2,7 +2,7 @@
     <div class="col col-3 colTimeExit">
         <div class="row">
             <div class="col col-4">
-                <button type="button" class="button">Sortir</button>
+                <button type="button" class="button buttonNormal">Sortir</button>
             </div>
             <div class="col-6 colSection colTime">
 

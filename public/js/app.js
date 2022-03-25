@@ -5584,6 +5584,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5594,7 +5595,9 @@ __webpack_require__.r(__webpack_exports__);
       emergency: "Emergencia",
       communeNote: "Nota comuna",
       relationExpedient: "Relacionar Expedient",
-      interactiveVideo: "video"
+      interactiveVideo: "video",
+      modalOpen: false,
+      expedients: []
     };
   },
   mounted: function mounted() {
@@ -5602,6 +5605,21 @@ __webpack_require__.r(__webpack_exports__);
 
     this.$eventTime.$on("change-section", function (section) {
       _this.selectSection = section;
+    });
+    this.$eventRelation.$on("open-valor-modal", function (message) {
+      var vueThis = _this;
+      axios.get("/expedients").then(function (response) {
+        vueThis.expedients = response.data;
+        vueThis.$eventRelation.$emit("get-expedients-in-section", response.data);
+        vueThis.modalOpen = true;
+      })["catch"](function (error) {
+        console.log(error);
+      })["finally"](function () {
+        return _this.loading = false;
+      });
+    });
+    this.$eventRelation.$on("close-modal", function (message) {
+      _this.modalOpen = false;
     });
   }
 });
@@ -5669,7 +5687,7 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-guardarInformacion", function (message) {
       if (_this.idCheck == _this.$checkSaveInformation) {
         // console.log(this.checkValue)
-        _this.$eventFinal.$emit("recojer-guardarInformacion", _this.checkValue);
+        _this.$eventFinal.$emit("recojer-guardarInformacion", _this.checkValueChecked);
       }
     });
     this.$eventFinal.$on("obtener-catalonia", function (message) {
@@ -6548,23 +6566,37 @@ __webpack_require__.r(__webpack_exports__);
         }
       },
       cartesTrucadesArray: [],
-      disabledButton: true
+      disabledButton: false
     };
   },
-  created: function created() {
-    var _this = this;
-
-    var vueThis = this;
-    axios.get("/cartes_trucades").then(function (response) {
-      vueThis.cartesTrucadesArray = response.data;
-      vueThis.disabledButton = false;
-    })["catch"](function (error) {
-      console.log(error);
-    })["finally"](function () {
-      return _this.loading = false;
-    });
+  created: function created() {// let vueThis = this
+    //     axios
+    //     .get("/cartes_trucades")
+    //     .then(response => {
+    //         vueThis.cartesTrucadesArray = response.data;
+    //         vueThis.disabledButton = false
+    //     })
+    //     .catch(error => {
+    //         console.log(error)
+    //     })
+    //     .finally(() => this.loading = false)
   },
   methods: {
+    getCartesTrucada: function getCartesTrucada() {
+      var _this = this;
+
+      var vueThis = this;
+      axios.get("/cartes_trucades").then(function (response) {
+        console.log(response);
+        vueThis.cartesTrucadesArray = response.data; // vueThis.disabledButton = false
+
+        vueThis.clickFinish();
+      })["catch"](function (error) {
+        console.log(error);
+      })["finally"](function () {
+        return _this.loading = false;
+      });
+    },
     clickFinish: function clickFinish() {
       //Datos Personales
       this.$eventFinal.$emit("obtener-telefono", "telefono");
@@ -7412,6 +7444,116 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    expedients: {
+      type: [Array],
+      require: true
+    }
+  },
+  data: function data() {
+    return {
+      idClick: null
+    };
+  },
+  methods: {
+    clickCloseModal: function clickCloseModal() {
+      this.$eventRelation.$emit("send-id-button", this.idClick);
+      this.$eventRelation.$emit("close-modal", "closeModal");
+    },
+    btnRelacionarClick: function btnRelacionarClick(idButton) {
+      var buttons = this.$refs.btns;
+
+      if (this.idClick != null) {
+        if (this.idClick != idButton) {
+          for (var i = 0; i < buttons.length; i++) {
+            if (parseInt(buttons[i].id) == this.idClick) {
+              buttons[i].className = "button buttonNormal";
+              buttons[i].innerHTML = "Relacionar";
+            }
+          }
+
+          for (var _i = 0; _i < buttons.length; _i++) {
+            if (parseInt(buttons[_i].id) == idButton) {
+              buttons[_i].className = "button buttonClick";
+              buttons[_i].innerHTML = "Relacionat";
+              this.idClick = idButton;
+            }
+          }
+        } else {
+          for (var _i2 = 0; _i2 < buttons.length; _i2++) {
+            if (parseInt(buttons[_i2].id) == this.idClick) {
+              buttons[_i2].className = "button buttonNormal";
+              buttons[_i2].innerHTML = "Relacionar";
+              this.idClick = null;
+            }
+          }
+        }
+      } else {
+        for (var _i3 = 0; _i3 < buttons.length; _i3++) {
+          if (parseInt(buttons[_i3].id) == idButton) {
+            buttons[_i3].className = "button buttonClick";
+            buttons[_i3].innerHTML = "Relacionat";
+            this.idClick = idButton;
+          }
+        }
+      }
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js& ***!
@@ -7432,7 +7574,56 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      expedients: [],
+      idClick: null,
+      relation: false,
+      relationText: null
+    };
+  },
+  methods: {
+    clickRelation: function clickRelation() {
+      this.$eventRelation.$emit("open-valor-modal", "modal");
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventRelation.$on("get-expedients-in-section", function (expedients) {
+      _this.expedients = expedients;
+    });
+    this.$eventRelation.$on("send-id-button", function (idClick) {
+      _this.idClick = idClick;
+
+      if (_this.idClick != null) {
+        _this.relation = true;
+        _this.$refs.textrelation.innerHTML = "Nº Expedient " + idClick;
+      } else {
+        _this.relation = false;
+        _this.relationText = null;
+        _this.$refs.textrelation.innerHTML = "";
+      }
+    });
+  }
+});
 
 /***/ }),
 
@@ -7977,6 +8168,7 @@ Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
 Vue.prototype.$eventCheck = new Vue();
+Vue.prototype.$eventRelation = new Vue();
 Vue.prototype.$eventFinal = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
@@ -7989,6 +8181,7 @@ Vue.component("agency-section", (__webpack_require__(/*! ./components/sections/A
 Vue.component("emergency-section", (__webpack_require__(/*! ./components/sections/EmergencySection.vue */ "./resources/js/components/sections/EmergencySection.vue")["default"]));
 Vue.component("commune-note-section", (__webpack_require__(/*! ./components/sections/CommuneNoteSection.vue */ "./resources/js/components/sections/CommuneNoteSection.vue")["default"]));
 Vue.component("relation-section", (__webpack_require__(/*! ./components/sections/RelationSection.vue */ "./resources/js/components/sections/RelationSection.vue")["default"]));
+Vue.component("relation-modal", (__webpack_require__(/*! ./components/sections/RelationModalSection.vue */ "./resources/js/components/sections/RelationModalSection.vue")["default"]));
 Vue.component("video-section", (__webpack_require__(/*! ./components/sections/videoSection/VideoSection.vue */ "./resources/js/components/sections/videoSection/VideoSection.vue")["default"]));
 Vue.component("backdrop-video", (__webpack_require__(/*! ./components/sections/videoSection/BackdropVideo.vue */ "./resources/js/components/sections/videoSection/BackdropVideo.vue")["default"]));
 Vue.component("backdrop-video-button", (__webpack_require__(/*! ./components/sections/videoSection/BackdropVideoButton.vue */ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue")["default"]));
@@ -33562,6 +33755,45 @@ component.options.__file = "resources/js/components/sections/PersonalSection.vue
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/RelationModalSection.vue":
+/*!*******************************************************************!*\
+  !*** ./resources/js/components/sections/RelationModalSection.vue ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RelationModalSection.vue?vue&type=template&id=3f10f43a& */ "./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&");
+/* harmony import */ var _RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RelationModalSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.render,
+  _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/sections/RelationModalSection.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/RelationSection.vue":
 /*!**************************************************************!*\
   !*** ./resources/js/components/sections/RelationSection.vue ***!
@@ -34059,6 +34291,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************!*\
+  !*** ./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationModalSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************!*\
   !*** ./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js& ***!
@@ -34409,6 +34657,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a& ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationModalSection.vue?vue&type=template&id=3f10f43a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da&":
 /*!*********************************************************************************************!*\
   !*** ./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da& ***!
@@ -34547,6 +34812,11 @@ var render = function () {
   return _c(
     "div",
     [
+      _c("relation-modal", {
+        style: _vm.modalOpen == true ? "display: block;" : "display: none;",
+        attrs: { expedients: _vm.expedients },
+      }),
+      _vm._v(" "),
       _vm.selectSection != _vm.interactiveVideo
         ? _c("finish-section")
         : _vm._e(),
@@ -35426,9 +35696,11 @@ var staticRenderFns = [
               "col col-2 d-flex justify-content-center align-items-center",
           },
           [
-            _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-              _vm._v("Afegir"),
-            ]),
+            _c(
+              "button",
+              { staticClass: "button buttonNormal", attrs: { type: "button" } },
+              [_vm._v("Afegir")]
+            ),
           ]
         ),
       ]
@@ -35444,9 +35716,11 @@ var staticRenderFns = [
         staticClass: "col col-2 d-flex justify-content-center align-items-end",
       },
       [
-        _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-          _vm._v("Mapa"),
-        ]),
+        _c(
+          "button",
+          { staticClass: "button buttonNormal", attrs: { type: "button" } },
+          [_vm._v("Mapa")]
+        ),
       ]
     )
   },
@@ -35638,7 +35912,7 @@ var render = function () {
     _c(
       "button",
       {
-        staticClass: "button",
+        staticClass: "button buttonNormal",
         class: _vm.disabledButton == true ? "buttonDisabled" : "",
         attrs: { type: "button", disabled: _vm.disabledButton },
       },
@@ -35648,11 +35922,11 @@ var render = function () {
     _c(
       "button",
       {
-        staticClass: "button",
+        staticClass: "button buttonNormal",
         class: _vm.disabledButton == true ? "buttonDisabled" : "",
         staticStyle: { "margin-left": "10px" },
         attrs: { type: "button", disabled: _vm.disabledButton },
-        on: { click: _vm.clickFinish },
+        on: { click: _vm.getCartesTrucada },
       },
       [_vm._v("Finalitzar")]
     ),
@@ -36096,6 +36370,7 @@ var render = function () {
           attrs: {
             name: "Guardar informació",
             idCheck: this.$checkSaveInformation,
+            checked: "",
           },
         }),
       ],
@@ -36104,6 +36379,104 @@ var render = function () {
   ])
 }
 var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "backdropRelation" } }, [
+    _c("div", { attrs: { id: "relationModal" } }, [
+      _c(
+        "div",
+        {
+          staticClass: "d-flex align-items-center justify-content-center",
+          attrs: { id: "closeModal" },
+          on: { click: _vm.clickCloseModal },
+        },
+        [_c("i", { staticClass: "fa fa-times fa-lg" })]
+      ),
+      _vm._v(" "),
+      _c("div", { attrs: { id: "divTableExpedient" } }, [
+        _c("table", { staticClass: "table table-hover" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.expedients, function (expedient) {
+              return _c("tr", { key: expedient.id }, [
+                _c("th", { attrs: { scope: "row" } }, [
+                  _vm._v(_vm._s(expedient.id)),
+                ]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(expedient.data_creacio))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(expedient.data_ultima_modificacio))]),
+                _vm._v(" "),
+                _c("td", [_vm._v(_vm._s(expedient.estat_expedient.estat))]),
+                _vm._v(" "),
+                _c("td", [
+                  _c(
+                    "button",
+                    {
+                      ref: "btns",
+                      refInFor: true,
+                      staticClass: "button buttonNormal",
+                      attrs: { id: expedient.id, type: "button" },
+                      on: {
+                        click: function ($event) {
+                          return _vm.btnRelacionarClick(expedient.id)
+                        },
+                      },
+                    },
+                    [_vm._v("Relacionar")]
+                  ),
+                ]),
+              ])
+            }),
+            0
+          ),
+        ]),
+      ]),
+    ]),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("ID")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Data Creació")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [
+          _vm._v("Data última Modificació"),
+        ]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Estats expedients")]),
+      ]),
+    ])
+  },
+]
 render._withStripped = true
 
 
@@ -36126,29 +36499,47 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
+    _c("div", { staticClass: "col col-8 colSection colRelationSection " }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col" }, [
+          _c(
+            "button",
+            {
+              staticClass: "button buttonNormal",
+              attrs: { type: "button" },
+              on: { click: _vm.clickRelation },
+            },
+            [_vm._v("Relacionar expedient")]
+          ),
+        ]),
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "row", staticStyle: { "margin-top": "40px" } }, [
+        _c("div", { staticClass: "col col-6" }, [
+          _c("p", {
+            ref: "textrelation",
+            style: _vm.relation == true ? "display: block;" : "display: none;",
+          }),
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col col-6" }, [
+          _c(
+            "button",
+            {
+              staticClass: "button buttonClick",
+              style:
+                _vm.relation == true ? "display: block;" : "display: none;",
+              attrs: { type: "button" },
+            },
+            [_vm._v("Desrelacionar")]
+          ),
+        ]),
+      ]),
+    ]),
+  ])
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "col col-8 colSection colRelationSection d-flex justify-content-start align-items-center",
-        },
-        [
-          _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-            _vm._v("Relacionar expedient"),
-          ]),
-        ]
-      ),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -36202,9 +36593,11 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col col-4" }, [
-      _c("button", { staticClass: "button", attrs: { type: "button" } }, [
-        _vm._v("Sortir"),
-      ]),
+      _c(
+        "button",
+        { staticClass: "button buttonNormal", attrs: { type: "button" } },
+        [_vm._v("Sortir")]
+      ),
     ])
   },
 ]

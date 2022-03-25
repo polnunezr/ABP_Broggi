@@ -1,5 +1,6 @@
 <template>
     <div>
+        <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients"></relation-modal>
         <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
         <div class="container-fluid">
             <div class="row">
@@ -54,12 +55,37 @@
                 emergency: "Emergencia",
                 communeNote: "Nota comuna",
                 relationExpedient: "Relacionar Expedient",
-                interactiveVideo: "video"
+                interactiveVideo: "video",
+                modalOpen: false,
+                expedients: []
             }
         },
         mounted() {
             this.$eventTime.$on("change-section", section => {
                 this.selectSection = section
+            })
+
+            this.$eventRelation.$on("open-valor-modal", message => {
+
+                let vueThis = this;
+
+                axios
+                .get("/expedients")
+                .then(response => {
+                    vueThis.expedients = response.data
+                    vueThis.$eventRelation.$emit("get-expedients-in-section",response.data);
+                    vueThis.modalOpen = true
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => this.loading = false)
+
+
+            })
+
+            this.$eventRelation.$on("close-modal", message => {
+                this.modalOpen = false
 
             })
         }

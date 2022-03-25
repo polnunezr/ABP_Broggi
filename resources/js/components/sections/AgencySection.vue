@@ -12,7 +12,7 @@
                     <input type="text" class="form-control">
                 </div>
                 <div class="col col-2 d-flex justify-content-center align-items-center">
-                    <button type="button" class="button">Afegir</button>
+                    <button type="button" class="button buttonNormal">Afegir</button>
                 </div>
             </div>
             <div class="row" style="margin-top: 20px">
@@ -20,7 +20,7 @@
                     <textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>
                 </div>
                 <div class="col col-2 d-flex justify-content-center align-items-end">
-                    <button type="button" class="button">Mapa</button>
+                    <button type="button" class="button buttonNormal">Mapa</button>
                 </div>
 
             </div>

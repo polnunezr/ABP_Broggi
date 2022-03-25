@@ -48,7 +48,7 @@
             this.$eventFinal.$on("obtener-guardarInformacion", message => {
                 if(this.idCheck == this.$checkSaveInformation) {
                     // console.log(this.checkValue)
-                    this.$eventFinal.$emit("recojer-guardarInformacion",this.checkValue)
+                    this.$eventFinal.$emit("recojer-guardarInformacion",this.checkValueChecked)
                 }
             })
 

@@ -101,7 +101,11 @@ Vue.prototype.$eventSelect = new Vue()
 
 Vue.prototype.$eventCheck = new Vue()
 
+Vue.prototype.$eventRelation = new Vue()
+
 Vue.prototype.$eventFinal = new Vue()
+
+
 
 
 
@@ -126,6 +130,8 @@ Vue.component("emergency-section", require("./components/sections/EmergencySecti
 Vue.component("commune-note-section", require("./components/sections/CommuneNoteSection.vue").default);
 
 Vue.component("relation-section", require("./components/sections/RelationSection.vue").default);
+
+Vue.component("relation-modal", require("./components/sections/RelationModalSection.vue").default);
 
 Vue.component("video-section", require("./components/sections/videoSection/VideoSection.vue").default);
 

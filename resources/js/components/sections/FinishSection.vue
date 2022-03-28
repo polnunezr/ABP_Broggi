@@ -1,6 +1,6 @@
 <template>
     <div id="finishSection">
-        <button type="button" class="button buttonNormal" :disabled="disabledButton"
+        <button type="button" class="button buttonNormal" :disabled="disabledButton" v-on:click="clickCancel"
         v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Cancelar</button>
         <button type="button" class="button buttonNormal" style="margin-left: 10px" v-on:click="getCartesTrucada"
         :disabled="disabledButton" v-bind:class = "disabledButton == true ? 'buttonDisabled' : ''">Finalitzar</button>
@@ -19,7 +19,6 @@
                     antecedentes: null,
                     origenLlamada: null,
                     guardarInformacion: false,
-
                     idTipusLocation: 1,
                     catalonia: true,
                     idProvinciaLocation: null,
@@ -48,7 +47,10 @@
                     hora: null,
                     tiempo: null,
                     timeSeconds: null,
-                    operador: null
+                    operador: null,
+
+                    expedientId: null,
+                    dadaPersonalId: null
 
                 },
                 objectPost: {
@@ -79,7 +81,8 @@
                         id: null,
                         telefon: null,
                         adreca: null,
-                        antecedents: null
+                        antecedents: null,
+                        guardar: true
                     },
                     expedients: {
                         id: null,
@@ -108,6 +111,7 @@
         },
         methods: {
             getCartesTrucada() {
+                this.disabledButton = true
                 let vueThis = this
 
                 axios
@@ -121,10 +125,12 @@
                 })
                 .catch(error => {
                     console.log(error)
+                    vueThis.disabledButton = false
                 })
                 .finally(() => this.loading = false)
             },
             clickFinish() {
+
                 //Datos Personales
                 this.$eventFinal.$emit("obtener-telefono","telefono");
                 this.$eventFinal.$emit("obtener-procedencia","procedencia");
@@ -181,32 +187,79 @@
                 this.$eventFinal.$emit("obtener-operador","operador");
                 this.$eventFinal.$emit("obtener-tiempo-segundos","timeSeconds");
 
+                //Expedient relation
+
+                this.$eventFinal.$emit("obtener-id-expedient","expedient");
+
+                //Dada personal relation
+
+                this.$eventFinal.$emit("obtener-id-dada-personal","dada-personal");
+
                 this.crearCartaTrucada()
             },
             crearCartaTrucada() {
 
+                let insertCartaTrucada = true;
+                let mensajeAlert = []
+                let mensaje = {
+                    id: null,
+                    text: null
+                }
+
+
                 //dades_personals
+                if(this.finalDates.telefono == null) {
+                    insertCartaTrucada = false
+                    this.objectPost.dades_personals.telefon = null
+                    mensaje.id = 1
+                    mensaje.text = "Introduzca el numero de telefono!"
+                    mensajeAlert.push(Object.assign({}, mensaje));
+                    //Cuando se cambia los datos del objeto, también se en el array
+                    //Esta funcion sube una copia del objeto, por lo tanto cuando se cambie los datos del objeto original
+                    //no se cambiara los objetos del array
+                    //overflow -> Javascript pushing objects into array changes entire array
+                }
+
+                //Dades personals
+
                 this.objectPost.dades_personals.telefon = this.finalDates.telefono
-                if(this.finalDates.guardarInformacion) {
+
+                if(this.finalDates.dadaPersonalId != null) {
+                    this.objectPost.dades_personals.id = this.finalDates.dadaPersonalId
+                    this.objectPost.dades_personals.telefon = null
+                    this.objectPost.dades_personals.adreca = null
+                    this.objectPost.dades_personals.antecedents = null
+                    this.objectPost.dades_personals.guardar = null;
+                }
+                else {
+                    if(!this.finalDates.guardarInformacion) {
+                    this.objectPost.dades_personals.guardar = false;
+                    }
+                    else {
+                        this.objectPost.dades_personals.guardar = true;
+                    }
                     this.objectPost.dades_personals.adreca = this.finalDates.adreca
                     this.objectPost.dades_personals.antecedents = this.finalDates.antecedentes
                 }
+
+                //expedients
+                //0000-00-00 00:00:00
+
+                if(this.finalDates.expedientId != null) {
+                    this.objectPost.expedients.id = this.finalDates.expedientId
+                }
                 else {
-                    this.objectPost.dades_personals.adreca = null
-                    this.objectPost.dades_personals.antecedents = null
+                    let fecha = this.finalDates.fecha;
+                    let fechaSplit = fecha.split("/")
+                    fecha = fechaSplit[2] + "-" +fechaSplit[1] + "-" +fechaSplit[0]
+
+                    this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora
+                    this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora
+                    this.objectPost.expedients.estats_expedients_id = 1
                 }
 
 
 
-                //expedients
-                //0000-00-00 00:00:00
-                let fecha = this.finalDates.fecha;
-                let fechaSplit = fecha.split("/")
-                fecha = fechaSplit[2] + "-" +fechaSplit[1] + "-" +fechaSplit[0]
-
-                this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora
-                this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora
-                this.objectPost.expedients.estats_expedients_id = 1
 
                 //cartes_trucades
 
@@ -234,18 +287,10 @@
 
                 this.objectPost.cartes_trucades.telefon = this.finalDates.telefono
 
-                if(this.finalDates.guardarInformacion) {
-                    this.objectPost.cartes_trucades.procedencia_trucada= this.finalDates.procedencia
-                    this.objectPost.cartes_trucades.origen_trucada= this.finalDates.origenLlamada
-                    this.objectPost.cartes_trucades.municipis_id_trucada= this.finalDates.idMunicipiTrucada
-                    this.objectPost.cartes_trucades.adreca_trucada= this.finalDates.adreca
-                }
-                else {
-                    this.objectPost.cartes_trucades.procedencia_trucada= null
-                    this.objectPost.cartes_trucades.origen_trucada= null
-                    this.objectPost.cartes_trucades.municipis_id_trucada= null
-                    this.objectPost.cartes_trucades.adreca_trucada= null
-                }
+                this.objectPost.cartes_trucades.procedencia_trucada= this.finalDates.procedencia
+                this.objectPost.cartes_trucades.origen_trucada= this.finalDates.origenLlamada
+                this.objectPost.cartes_trucades.municipis_id_trucada= this.finalDates.idMunicipiTrucada
+                this.objectPost.cartes_trucades.adreca_trucada= this.finalDates.adreca
 
                 this.objectPost.cartes_trucades.nom_trucada = this.objectPost.cartes_trucades.codi_trucada //?
 
@@ -330,6 +375,24 @@
                 this.objectPost.cartes_trucades.incidents_id = this.finalDates.idIncident
 
                 //Nota comuna
+
+                if(this.finalDates.notaComuna == null) {
+                    insertCartaTrucada = false
+                    this.objectPost.cartes_trucades.nota_comuna = null
+                    if(mensajeAlert.length > 0) {
+                        mensaje.id = 2;
+                        mensaje.text = "Introduzca la nota comúna!"
+                        mensajeAlert.push(Object.assign({}, mensaje));
+                    }
+                    else {
+                        mensaje.id = 1;
+                        mensaje.text = "Introduzca la nota comúna!"
+                        mensajeAlert.push(Object.assign({}, mensaje));
+                    }
+
+
+                }
+
                 this.objectPost.cartes_trucades.nota_comuna = this.finalDates.notaComuna
 
                 // debugger;
@@ -340,17 +403,67 @@
 
                 let vueThis = this
 
-                axios
-                .post("/cartes_trucades_view",vueThis.objectPost)
-                .then(function(response) {
-                    console.log(response)
+                if(insertCartaTrucada) {
+                    axios
+                    .post("/cartes_trucades_view",vueThis.objectPost)
+                    .then(function(response) {
+                        console.log(response)
+                        vueThis.$eventAlert.$emit("open-alert-carta-insert",
+                        [
+                        {
+                            id: 1,
+                            text: "Carta de llamada añadida correctamente"
+                        }
+                        ]
+                        );
 
-                }).catch(function(error) {
-                    console.log(error.response.status)
-                    console.log(error.response.data)
-                })
+                        vueThis.clearAll();
+                        vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                        vueThis.disabledButton = false;
+
+                    }).catch(function(error) {
+                        console.log(error.response.status)
+                        console.log(error.response.data)
+                        vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                        vueThis.disabledButton = false;
+                    })
+                }
+                else {
+                    this.$eventAlert.$emit("open-alert",mensajeAlert);
+                    this.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                    this.disabledButton = false;
+                }
+
 
                 // debugger;
+            },
+            clickCancel() {
+                this.disabledButton = true
+                this.clearAll();
+                this.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                this.disabledButton = false
+            },
+            clearAll() {
+                this.$eventClear.$emit("clear-input-text","input");
+                this.$eventClear.$emit("clear-select-personal","select-dades-personals");
+                this.$eventClear.$emit("clear-antecedents","antecedents");
+                this.$eventClear.$emit("clear-check-information-save","check-information-save");
+                this.$eventClear.$emit("clear-select-location","select-location");
+                this.$eventClear.$emit("clear-check-catalonia","check-catalonia");
+                this.$eventClear.$emit("clear-select-tipus-location","select-tipus-location");
+                this.$eventClear.$emit("clear-select-other-provincies","select-other-provincies");
+                this.$eventClear.$emit("clear-detalls","detalls");
+                this.$eventClear.$emit("clear-select-emergencia","select-location");
+                this.$eventClear.$emit("clear-nota-comuna","nota-comuna");
+                this.$eventClear.$emit("clear-relation-expedient","relation-expedient");
+
+                this.$eventClear.$emit("clear-time","time");
+
+                this.objectPost.expedients.id = null;
+                if(this.objectPost.dades_personals.id != null) {
+                    this.$eventClear.$emit("clear-dades-personals","dades-personals");
+                }
+                this.objectPost.dades_personals.id = null;
             }
         },
         mounted() {
@@ -647,6 +760,18 @@
 
             this.$eventFinal.$on("recojer-operador", operador => {
                 this.finalDates.operador = operador
+            })
+
+            //Relation expedient
+
+            this.$eventFinal.$on("recojer-id-expedient", idExpedient => {
+                this.finalDates.expedientId = idExpedient
+            })
+
+            //Relation dades personals
+
+            this.$eventFinal.$on("recojer-id-dada-personal", dadaPersonalId => {
+                this.finalDates.dadaPersonalId = dadaPersonalId
             })
 
         }

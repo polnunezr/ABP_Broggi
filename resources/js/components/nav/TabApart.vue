@@ -14,17 +14,18 @@
     export default {
         data() {
             return {
-                personalData: "Dades Personals",
-                locate: "Localitzacio",
-                agency: "Agencies",
-                emergency: "Emergencia",
-                communeNote: "Nota comuna",
-                relationExpedient: "Relacionar Expedient",
-                interactiveVideo: "video"
+                personalData: this.$dadesPersonals,
+                locate: this.$locate,
+                agency: this.$agency,
+                emergency: this.$emergency,
+                communeNote:this.$communeNote,
+                relationExpedient: this.$relationExpedient,
+                interactiveVideo: this.$interactiveVideo,
             }
         },
         methods: {
             changeSection(section) {
+                this.$eventAlert.$emit("change-section",section);
                 this.$eventTime.$emit("change-section",section);
             }
         }

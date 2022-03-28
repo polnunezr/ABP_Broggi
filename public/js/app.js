@@ -5585,19 +5585,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      selectSection: "Dades Personals",
-      personalData: "Dades Personals",
-      locate: "Localitzacio",
-      agency: "Agencies",
-      emergency: "Emergencia",
-      communeNote: "Nota comuna",
-      relationExpedient: "Relacionar Expedient",
-      interactiveVideo: "video",
+      selectSection: this.$dadesPersonals,
+      personalData: this.$dadesPersonals,
+      locate: this.$locate,
+      agency: this.$agency,
+      emergency: this.$emergency,
+      communeNote: this.$communeNote,
+      relationExpedient: this.$relationExpedient,
+      interactiveVideo: this.$interactiveVideo,
       modalOpen: false,
-      expedients: []
+      expedients: [],
+      alertShow: false,
+      alertDanger: true,
+      mensajeAlert: [],
+      marginTopLocation: 30,
+      telefon: null,
+      municipiLocation: null,
+      incident: null
     };
   },
   mounted: function mounted() {
@@ -5605,13 +5619,39 @@ __webpack_require__.r(__webpack_exports__);
 
     this.$eventTime.$on("change-section", function (section) {
       _this.selectSection = section;
+
+      if (section == _this.$locate && _this.alertShow == false) {
+        _this.marginTopLocation = 30;
+      }
     });
     this.$eventRelation.$on("open-valor-modal", function (message) {
       var vueThis = _this;
+      _this.expedients = []; //telefon
+
+      _this.$eventExpedient.$emit("obtener-telefono", "telefono"); //municipi locate
+
+
+      _this.$eventExpedient.$emit("obtener-id-municipi-location", "municipilocation"); //emergency
+
+
+      _this.$eventExpedient.$emit("obtener-id-incident", "incident");
+
+      var expedientCheck = false;
       axios.get("/expedients").then(function (response) {
-        vueThis.expedients = response.data;
-        vueThis.$eventRelation.$emit("get-expedients-in-section", response.data);
+        for (var i = 0; i < response.data.length; i++) {
+          for (var j = 0; j < response.data[i].cartesTrucada.length; j++) {
+            if ((response.data[i].cartesTrucada[j].telefon == vueThis.telefon && response.data[i].cartesTrucada[j].telefon != null || response.data[i].cartesTrucada[j].municipis_id == vueThis.municipiLocation && response.data[i].cartesTrucada[j].municipis_id != null || response.data[i].cartesTrucada[j].incidents_id == vueThis.incident && response.data[i].cartesTrucada[j].incidents_id != null) && vueThis.expedientCheck == false) {
+              vueThis.expedients.push(response.data[i]);
+              vueThis.expedientCheck = true;
+            }
+          }
+
+          vueThis.expedientCheck = false;
+        } // vueThis.$eventRelation.$emit("get-expedients-in-section",response.data);
+
+
         vueThis.modalOpen = true;
+        vueThis.$eventRelation.$emit("edit-view-modal", "modal");
       })["catch"](function (error) {
         console.log(error);
       })["finally"](function () {
@@ -5621,6 +5661,52 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventRelation.$on("close-modal", function (message) {
       _this.modalOpen = false;
     });
+    this.$eventAlert.$on("open-alert", function (mensajeAlert) {
+      // this.$selectSection = this.selectSection
+      _this.alertDanger = true;
+      _this.mensajeAlert = mensajeAlert;
+      _this.alertShow = true;
+    });
+    this.$eventAlert.$on("close-alert", function (message) {
+      _this.alertDanger = true;
+      _this.mensajeAlert = [];
+      _this.alertShow = false;
+      _this.marginTopLocation = 30;
+    });
+    this.$eventAlert.$on("change-margin-top-locate", function (marginTop) {
+      _this.marginTopLocation = marginTop;
+    });
+    this.$eventAlert.$on("open-alert-carta-insert", function (mensajeAlert) {
+      _this.alertDanger = false;
+      _this.mensajeAlert = mensajeAlert;
+      _this.alertShow = true;
+    });
+    this.$eventExpedient.$on("recojer-telefono", function (telefono) {
+      if (telefono != "" && telefono != null) {
+        _this.telefon = telefono;
+      } else {
+        _this.telefon = null;
+      }
+    });
+    this.$eventExpedient.$on("recojer-id-municipi-location", function (municipiLocation) {
+      if (municipiLocation == 0) {
+        _this.municipiLocation = null;
+      } else {
+        _this.municipiLocation = municipiLocation;
+      }
+    });
+    this.$eventExpedient.$on("recojer-id-incident", function (incident) {
+      if (incident == 0) {
+        _this.incident = null;
+      } else {
+        _this.incident = incident;
+      }
+    }); // this.$eventAlert.$on("get-section-selected", message => {
+    //     debugger;
+    //     let a = 4
+    //     if(a == 4) {
+    //     }
+    // })
   }
 });
 
@@ -5695,6 +5781,20 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-catalonia", _this.checkValueChecked);
       }
     });
+    this.$eventClear.$on("clear-check-catalonia", function (message) {
+      if (!_this.$refs.checkBox.checked) {
+        _this.$refs.checkBox.checked = true;
+        _this.checkValueChecked = true;
+
+        _this.clickCheck();
+      }
+    });
+    this.$eventClear.$on("clear-check-information-save", function (message) {
+      if (_this.idCheck == _this.$checkSaveInformation) {
+        _this.$refs.checkBox.checked = true;
+        _this.checkValueChecked = true;
+      }
+    });
   }
 });
 
@@ -5763,6 +5863,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
@@ -5778,7 +5880,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      text: null
+      text: null,
+      disabledInput: false
     };
   },
   computed: {
@@ -5808,6 +5911,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
+    },
+    changeInput: function changeInput() {
+      if (this.idInput == this.$inputTelefon) {
+        this.$eventPersonal.$emit("change-input-telefono", this.text);
+      }
     }
   },
   mounted: function mounted() {
@@ -5818,6 +5926,11 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-telefono", _this.text);
       }
     });
+    this.$eventExpedient.$on("obtener-telefono", function (message) {
+      if (_this.idInput == _this.$inputTelefon) {
+        _this.$eventExpedient.$emit("recojer-telefono", _this.text);
+      }
+    });
     this.$eventFinal.$on("obtener-procedencia", function (message) {
       if (_this.idInput == _this.$inputProcedencia) {
         _this.$eventFinal.$emit("recojer-procedencia", _this.text);
@@ -5826,6 +5939,11 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-adreca", function (message) {
       if (_this.idInput == _this.$inputAdreca) {
         _this.$eventFinal.$emit("recojer-adreca", _this.text);
+      }
+    });
+    this.$eventPersonal.$on("disabled-input-adreca", function (disabled) {
+      if (_this.idInput == _this.$inputAdreca) {
+        _this.disabledInput = disabled;
       }
     });
     this.$eventFinal.$on("obtener-origen-llamada", function (message) {
@@ -5886,6 +6004,14 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-provincia-municipi", function (message) {
       if (_this.idInput == _this.$inputProvinciaMunicipi) {
         _this.$eventFinal.$emit("recojer-provincia-municipi", _this.text);
+      }
+    });
+    this.$eventClear.$on("clear-input-text", function (message) {
+      _this.text = null;
+    });
+    this.$eventPersonal.$on("set-adreca", function (adreca) {
+      if (_this.idInput == _this.$inputAdreca) {
+        _this.text = adreca;
       }
     });
   }
@@ -6042,10 +6168,9 @@ __webpack_require__.r(__webpack_exports__);
         case this.$tipusEmergenciaId:
           this.$eventSelect.$emit("change-select-emergencia", this.selectSelectedTipusIncident);
           break;
-
-        case this.$incidentsId:
-          this.$eventSelect.$emit("change-select-incident", parseInt(this.$refs.select.value));
-          break;
+        // case this.$incidentsId:
+        //     this.$eventSelect.$emit("change-select-incident",this.selectSelectedIncident)
+        // break;
       }
     }
   },
@@ -6093,9 +6218,14 @@ __webpack_require__.r(__webpack_exports__);
         _this.selectSelected = option;
       }
     });
-    this.$eventSelect.$on("change-select-option-incident", function (option) {
+    this.$eventSelect.$on("change-select-id-emergencia", function (id) {
+      if (_this.idSelect == _this.$tipusEmergenciaId) {
+        _this.selectSelectedTipusIncident = id;
+      }
+    });
+    this.$eventSelect.$on("change-select-id-incident", function (id) {
       if (_this.idSelect == _this.$incidentsId) {
-        _this.selectSelectedIncident = option;
+        _this.selectSelectedIncident = id;
       }
     });
     this.$eventFinal.$on("obtener-id-municipi-trucada", function (message) {
@@ -6123,6 +6253,11 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-id-municipi-location", _this.selectSelected);
       }
     });
+    this.$eventExpedient.$on("obtener-id-municipi-location", function (message) {
+      if (_this.idSelect == _this.$municipiLocation) {
+        _this.$eventExpedient.$emit("recojer-id-municipi-location", _this.selectSelected);
+      }
+    });
     this.$eventFinal.$on("obtener-id-otra-provincia", function (message) {
       if (_this.idSelect == _this.$provinciaSelectProvincia) {
         _this.$eventFinal.$emit("recojer-id-otra-provincia", _this.selectSelected);
@@ -6138,6 +6273,48 @@ __webpack_require__.r(__webpack_exports__);
         _this.$eventFinal.$emit("recojer-id-incident", _this.selectSelectedIncident);
       }
     });
+    this.$eventExpedient.$on("obtener-id-incident", function (message) {
+      if (_this.idSelect == _this.$incidentsId) {
+        _this.$eventExpedient.$emit("recojer-id-incident", _this.selectSelectedIncident);
+      }
+    });
+    this.$eventClear.$on("clear-select-id-location", function (message) {
+      if (_this.idSelect == _this.$provinciaLocation || _this.idSelect == _this.$comarcaLocation || _this.idSelect == _this.$municipiLocation) {
+        _this.selectSelected = 0;
+      }
+    });
+    this.$eventClear.$on("clear-select-id-personal", function (message) {
+      if (_this.idSelect == _this.$provinciaPersonal || _this.idSelect == _this.$comarcaPersonal || _this.idSelect == _this.$municipiPersonal) {
+        _this.selectSelected = 0;
+      }
+    });
+    this.$eventClear.$on("clear-select-tipus-location", function (message) {
+      if (_this.idSelect == _this.$tipusLocalitzacioId) {
+        _this.selectSelectedTipusLocation = 1;
+
+        _this.$eventSelect.$emit("change-select-localitzacio", 1);
+      }
+    });
+    this.$eventClear.$on("clear-select-other-provincies", function (message) {
+      if (_this.idSelect == _this.$provinciaSelectProvincia) {
+        _this.selectSelected = 0;
+      }
+    }); //Clear
+    // this.$eventClear.$on("clear-select", message => {
+    //     if(this.name == this.$comarca || this.name == this.$provincia
+    //     || this.name == this.$municipi) {
+    //         this.selectSelected = 0
+    //     }
+    //     else if(this.name == this.$tipusLocalitzacio) {
+    //         this.selectSelectedTipusLocation = 1
+    //     }
+    //     else if(this.idSelect == this.$tipusEmergenciaId) {
+    //         this.selectSelectedTipusIncident = 1
+    //     }
+    //     else {
+    //         this.selectSelectedIncident = 1
+    //     }
+    // })
   }
 });
 
@@ -6250,17 +6427,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      personalData: "Dades Personals",
-      locate: "Localitzacio",
-      agency: "Agencies",
-      emergency: "Emergencia",
-      communeNote: "Nota comuna",
-      relationExpedient: "Relacionar Expedient",
-      interactiveVideo: "video"
+      personalData: this.$dadesPersonals,
+      locate: this.$locate,
+      agency: this.$agency,
+      emergency: this.$emergency,
+      communeNote: this.$communeNote,
+      relationExpedient: this.$relationExpedient,
+      interactiveVideo: this.$interactiveVideo
     };
   },
   methods: {
     changeSection: function changeSection(section) {
+      this.$eventAlert.$emit("change-section", section);
       this.$eventTime.$emit("change-section", section);
     }
   }
@@ -6310,6 +6488,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -6319,6 +6500,178 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
+    },
+    buttonClickMap: function buttonClickMap() {}
+  },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$agencyCol;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    mensajeAlert: {
+      type: [Array],
+      require: true
+    },
+    alertDanger: {
+      type: [Boolean],
+      require: true
+    },
+    selectSectionCreate: {
+      type: [String],
+      require: true
+    }
+  },
+  created: function created() {
+    this.changeMargin(this.selectSectionCreate);
+  },
+  data: function data() {
+    return {
+      selectSection: this.$dadesPersonals,
+      marginLeftAlert: 0,
+      marginRightAlert: 0,
+      change: false
+    };
+  },
+  methods: {
+    clickAlert: function clickAlert() {
+      this.$eventAlert.$emit("close-alert", "closeAlert");
+    },
+    changeMargin: function changeMargin(section) {
+      switch (section) {
+        case this.$dadesPersonals:
+          this.marginLeftAlert = 0;
+          this.marginRightAlert = 0;
+          break;
+
+        case this.$locate:
+          this.marginLeftAlert = 6;
+          this.marginRightAlert = 0;
+          this.$eventAlert.$emit("change-margin-top-locate", 0);
+          break;
+
+        case this.$agency:
+          this.marginLeftAlert = 150;
+          this.marginRightAlert = 0;
+          break;
+
+        case this.$emergency:
+          this.marginLeftAlert = 140;
+          this.marginRightAlert = 0;
+          break;
+
+        case this.$communeNote:
+          this.marginLeftAlert = 90;
+          this.marginRightAlert = 0;
+          break;
+
+        case this.$relationExpedient:
+          this.marginLeftAlert = 140;
+          this.marginRightAlert = 0;
+          break;
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    // this.$eventAlert.$on("set-section-selected", section => {
+    //     debugger;
+    //     this.changeMargin(section)
+    //     this.selectSection = section
+    // })
+    this.$eventAlert.$on("change-section", function (section) {
+      // debugger;
+      _this.change = true;
+
+      _this.changeMargin(section);
+
+      _this.selectSection = section;
+    });
+  },
+  computed: {
+    classAlert: function classAlert() {
+      var response;
+
+      if (this.alertDanger == true) {
+        response = "alert-danger";
+      } else {
+        response = "alert-success";
+      }
+
+      return response;
+    },
+    colReturn: function colReturn() {
+      var response = "";
+      var section = "";
+
+      if (!this.change) {
+        section = this.selectSectionCreate;
+      } else {
+        section = this.selectSection;
+      }
+
+      switch (section) {
+        case this.$dadesPersonals:
+          response = this.$dadesPersonalsCol;
+          break;
+
+        case this.$locate:
+          response = this.$locateCol;
+          break;
+
+        case this.$agency:
+          response = this.$agencyCol;
+          break;
+
+        case this.$emergency:
+          response = this.$emergencyCol;
+          break;
+
+        case this.$communeNote:
+          response = this.$communeNoteCol;
+          break;
+
+        case this.$relationExpedient:
+          response = this.$relationExpedientCol;
+          break;
+      }
+
+      return response;
     }
   }
 });
@@ -6357,6 +6710,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -6369,11 +6723,19 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventTime.$emit("start-time", "message");
     }
   },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$communeNoteCol;
+    }
+  },
   mounted: function mounted() {
     var _this = this;
 
     this.$eventFinal.$on("obtener-nota-comuna", function (message) {
       _this.$eventFinal.$emit("recojer-nota-comuna", _this.notaComuna);
+    });
+    this.$eventClear.$on("clear-nota-comuna", function (message) {
+      _this.notaComuna = null;
     });
   }
 });
@@ -6391,6 +6753,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
 //
 //
 //
@@ -6448,23 +6811,46 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this2 = this;
 
+    var idEmergenciaSelect = 1;
+    var idIncidentSelect = 1;
     this.$eventSelect.$on("change-select-emergencia", function (idSelect) {
       for (var i = 0; i < _this2.tipusEmergencia.length; i++) {
         if (_this2.tipusEmergencia[i].id == idSelect) {
+          idEmergenciaSelect = _this2.tipusEmergencia[i].id;
           _this2.incidents = _this2.tipusEmergencia[i].incidents;
-          _this2.incident = _this2.tipusEmergencia[i].incidents[0];
+          idIncidentSelect = _this2.tipusEmergencia[i].incidents[0].id;
         }
       }
 
-      _this2.$eventSelect.$emit("change-select-option-incident", _this2.incident.id);
-    });
-    this.$eventSelect.$on("change-select-incident", function (idSelect) {
-      for (var i = 0; i < _this2.incidents.length; i++) {
-        if (_this2.incidents[i].id == idSelect) {
-          _this2.incident = _this2.incidents[i];
+      _this2.$eventSelect.$emit("change-select-id-emergencia", idEmergenciaSelect);
+
+      _this2.$eventSelect.$emit("change-select-id-incident", idIncidentSelect);
+    }); // this.$eventSelect.$on("change-select-incident", idSelect => {
+    //     let idIncidentSelect = 1;
+    //     for(let i = 0; i < this.incidents.length; i++) {
+    //         if(this.incidents[i].id == idSelect) {
+    //           this.incident = this.incidents[i]
+    //           idIncidentSelect =
+    //         }
+    //     }
+    // })
+
+    this.$eventClear.$on("clear-select-emergencia", function (message) {
+      for (var i = 0; i < _this2.tipusEmergencia.length; i++) {
+        if (_this2.tipusEmergencia[i].id == 1) {
+          _this2.incidents = _this2.tipusEmergencia[i].incidents;
         }
       }
+
+      _this2.$eventSelect.$emit("change-select-id-emergencia", 1);
+
+      _this2.$eventSelect.$emit("change-select-id-incident", 1);
     });
+  },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$emergencyCol;
+    }
   }
 });
 
@@ -6526,7 +6912,9 @@ __webpack_require__.r(__webpack_exports__);
         hora: null,
         tiempo: null,
         timeSeconds: null,
-        operador: null
+        operador: null,
+        expedientId: null,
+        dadaPersonalId: null
       },
       objectPost: {
         cartes_trucades: {
@@ -6556,7 +6944,8 @@ __webpack_require__.r(__webpack_exports__);
           id: null,
           telefon: null,
           adreca: null,
-          antecedents: null
+          antecedents: null,
+          guardar: true
         },
         expedients: {
           id: null,
@@ -6585,6 +6974,7 @@ __webpack_require__.r(__webpack_exports__);
     getCartesTrucada: function getCartesTrucada() {
       var _this = this;
 
+      this.disabledButton = true;
       var vueThis = this;
       axios.get("/cartes_trucades").then(function (response) {
         console.log(response);
@@ -6593,6 +6983,7 @@ __webpack_require__.r(__webpack_exports__);
         vueThis.clickFinish();
       })["catch"](function (error) {
         console.log(error);
+        vueThis.disabledButton = false;
       })["finally"](function () {
         return _this.loading = false;
       });
@@ -6655,30 +7046,66 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventFinal.$emit("obtener-hora", "hora");
       this.$eventFinal.$emit("obtener-tiempo", "tiempo");
       this.$eventFinal.$emit("obtener-operador", "operador");
-      this.$eventFinal.$emit("obtener-tiempo-segundos", "timeSeconds");
+      this.$eventFinal.$emit("obtener-tiempo-segundos", "timeSeconds"); //Expedient relation
+
+      this.$eventFinal.$emit("obtener-id-expedient", "expedient"); //Dada personal relation
+
+      this.$eventFinal.$emit("obtener-id-dada-personal", "dada-personal");
       this.crearCartaTrucada();
     },
     crearCartaTrucada: function crearCartaTrucada() {
-      //dades_personals
+      var insertCartaTrucada = true;
+      var mensajeAlert = [];
+      var mensaje = {
+        id: null,
+        text: null
+      }; //dades_personals
+
+      if (this.finalDates.telefono == null) {
+        insertCartaTrucada = false;
+        this.objectPost.dades_personals.telefon = null;
+        mensaje.id = 1;
+        mensaje.text = "Introduzca el numero de telefono!";
+        mensajeAlert.push(Object.assign({}, mensaje)); //Cuando se cambia los datos del objeto, también se en el array
+        //Esta funcion sube una copia del objeto, por lo tanto cuando se cambie los datos del objeto original
+        //no se cambiara los objetos del array
+        //overflow -> Javascript pushing objects into array changes entire array
+      } //Dades personals
+
+
       this.objectPost.dades_personals.telefon = this.finalDates.telefono;
 
-      if (this.finalDates.guardarInformacion) {
-        this.objectPost.dades_personals.adreca = this.finalDates.adreca;
-        this.objectPost.dades_personals.antecedents = this.finalDates.antecedentes;
-      } else {
+      if (this.finalDates.dadaPersonalId != null) {
+        this.objectPost.dades_personals.id = this.finalDates.dadaPersonalId;
+        this.objectPost.dades_personals.telefon = null;
         this.objectPost.dades_personals.adreca = null;
         this.objectPost.dades_personals.antecedents = null;
+        this.objectPost.dades_personals.guardar = null;
+      } else {
+        if (!this.finalDates.guardarInformacion) {
+          this.objectPost.dades_personals.guardar = false;
+        } else {
+          this.objectPost.dades_personals.guardar = true;
+        }
+
+        this.objectPost.dades_personals.adreca = this.finalDates.adreca;
+        this.objectPost.dades_personals.antecedents = this.finalDates.antecedentes;
       } //expedients
       //0000-00-00 00:00:00
 
 
-      var fecha = this.finalDates.fecha;
-      var fechaSplit = fecha.split("/");
-      fecha = fechaSplit[2] + "-" + fechaSplit[1] + "-" + fechaSplit[0];
-      this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora;
-      this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora;
-      this.objectPost.expedients.estats_expedients_id = 1; //cartes_trucades
+      if (this.finalDates.expedientId != null) {
+        this.objectPost.expedients.id = this.finalDates.expedientId;
+      } else {
+        var fecha = this.finalDates.fecha;
+        var fechaSplit = fecha.split("/");
+        fecha = fechaSplit[2] + "-" + fechaSplit[1] + "-" + fechaSplit[0];
+        this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora;
+        this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora;
+        this.objectPost.expedients.estats_expedients_id = 1;
+      } //cartes_trucades
       //Personal dates
+
 
       var codiTrucadaBig = 0,
           textCodiTrucadaSplit,
@@ -6706,19 +7133,10 @@ __webpack_require__.r(__webpack_exports__);
       this.objectPost.cartes_trucades.dades_personals_id = null; //Obtener response
 
       this.objectPost.cartes_trucades.telefon = this.finalDates.telefono;
-
-      if (this.finalDates.guardarInformacion) {
-        this.objectPost.cartes_trucades.procedencia_trucada = this.finalDates.procedencia;
-        this.objectPost.cartes_trucades.origen_trucada = this.finalDates.origenLlamada;
-        this.objectPost.cartes_trucades.municipis_id_trucada = this.finalDates.idMunicipiTrucada;
-        this.objectPost.cartes_trucades.adreca_trucada = this.finalDates.adreca;
-      } else {
-        this.objectPost.cartes_trucades.procedencia_trucada = null;
-        this.objectPost.cartes_trucades.origen_trucada = null;
-        this.objectPost.cartes_trucades.municipis_id_trucada = null;
-        this.objectPost.cartes_trucades.adreca_trucada = null;
-      }
-
+      this.objectPost.cartes_trucades.procedencia_trucada = this.finalDates.procedencia;
+      this.objectPost.cartes_trucades.origen_trucada = this.finalDates.origenLlamada;
+      this.objectPost.cartes_trucades.municipis_id_trucada = this.finalDates.idMunicipiTrucada;
+      this.objectPost.cartes_trucades.adreca_trucada = this.finalDates.adreca;
       this.objectPost.cartes_trucades.nom_trucada = this.objectPost.cartes_trucades.codi_trucada; //?
       //Localització
 
@@ -6801,6 +7219,21 @@ __webpack_require__.r(__webpack_exports__);
 
       this.objectPost.cartes_trucades.incidents_id = this.finalDates.idIncident; //Nota comuna
 
+      if (this.finalDates.notaComuna == null) {
+        insertCartaTrucada = false;
+        this.objectPost.cartes_trucades.nota_comuna = null;
+
+        if (mensajeAlert.length > 0) {
+          mensaje.id = 2;
+          mensaje.text = "Introduzca la nota comúna!";
+          mensajeAlert.push(Object.assign({}, mensaje));
+        } else {
+          mensaje.id = 1;
+          mensaje.text = "Introduzca la nota comúna!";
+          mensajeAlert.push(Object.assign({}, mensaje));
+        }
+      }
+
       this.objectPost.cartes_trucades.nota_comuna = this.finalDates.notaComuna; // debugger;
 
       this.objectPost.cartes_trucades.expedients_id = null; //Obtener response | cuando se crea uno
@@ -6808,12 +7241,57 @@ __webpack_require__.r(__webpack_exports__);
       this.objectPost.cartes_trucades.usuaris_id = 1; //Provisional
 
       var vueThis = this;
-      axios.post("/cartes_trucades_view", vueThis.objectPost).then(function (response) {
-        console.log(response);
-      })["catch"](function (error) {
-        console.log(error.response.status);
-        console.log(error.response.data);
-      }); // debugger;
+
+      if (insertCartaTrucada) {
+        axios.post("/cartes_trucades_view", vueThis.objectPost).then(function (response) {
+          console.log(response);
+          vueThis.$eventAlert.$emit("open-alert-carta-insert", [{
+            id: 1,
+            text: "Carta de llamada añadida correctamente"
+          }]);
+          vueThis.clearAll();
+          vueThis.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+          vueThis.disabledButton = false;
+        })["catch"](function (error) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          vueThis.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+          vueThis.disabledButton = false;
+        });
+      } else {
+        this.$eventAlert.$emit("open-alert", mensajeAlert);
+        this.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+        this.disabledButton = false;
+      } // debugger;
+
+    },
+    clickCancel: function clickCancel() {
+      this.disabledButton = true;
+      this.clearAll();
+      this.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+      this.disabledButton = false;
+    },
+    clearAll: function clearAll() {
+      this.$eventClear.$emit("clear-input-text", "input");
+      this.$eventClear.$emit("clear-select-personal", "select-dades-personals");
+      this.$eventClear.$emit("clear-antecedents", "antecedents");
+      this.$eventClear.$emit("clear-check-information-save", "check-information-save");
+      this.$eventClear.$emit("clear-select-location", "select-location");
+      this.$eventClear.$emit("clear-check-catalonia", "check-catalonia");
+      this.$eventClear.$emit("clear-select-tipus-location", "select-tipus-location");
+      this.$eventClear.$emit("clear-select-other-provincies", "select-other-provincies");
+      this.$eventClear.$emit("clear-detalls", "detalls");
+      this.$eventClear.$emit("clear-select-emergencia", "select-location");
+      this.$eventClear.$emit("clear-nota-comuna", "nota-comuna");
+      this.$eventClear.$emit("clear-relation-expedient", "relation-expedient");
+      this.$eventClear.$emit("clear-time", "time");
+      this.objectPost.expedients.id = null;
+
+      if (this.objectPost.dades_personals.id != null) {
+        this.$eventClear.$emit("clear-dades-personals", "dades-personals");
+      }
+
+      this.objectPost.dades_personals.id = null;
     }
   },
   mounted: function mounted() {
@@ -7039,6 +7517,14 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventFinal.$on("recojer-operador", function (operador) {
       _this2.finalDates.operador = operador;
+    }); //Relation expedient
+
+    this.$eventFinal.$on("recojer-id-expedient", function (idExpedient) {
+      _this2.finalDates.expedientId = idExpedient;
+    }); //Relation dades personals
+
+    this.$eventFinal.$on("recojer-id-dada-personal", function (dadaPersonalId) {
+      _this2.finalDates.dadaPersonalId = dadaPersonalId;
     });
   }
 });
@@ -7129,7 +7615,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    marginTopLocation: {
+      type: [Number],
+      require: true
+    }
+  },
   data: function data() {
     return {
       title: "Localització",
@@ -7180,6 +7674,24 @@ __webpack_require__.r(__webpack_exports__);
     changeSelectProvincia: function changeSelectProvincia() {
       console.log(2);
       this.provinciesSelect = 2;
+    },
+    resetLoction: function resetLoction() {
+      this.provinciesSelect = 0;
+      this.comarcaSelect = 0;
+
+      for (var i = 0; i < this.provincies.length; i++) {
+        if (this.provincies[i].id == 1) {
+          this.comarques = this.provincies[i].comarques;
+          this.municipis = this.comarques[0].municipis;
+        }
+      }
+
+      this.$eventClear.$emit("clear-select-id-location", "clear");
+    }
+  },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$locateCol;
     }
   },
   mounted: function mounted() {
@@ -7271,6 +7783,61 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventFinal.$on("obtener-detalls-location", function (message) {
       _this2.$eventFinal.$emit("recojer-detalls-location", _this2.detalls);
     });
+    this.$eventClear.$on("clear-select-location", function (message) {
+      _this2.resetLoction();
+    });
+    this.$eventClear.$on("clear-detalls", function (message) {
+      _this2.detalls = null;
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  created: function created() {
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
+    var mapboxClient = mapboxSdk({
+      accessToken: mapboxgl.accessToken
+    });
+    mapboxClient.geocoding.forwardGeocode({
+      query: 'Barcelona',
+      autocomplete: false,
+      limit: 1
+    }).send().then(function (response) {
+      if (!response || !response.body || !response.body.features || !response.body.features.length) {
+        console.error('Invalid response:');
+        console.error(response);
+        return;
+      }
+
+      var feature = response.body.features[0];
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: feature.center,
+        zoom: 10
+      }); // Create a marker and add it to the map.
+
+      new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+      new mapboxgl.query("Madrid").addTo(map);
+    });
   }
 });
 
@@ -7337,6 +7904,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7346,7 +7916,12 @@ __webpack_require__.r(__webpack_exports__);
       municipis: [],
       provinciesSelect: 0,
       comarcaSelect: 0,
-      antecedentes: null
+      antecedentes: null,
+      dadesPersonals: [],
+      telefono: null,
+      disabledAntecedents: false,
+      dadesPersonalsId: null,
+      showCheckSaveInformation: true
     };
   },
   created: function created() {
@@ -7361,12 +7936,8 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       meThis.comarques = meThis.provincies[_this.provinciesSelect].comarques;
-      meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis; // meThis.firstProvincia = meThis.provincies[0]
-      // meThis.firstComarques = meThis.comarques[0]
-      // meThis.firstMunicipis = meThis.municipis[0]
-      // meThis.provincies.shift();
-      // meThis.comarques.shift();
-      // meThis.municipis.shift();
+      meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis;
+      meThis.updateDatosPersonals();
     })["catch"](function (error) {
       console.log(error);
     })["finally"](function () {
@@ -7376,68 +7947,150 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
+    },
+    resetSelectPersonal: function resetSelectPersonal() {
+      this.provinciesSelect = 0;
+      this.comarcaSelect = 0;
+
+      for (var i = 0; i < this.provincies.length; i++) {
+        if (this.provincies[i].id == 1) {
+          this.comarques = this.provincies[i].comarques;
+          this.municipis = this.comarques[0].municipis;
+        }
+      }
+
+      this.$eventClear.$emit("clear-select-id-personal", "clear");
+    },
+    updateDatosPersonals: function updateDatosPersonals() {
+      var _this2 = this;
+
+      var meThis = this;
+      this.dadesPersonals = [];
+      axios.get("/dades_personals").then(function (response) {
+        meThis.dadesPersonals = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      })["finally"](function () {
+        return _this2.loading = false;
+      });
+    },
+    changeInputTelefon: function changeInputTelefon() {
+      var relation = false;
+
+      for (var i = 0; i < this.dadesPersonals.length; i++) {
+        if (this.dadesPersonals[i].telefon == this.telefono) {
+          this.dadesPersonalsId = this.dadesPersonals[i].id;
+          this.$eventPersonal.$emit("set-adreca", this.dadesPersonals[i].adreca);
+          this.antecedentes = this.dadesPersonals[i].antecedents;
+          this.disabledAntecedents = true;
+          this.$eventPersonal.$emit("disabled-input-adreca", true);
+          this.showCheckSaveInformation = false;
+          relation = true;
+        }
+      }
+
+      if (!relation && this.dadesPersonalsId != null) {
+        this.resetDadesPersonals();
+      }
+    },
+    resetDadesPersonals: function resetDadesPersonals() {
+      this.$eventPersonal.$emit("set-adreca", null);
+      this.antecedentes = null;
+      this.disabledAntecedents = false;
+      this.$eventPersonal.$emit("disabled-input-adreca", false);
+      this.dadesPersonalsId = null;
+      this.showCheckSaveInformation = true;
+    }
+  },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$dadesPersonalsCol;
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     this.$eventSelect.$on("change-select-provincia-personal", function (idSelect) {
       var idComarcaSelect = 0;
       var idMunicipiSelect = 0;
-      _this2.provinciesSelect = idSelect;
+      _this3.provinciesSelect = idSelect;
 
-      for (var i = 0; i < _this2.provincies.length; i++) {
-        if (_this2.provincies[i].id == _this2.provinciesSelect) {
-          _this2.comarques = _this2.provincies[i].comarques;
-          idComarcaSelect = _this2.provincies[i].comarques[0].id;
-          _this2.municipis = _this2.provincies[i].comarques[0].municipis;
-          idMunicipiSelect = _this2.provincies[i].comarques[0].municipis[0].id;
+      for (var i = 0; i < _this3.provincies.length; i++) {
+        if (_this3.provincies[i].id == _this3.provinciesSelect) {
+          _this3.comarques = _this3.provincies[i].comarques;
+          idComarcaSelect = _this3.provincies[i].comarques[0].id;
+          _this3.municipis = _this3.provincies[i].comarques[0].municipis;
+          idMunicipiSelect = _this3.provincies[i].comarques[0].municipis[0].id;
         }
       }
 
-      _this2.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
+      _this3.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
 
-      _this2.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
+      _this3.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
     });
     this.$eventSelect.$on("change-select-comarca-personal", function (idSelect) {
       var idProvincia = 0;
       var idMunicipiSelect = 0;
-      _this2.comarcaSelect = idSelect;
+      _this3.comarcaSelect = idSelect;
 
-      for (var i = 0; i < _this2.comarques.length; i++) {
-        if (_this2.comarques[i].id == _this2.comarcaSelect) {
-          _this2.municipis = _this2.comarques[i].municipis;
-          idMunicipiSelect = _this2.comarques[i].municipis[0].id;
-          idProvincia = _this2.comarques[i].provincies_id;
+      for (var i = 0; i < _this3.comarques.length; i++) {
+        if (_this3.comarques[i].id == _this3.comarcaSelect) {
+          _this3.municipis = _this3.comarques[i].municipis;
+          idMunicipiSelect = _this3.comarques[i].municipis[0].id;
+          idProvincia = _this3.comarques[i].provincies_id;
         }
       }
 
-      _this2.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
+      _this3.$eventSelect.$emit("change-select-option-municipi-personal", idMunicipiSelect);
 
-      _this2.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
+      _this3.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
     });
     this.$eventSelect.$on("change-select-municipi-personal", function (idSelect) {
       var idProvincia = 0;
       var idComarcaSelect = 0; // console.log(idSelect)
 
-      for (var i = 0; i < _this2.municipis.length; i++) {
-        if (_this2.municipis[i].id == idSelect) {
-          idComarcaSelect = _this2.municipis[i].comarques_id;
+      for (var i = 0; i < _this3.municipis.length; i++) {
+        if (_this3.municipis[i].id == idSelect) {
+          idComarcaSelect = _this3.municipis[i].comarques_id;
         }
       }
 
-      for (var _i = 0; _i < _this2.comarques.length; _i++) {
-        if (_this2.comarques[_i].id == idComarcaSelect) {
-          idProvincia = _this2.comarques[_i].provincies_id;
+      for (var _i = 0; _i < _this3.comarques.length; _i++) {
+        if (_this3.comarques[_i].id == idComarcaSelect) {
+          idProvincia = _this3.comarques[_i].provincies_id;
         }
       }
 
-      _this2.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
+      _this3.$eventSelect.$emit("change-select-option-comarca-personal", idComarcaSelect);
 
-      _this2.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
+      _this3.$eventSelect.$emit("change-select-option-provincia-personal", idProvincia);
     });
     this.$eventFinal.$on("obtener-antecedentes", function (message) {
-      _this2.$eventFinal.$emit("recojer-antecedentes", _this2.antecedentes);
+      _this3.$eventFinal.$emit("recojer-antecedentes", _this3.antecedentes);
+    });
+    this.$eventClear.$on("clear-select-personal", function (message) {
+      _this3.resetSelectPersonal();
+    });
+    this.$eventClear.$on("clear-antecedents", function (message) {
+      _this3.antecedentes = null;
+    });
+    this.$eventPersonal.$on("update-personal-dates", function (message) {
+      _this3.updateDatosPersonals();
+    });
+    this.$eventPersonal.$on("change-input-telefono", function (telefono) {
+      if (telefono != "" && telefono != null) {
+        _this3.telefono = telefono;
+      } else {
+        _this3.telefono = null;
+      }
+
+      _this3.changeInputTelefon();
+    });
+    this.$eventFinal.$on("obtener-id-dada-personal", function (message) {
+      _this3.$eventFinal.$emit("recojer-id-dada-personal", _this3.dadesPersonalsId);
+    });
+    this.$eventClear.$on("clear-dades-personals", function (message) {
+      _this3.resetDadesPersonals();
     });
   }
 });
@@ -7549,6 +8202,42 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
     }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$eventRelation.$on("unrelate-valor", function (message) {
+      var buttons = _this.$refs.btns;
+
+      if (buttons != null) {
+        for (var i = 0; i < buttons.length; i++) {
+          if (parseInt(buttons[i].id) == _this.idClick) {
+            buttons[i].className = "button buttonNormal";
+            buttons[i].innerHTML = "Relacionar";
+          }
+        }
+      }
+
+      _this.idClick = null;
+    });
+    this.$eventRelation.$on("edit-view-modal", function (message) {
+      _this.$nextTick(function () {
+        var buttons = [];
+
+        if (_this.expedients.length > 0) {
+          if (_this.idClick != null) {
+            buttons = _this.$refs.btns;
+
+            for (var i = 0; i < buttons.length; i++) {
+              if (parseInt(buttons[i].id) == _this.idClick) {
+                buttons[i].className = "button buttonClick";
+                buttons[i].innerHTML = "Relacionat";
+              }
+            }
+          }
+        } else {}
+      });
+    });
   }
 });
 
@@ -7590,6 +8279,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -7602,14 +8293,26 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     clickRelation: function clickRelation() {
       this.$eventRelation.$emit("open-valor-modal", "modal");
+    },
+    cickUnrelate: function cickUnrelate() {
+      this.$eventRelation.$emit("unrelate-valor", "modal");
+      this.relation = false;
+      this.relationText = null;
+      this.$refs.textrelation.innerHTML = "";
+      this.idClick = null;
+    }
+  },
+  computed: {
+    colReturn: function colReturn() {
+      return this.$relationExpedientCol;
     }
   },
   mounted: function mounted() {
     var _this = this;
 
-    this.$eventRelation.$on("get-expedients-in-section", function (expedients) {
-      _this.expedients = expedients;
-    });
+    // this.$eventRelation.$on("get-expedients-in-section", expedients => {
+    //     this.expedients = expedients
+    // })
     this.$eventRelation.$on("send-id-button", function (idClick) {
       _this.idClick = idClick;
 
@@ -7621,6 +8324,12 @@ __webpack_require__.r(__webpack_exports__);
         _this.relationText = null;
         _this.$refs.textrelation.innerHTML = "";
       }
+    });
+    this.$eventClear.$on("clear-relation-expedient", function (expedients) {
+      _this.cickUnrelate();
+    });
+    this.$eventFinal.$on("obtener-id-expedient", function (message) {
+      _this.$eventFinal.$emit("recojer-id-expedient", _this.idClick);
     });
   }
 });
@@ -7667,7 +8376,8 @@ __webpack_require__.r(__webpack_exports__);
       data: "08/03/2022",
       hora: "16:28:00",
       operador: "001",
-      timeSeconds: 0
+      timeSeconds: 0,
+      intervalTime: null
     };
   },
   created: function created() {
@@ -7712,7 +8422,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (!_this.start) {
         _this.start = true;
-        setInterval(function () {
+        _this.intervalTime = setInterval(function () {
           lastCharacter = vueThis.time.substring(vueThis.time.length - 1, vueThis.time.length);
           lastCharacterInt = parseInt(lastCharacter);
 
@@ -7764,6 +8474,15 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventFinal.$on("obtener-tiempo-segundos", function (message) {
       _this.$eventFinal.$emit("recojer-tiempo-segundos", _this.timeSeconds);
+    });
+    this.$eventClear.$on("clear-time", function (message) {
+      if (_this.intervalTime != null) {
+        clearInterval(_this.intervalTime);
+        _this.intervalTime = null;
+        _this.time = "00:00";
+        _this.start = false;
+        _this.timeSeconds = 0;
+      }
     });
   }
 });
@@ -8117,6 +8836,30 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+/*
+personalData: "Dades Personals",
+                locate: "Localitzacio",
+                agency: "Agencies",
+                emergency: "Emergencia",
+                communeNote: "Nota comuna",
+                relationExpedient: "Relacionar Expedient",
+                interactiveVideo: "video"
+*/
+// Vue.prototype.$selectSection="Dades Personals"
+
+Vue.prototype.$dadesPersonals = "Dades Personals";
+Vue.prototype.$locate = "Localitzacio";
+Vue.prototype.$agency = "Agencies";
+Vue.prototype.$emergency = "Emergencia";
+Vue.prototype.$communeNote = "Nota comuna";
+Vue.prototype.$relationExpedient = "Relacionar Expedient";
+Vue.prototype.$interactiveVideo = "video";
+Vue.prototype.$dadesPersonalsCol = "col-11";
+Vue.prototype.$locateCol = "col-11";
+Vue.prototype.$agencyCol = "col-8";
+Vue.prototype.$emergencyCol = "col-8";
+Vue.prototype.$communeNoteCol = "col-9";
+Vue.prototype.$relationExpedientCol = "col-8";
 Vue.prototype.$checkCatalonia = "Catalunya";
 Vue.prototype.$provincia = "Provincia";
 Vue.prototype.$comarca = "Comarca";
@@ -8164,17 +8907,23 @@ Vue.prototype.$inputSentit = "inputSentit";
 Vue.prototype.$provinciaSelectProvincia = "provinciaSelectProvincia";
 Vue.prototype.$inputProvinciaMunicipi = "inputProvinciaMunicipi";
 Vue.prototype.$textAreaDetalls = "textAreaDetalls";
+Vue.prototype.$eventAlert = new Vue();
 Vue.prototype.$eventTime = new Vue();
 Vue.prototype.$eventVideo = new Vue();
 Vue.prototype.$eventSelect = new Vue();
 Vue.prototype.$eventCheck = new Vue();
 Vue.prototype.$eventRelation = new Vue();
-Vue.prototype.$eventFinal = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventFinal = new Vue();
+Vue.prototype.$eventClear = new Vue();
+Vue.prototype.$eventExpedient = new Vue();
+Vue.prototype.$eventPersonal = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
 Vue.component('tab-apart', (__webpack_require__(/*! ./components/nav/TabApart.vue */ "./resources/js/components/nav/TabApart.vue")["default"]));
 Vue.component('apart-navbar', (__webpack_require__(/*! ./components/nav/ApartNavbar.vue */ "./resources/js/components/nav/ApartNavbar.vue")["default"]));
+Vue.component("map-section", (__webpack_require__(/*! ./components/sections/MapSection.vue */ "./resources/js/components/sections/MapSection.vue")["default"]));
 Vue.component("time-section", (__webpack_require__(/*! ./components/sections/TimeSection.vue */ "./resources/js/components/sections/TimeSection.vue")["default"]));
+Vue.component("alert-section", (__webpack_require__(/*! ./components/sections/AlertSection.vue */ "./resources/js/components/sections/AlertSection.vue")["default"]));
 Vue.component("personal-section", (__webpack_require__(/*! ./components/sections/PersonalSection.vue */ "./resources/js/components/sections/PersonalSection.vue")["default"]));
 Vue.component("location-section", (__webpack_require__(/*! ./components/sections/LocationSection.vue */ "./resources/js/components/sections/LocationSection.vue")["default"]));
 Vue.component("agency-section", (__webpack_require__(/*! ./components/sections/AgencySection.vue */ "./resources/js/components/sections/AgencySection.vue")["default"]));
@@ -33560,6 +34309,45 @@ component.options.__file = "resources/js/components/sections/AgencySection.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/AlertSection.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/sections/AlertSection.vue ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AlertSection.vue?vue&type=template&id=3241da0f& */ "./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&");
+/* harmony import */ var _AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AlertSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.render,
+  _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/sections/AlertSection.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/CommuneNoteSection.vue":
 /*!*****************************************************************!*\
   !*** ./resources/js/components/sections/CommuneNoteSection.vue ***!
@@ -33712,6 +34500,45 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/js/components/sections/LocationSection.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/sections/MapSection.vue":
+/*!*********************************************************!*\
+  !*** ./resources/js/components/sections/MapSection.vue ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MapSection.vue?vue&type=template&id=1dd2698f& */ "./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&");
+/* harmony import */ var _MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MapSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.render,
+  _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/sections/MapSection.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -34211,6 +35038,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AlertSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js&":
 /*!******************************************************************************************!*\
   !*** ./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js& ***!
@@ -34272,6 +35115,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LocationSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MapSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -34572,6 +35431,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f& ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AlertSection.vue?vue&type=template&id=3241da0f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e&":
 /*!************************************************************************************************!*\
   !*** ./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e& ***!
@@ -34636,6 +35512,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LocationSection.vue?vue&type=template&id=9bb0998c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f& ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MapSection.vue?vue&type=template&id=1dd2698f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&");
 
 
 /***/ }),
@@ -34812,6 +35705,8 @@ var render = function () {
   return _c(
     "div",
     [
+      _c("map-section"),
+      _vm._v(" "),
       _c("relation-modal", {
         style: _vm.modalOpen == true ? "display: block;" : "display: none;",
         attrs: { expedients: _vm.expedients },
@@ -34842,6 +35737,23 @@ var render = function () {
                     : "col col-10 colCard",
               },
               [
+                _vm.selectSection != _vm.interactiveVideo &&
+                _vm.alertShow == true
+                  ? _c(
+                      "div",
+                      [
+                        _c("alert-section", {
+                          attrs: {
+                            mensajeAlert: _vm.mensajeAlert,
+                            alertDanger: _vm.alertDanger,
+                            selectSectionCreate: _vm.selectSection,
+                          },
+                        }),
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
                   "div",
                   {
@@ -34862,7 +35774,11 @@ var render = function () {
                         ? "display: block;"
                         : "display: none;",
                   },
-                  [_c("location-section")],
+                  [
+                    _c("location-section", {
+                      attrs: { marginTopLocation: _vm.marginTopLocation },
+                    }),
+                  ],
                   1
                 ),
                 _vm._v(" "),
@@ -35149,7 +36065,11 @@ var render = function () {
                 },
               ],
               staticClass: "form-control",
-              attrs: { type: "text", id: _vm.idInput },
+              attrs: {
+                type: "text",
+                id: _vm.idInput,
+                disabled: _vm.disabledInput,
+              },
               domProps: { value: _vm.text },
               on: {
                 click: _vm.startTime,
@@ -35175,6 +36095,7 @@ var render = function () {
               domProps: { value: _vm.text },
               on: {
                 click: _vm.startTime,
+                change: _vm.changeInput,
                 input: function ($event) {
                   if ($event.target.composing) {
                     return
@@ -35327,7 +36248,7 @@ var render = function () {
                 }),
                 0
               )
-            : _vm.name == this.$tipusEmergencia
+            : _vm.idSelect == this.$tipusEmergenciaId
             ? _c(
                 "select",
                 {
@@ -35653,78 +36574,115 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c("div", { staticClass: "col col-8 colSection colAgency" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
-          _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-        ]),
-      ]),
-      _vm._v(" "),
-      _vm._m(0),
-      _vm._v(" "),
-      _c("div", { staticClass: "row", staticStyle: { "margin-top": "20px" } }, [
-        _c("div", { staticClass: "col col-10" }, [
-          _c("textarea", {
-            staticClass: "form-control",
-            attrs: { id: "textAreaAgency" },
-            on: { click: _vm.startTime },
-          }),
-        ]),
-        _vm._v(" "),
-        _vm._m(1),
-      ]),
-    ]),
-  ])
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
+    _c(
       "div",
-      { staticClass: "row", staticStyle: { "margin-top": "20px" } },
+      { staticClass: "col colSection colAgency", class: _vm.colReturn },
       [
-        _c("div", { staticClass: "col col-10" }, [
-          _c("input", { staticClass: "form-control", attrs: { type: "text" } }),
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col" }, [
+            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
+          ]),
         ]),
         _vm._v(" "),
         _c(
           "div",
-          {
-            staticClass:
-              "col col-2 d-flex justify-content-center align-items-center",
-          },
+          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
           [
+            _c("div", { staticClass: "col col-10" }, [
+              _c("textarea", {
+                staticClass: "form-control",
+                attrs: { id: "textAreaAgency" },
+                on: { click: _vm.startTime },
+              }),
+            ]),
+            _vm._v(" "),
             _c(
-              "button",
-              { staticClass: "button buttonNormal", attrs: { type: "button" } },
-              [_vm._v("Afegir")]
+              "div",
+              {
+                staticClass:
+                  "col col-2 d-flex justify-content-center align-items-end",
+              },
+              [
+                _c(
+                  "button",
+                  {
+                    staticClass: "button buttonNormal",
+                    attrs: { type: "button" },
+                    on: { click: _vm.buttonClickMap },
+                  },
+                  [_vm._v("Mapa")]
+                ),
+              ]
             ),
           ]
         ),
       ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "col col-2 d-flex justify-content-center align-items-end",
-      },
-      [
-        _c(
-          "button",
-          { staticClass: "button buttonNormal", attrs: { type: "button" } },
-          [_vm._v("Mapa")]
-        ),
-      ]
-    )
-  },
-]
+    ),
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col colAlert", class: _vm.colReturn }, [
+      _c(
+        "div",
+        {
+          staticClass: "alert alert-dismissible fade show",
+          class: _vm.classAlert,
+          style: {
+            "margin-left": _vm.marginLeftAlert + "px",
+            "margin-right": _vm.marginRightAlert + "px",
+          },
+          attrs: { role: "alert" },
+        },
+        [
+          _vm._l(_vm.mensajeAlert, function (mensajesAlert) {
+            return _c("p", { key: mensajesAlert.id }, [
+              _vm._v(
+                "\n                " +
+                  _vm._s(mensajesAlert.text) +
+                  "\n            "
+              ),
+            ])
+          }),
+          _vm._v(" "),
+          _c("button", {
+            staticClass: "btn-close",
+            attrs: {
+              type: "button",
+              "data-bs-dismiss": "alert",
+              "aria-label": "Close",
+            },
+            on: { click: _vm.clickAlert },
+          }),
+        ],
+        2
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -35748,43 +36706,51 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c("div", { staticClass: "col col-9 colSection colCommuneNote" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
-          _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row", staticStyle: { "margin-top": "20px" } }, [
-        _c("div", { staticClass: "col" }, [
-          _c("div", { staticClass: "form-floating" }, [
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.notaComuna,
-                  expression: "notaComuna",
-                },
-              ],
-              staticClass: "form-control",
-              staticStyle: { height: "200px", resize: "none" },
-              attrs: { id: "textAreaCommuneNote" },
-              domProps: { value: _vm.notaComuna },
-              on: {
-                click: _vm.startTime,
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.notaComuna = $event.target.value
-                },
-              },
-            }),
+    _c(
+      "div",
+      { staticClass: "col colSection colCommuneNote", class: _vm.colReturn },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col" }, [
+            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
           ]),
         ]),
-      ]),
-    ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
+          [
+            _c("div", { staticClass: "col" }, [
+              _c("div", { staticClass: "form-floating" }, [
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.notaComuna,
+                      expression: "notaComuna",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  staticStyle: { height: "200px", resize: "none" },
+                  attrs: { id: "textAreaCommuneNote" },
+                  domProps: { value: _vm.notaComuna },
+                  on: {
+                    click: _vm.startTime,
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.notaComuna = $event.target.value
+                    },
+                  },
+                }),
+              ]),
+            ]),
+          ]
+        ),
+      ]
+    ),
   ])
 }
 var staticRenderFns = []
@@ -35813,7 +36779,7 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-8 colSection colEmergency" },
+      { staticClass: "col colSection colEmergency", class: _vm.colReturn },
       [
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col" }, [
@@ -35915,6 +36881,7 @@ var render = function () {
         staticClass: "button buttonNormal",
         class: _vm.disabledButton == true ? "buttonDisabled" : "",
         attrs: { type: "button", disabled: _vm.disabledButton },
+        on: { click: _vm.clickCancel },
       },
       [_vm._v("Cancelar")]
     ),
@@ -35958,7 +36925,11 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-11 colSection colLocation" },
+      {
+        staticClass: "col colSection colLocation",
+        class: _vm.colReturn,
+        style: { "margin-top": _vm.marginTopLocation + "px" },
+      },
       [
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col colTitle" }, [
@@ -36225,6 +37196,31 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&":
+/*!*******************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f& ***!
+  \*******************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "map" } })
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf&":
 /*!************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf& ***!
@@ -36244,7 +37240,7 @@ var render = function () {
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
     _c(
       "div",
-      { staticClass: "col col-11 colSection colPersonalDates" },
+      { staticClass: "col colSection colPersonalDates", class: _vm.colReturn },
       [
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col colTitle" }, [
@@ -36345,7 +37341,10 @@ var render = function () {
                   ],
                   staticClass: "form-control",
                   staticStyle: { height: "130px", resize: "none" },
-                  attrs: { id: "textAreaAntecedents" },
+                  attrs: {
+                    id: "textAreaAntecedents",
+                    disabled: _vm.disabledAntecedents,
+                  },
                   domProps: { value: _vm.antecedentes },
                   on: {
                     click: _vm.startTime,
@@ -36367,6 +37366,10 @@ var render = function () {
         ),
         _vm._v(" "),
         _c("data-check", {
+          style:
+            _vm.showCheckSaveInformation == true
+              ? "display: block;"
+              : "display: none;",
           attrs: {
             name: "Guardar informació",
             idCheck: this.$checkSaveInformation,
@@ -36500,43 +37503,56 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c("div", { staticClass: "col col-8 colSection colRelationSection " }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
-          _c(
-            "button",
-            {
-              staticClass: "button buttonNormal",
-              attrs: { type: "button" },
-              on: { click: _vm.clickRelation },
-            },
-            [_vm._v("Relacionar expedient")]
-          ),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "row", staticStyle: { "margin-top": "40px" } }, [
-        _c("div", { staticClass: "col col-6" }, [
-          _c("p", {
-            ref: "textrelation",
-            style: _vm.relation == true ? "display: block;" : "display: none;",
-          }),
+    _c(
+      "div",
+      {
+        staticClass: "col colSection colRelationSection",
+        class: _vm.colReturn,
+      },
+      [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col" }, [
+            _c(
+              "button",
+              {
+                staticClass: "button buttonNormal",
+                attrs: { type: "button" },
+                on: { click: _vm.clickRelation },
+              },
+              [_vm._v("Relacionar expedient")]
+            ),
+          ]),
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col col-6" }, [
-          _c(
-            "button",
-            {
-              staticClass: "button buttonClick",
-              style:
-                _vm.relation == true ? "display: block;" : "display: none;",
-              attrs: { type: "button" },
-            },
-            [_vm._v("Desrelacionar")]
-          ),
-        ]),
-      ]),
-    ]),
+        _c(
+          "div",
+          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
+          [
+            _c("div", { staticClass: "col col-6" }, [
+              _c("p", {
+                ref: "textrelation",
+                style:
+                  _vm.relation == true ? "display: block;" : "display: none;",
+              }),
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col col-6" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "button buttonClick",
+                  style:
+                    _vm.relation == true ? "display: block;" : "display: none;",
+                  attrs: { type: "button" },
+                  on: { click: _vm.cickUnrelate },
+                },
+                [_vm._v("Desrelacionar")]
+              ),
+            ]),
+          ]
+        ),
+      ]
+    ),
   ])
 }
 var staticRenderFns = []

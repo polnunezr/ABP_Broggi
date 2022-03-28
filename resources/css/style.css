@@ -5,7 +5,16 @@ body {
     /* background: linear-gradient(145deg, rgba(242,160,160,1) 50%, rgba(217,98,163,1) 100%); */
 
     background-color: gainsboro;
+    margin: 0;
+    padding: 0;
+}
 
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 500;
 }
 
 .colCard {
@@ -28,6 +37,24 @@ body {
     padding-right: 30px;
     padding-bottom: 30px;
 
+}
+
+.colAlert {
+    padding-top: 30px;
+    padding-bottom: 0px;
+    padding-left: 40px;
+    margin-right: 20px;
+}
+
+.alert-danger {
+    color: white;
+    background-color: #D962A3;
+    border-color: #f5c2c7;
+}
+
+.alert {
+    padding-top: 30px;
+    padding-left: 40px;
 }
 
 .colTitle {
@@ -81,11 +108,13 @@ body {
 .colLocation {
     /* height: 40vh;
     min-height: 387px; */
+    /* margin-top: 30px; */
+    /*?¿?¿?¡'*/
 }
 
 .colAgency {
-    height: 28vh;
-    min-height: 270px;
+    /* height: 28vh;
+    min-height: 270px; */
 }
 
 .colEmergency {
@@ -225,7 +254,7 @@ h4 {
 }
 
 #textAreaAgency {
-    height: 120px;
+    height: 180px;
     resize: none;
 }
 

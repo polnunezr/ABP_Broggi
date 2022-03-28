@@ -1,6 +1,7 @@
 <template>
     <div class="row d-flex justify-content-center">
-        <div class="col col-8 colSection colEmergency">
+        <div class="col colSection colEmergency"
+        v-bind:class="colReturn">
             <div class="row">
                 <div class="col">
                     <h4 v-text="title"></h4>
@@ -54,25 +55,52 @@
             .finally(() => this.loading = false)
         },
         mounted() {
+
+            let idEmergenciaSelect = 1;
+            let idIncidentSelect = 1;
+
             this.$eventSelect.$on("change-select-emergencia", idSelect => {
                 for(let i = 0; i < this.tipusEmergencia.length; i++) {
                     if(this.tipusEmergencia[i].id == idSelect) {
-                      this.incidents = this.tipusEmergencia[i].incidents
-                      this.incident = this.tipusEmergencia[i].incidents[0]
+                        idEmergenciaSelect = this.tipusEmergencia[i].id
+                        this.incidents = this.tipusEmergencia[i].incidents
+                        idIncidentSelect = this.tipusEmergencia[i].incidents[0].id
                     }
                 }
 
-                this.$eventSelect.$emit("change-select-option-incident",this.incident.id)
+                this.$eventSelect.$emit("change-select-id-emergencia",idEmergenciaSelect)
+                this.$eventSelect.$emit("change-select-id-incident",idIncidentSelect)
             })
 
-            this.$eventSelect.$on("change-select-incident", idSelect => {
-                for(let i = 0; i < this.incidents.length; i++) {
-                    if(this.incidents[i].id == idSelect) {
-                      this.incident = this.incidents[i]
+            // this.$eventSelect.$on("change-select-incident", idSelect => {
+
+            //     let idIncidentSelect = 1;
+
+            //     for(let i = 0; i < this.incidents.length; i++) {
+            //         if(this.incidents[i].id == idSelect) {
+            //           this.incident = this.incidents[i]
+            //           idIncidentSelect =
+            //         }
+            //     }
+
+            // })
+
+
+            this.$eventClear.$on("clear-select-emergencia", message => {
+                for(let i = 0; i < this.tipusEmergencia.length; i++) {
+                    if(this.tipusEmergencia[i].id == 1) {
+                        this.incidents = this.tipusEmergencia[i].incidents
                     }
                 }
 
+                this.$eventSelect.$emit("change-select-id-emergencia",1)
+                this.$eventSelect.$emit("change-select-id-incident",1)
             })
-        }
+        },
+        computed: {
+            colReturn() {
+                return this.$emergencyCol
+            }
+        },
     }
 </script>

@@ -1,13 +1,15 @@
 <template>
     <div class="row d-flex justify-content-center">
-        <div class="col col-11 colSection colPersonalDates">
+        <div class="col colSection colPersonalDates"
+        v-bind:class="colReturn">
             <div class="row">
                 <div class="col colTitle">
                     <h4 v-text="title"></h4>
                 </div>
             </div>
 
-            <data-input name="Telefon" :idInput="this.$inputTelefon" small number></data-input>
+            <data-input name="Telefon" :idInput="this.$inputTelefon"
+            small number></data-input>
 
             <data-input name="Procedencia" :idInput="this.$inputProcedencia" small></data-input>
 
@@ -35,13 +37,14 @@
                     <div class="form-floating">
                         <textarea class="form-control" id="textAreaAntecedents"
                         style="height: 130px; resize: none" v-on:click="startTime"
-                        v-model="antecedentes"></textarea>
+                        v-model="antecedentes" :disabled="disabledAntecedents"></textarea>
                         <label for="textAreaAntecedents">Antecedents</label>
                     </div>
                 </div>
             </div>
 
-            <data-check name="Guardar informació" :idCheck="this.$checkSaveInformation" checked></data-check>
+            <data-check v-bind:style="showCheckSaveInformation == true ? 'display: block;' : 'display: none;'"
+            name="Guardar informació" :idCheck="this.$checkSaveInformation" checked></data-check>
 
 
         </div>
@@ -58,7 +61,12 @@
                 municipis: [],
                 provinciesSelect : 0,
                 comarcaSelect: 0,
-                antecedentes: null
+                antecedentes: null,
+                dadesPersonals: [],
+                telefono: null,
+                disabledAntecedents: false,
+                dadesPersonalsId: null,
+                showCheckSaveInformation: true
             }
         },
         created() {
@@ -76,23 +84,74 @@
                     meThis.comarques = meThis.provincies[this.provinciesSelect].comarques
                     meThis.municipis = meThis.provincies[this.provinciesSelect].comarques[this.comarcaSelect].municipis
 
-                    // meThis.firstProvincia = meThis.provincies[0]
-                    // meThis.firstComarques = meThis.comarques[0]
-                    // meThis.firstMunicipis = meThis.municipis[0]
-
-                    // meThis.provincies.shift();
-                    // meThis.comarques.shift();
-                    // meThis.municipis.shift();
-
+                    meThis.updateDatosPersonals();
                 })
                 .catch(error => {
                     console.log(error)
                 })
                 .finally(() => this.loading = false)
+
         },
         methods: {
             startTime() {
                 this.$eventTime.$emit("start-time","message");
+            },
+            resetSelectPersonal() {
+                this.provinciesSelect = 0
+                this.comarcaSelect = 0
+
+                for(let i = 0; i < this.provincies.length; i++) {
+                    if(this.provincies[i].id == 1) {
+                        this.comarques = this.provincies[i].comarques
+                        this.municipis = this.comarques[0].municipis
+                    }
+
+                }
+
+                this.$eventClear.$emit("clear-select-id-personal","clear");
+            },
+            updateDatosPersonals() {
+                let meThis = this
+                this.dadesPersonals = []
+                axios
+                    .get("/dades_personals")
+                    .then(response => {
+                        meThis.dadesPersonals = response.data
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => this.loading = false)
+            },
+            changeInputTelefon() {
+                let relation = false;
+                for(let i = 0; i < this.dadesPersonals.length; i++) {
+                    if(this.dadesPersonals[i].telefon == this.telefono) {
+                        this.dadesPersonalsId = this.dadesPersonals[i].id
+                        this.$eventPersonal.$emit("set-adreca",this.dadesPersonals[i].adreca);
+                        this.antecedentes = this.dadesPersonals[i].antecedents
+                        this.disabledAntecedents = true
+                        this.$eventPersonal.$emit("disabled-input-adreca",true);
+                        this.showCheckSaveInformation = false
+                        relation = true;
+                    }
+                }
+                if(!relation && this.dadesPersonalsId != null) {
+                    this.resetDadesPersonals();
+                }
+            },
+            resetDadesPersonals() {
+                this.$eventPersonal.$emit("set-adreca",null);
+                this.antecedentes = null
+                this.disabledAntecedents = false
+                this.$eventPersonal.$emit("disabled-input-adreca",false);
+                this.dadesPersonalsId = null
+                this.showCheckSaveInformation = true
+            }
+        },
+        computed: {
+            colReturn() {
+                return this.$dadesPersonalsCol
             }
         },
         mounted() {
@@ -166,6 +225,38 @@
 
             this.$eventFinal.$on("obtener-antecedentes", message => {
                 this.$eventFinal.$emit("recojer-antecedentes",this.antecedentes);
+            })
+
+            this.$eventClear.$on("clear-select-personal", message => {
+                this.resetSelectPersonal();
+            })
+
+            this.$eventClear.$on("clear-antecedents", message => {
+                this.antecedentes = null
+            })
+
+            this.$eventPersonal.$on("update-personal-dates", message => {
+                this.updateDatosPersonals();
+            })
+
+            this.$eventPersonal.$on("change-input-telefono", telefono => {
+                if(telefono != "" && telefono != null) {
+                    this.telefono = telefono
+                }
+                else {
+                    this.telefono = null
+                }
+
+                this.changeInputTelefon();
+
+            })
+
+            this.$eventFinal.$on("obtener-id-dada-personal", message => {
+                this.$eventFinal.$emit("recojer-id-dada-personal",this.dadesPersonalsId);
+            })
+
+            this.$eventClear.$on("clear-dades-personals", message => {
+                this.resetDadesPersonals();
             })
 
         }

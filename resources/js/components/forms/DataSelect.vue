@@ -26,7 +26,7 @@
                 {{arrayElement.tipus}}</option>
             </select>
 
-            <select v-else-if="name == this.$tipusEmergencia"
+            <select v-else-if="idSelect == this.$tipusEmergenciaId"
                 ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
                 v-model="selectSelectedTipusIncident">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
@@ -132,13 +132,12 @@
                     case this.$tipusLocalitzacioId:
                         this.$eventSelect.$emit("change-select-localitzacio",parseInt(this.$refs.select.value))
                     break;
-
                     case this.$tipusEmergenciaId:
                         this.$eventSelect.$emit("change-select-emergencia",this.selectSelectedTipusIncident)
                     break;
-                    case this.$incidentsId:
-                        this.$eventSelect.$emit("change-select-incident",parseInt(this.$refs.select.value))
-                    break;
+                    // case this.$incidentsId:
+                    //     this.$eventSelect.$emit("change-select-incident",this.selectSelectedIncident)
+                    // break;
                 }
 
 
@@ -193,9 +192,15 @@
                 }
             })
 
-            this.$eventSelect.$on("change-select-option-incident", option => {
+            this.$eventSelect.$on("change-select-id-emergencia", id => {
+                if(this.idSelect == this.$tipusEmergenciaId) {
+                    this.selectSelectedTipusIncident = id
+                }
+            })
+
+            this.$eventSelect.$on("change-select-id-incident", id => {
                 if(this.idSelect == this.$incidentsId) {
-                    this.selectSelectedIncident = option
+                    this.selectSelectedIncident = id
                 }
             })
 
@@ -230,6 +235,17 @@
                 }
             })
 
+
+
+            this.$eventExpedient.$on("obtener-id-municipi-location", message => {
+                if(this.idSelect == this.$municipiLocation) {
+                    this.$eventExpedient.$emit("recojer-id-municipi-location",this.selectSelected);
+                }
+            })
+
+
+
+
             this.$eventFinal.$on("obtener-id-otra-provincia", message => {
                 if(this.idSelect == this.$provinciaSelectProvincia) {
                     this.$eventFinal.$emit("recojer-id-otra-provincia",this.selectSelected);
@@ -247,6 +263,61 @@
                     this.$eventFinal.$emit("recojer-id-incident",this.selectSelectedIncident);
                 }
             })
+
+
+            this.$eventExpedient.$on("obtener-id-incident", message => {
+                if(this.idSelect == this.$incidentsId) {
+                    this.$eventExpedient.$emit("recojer-id-incident",this.selectSelectedIncident);
+                }
+            })
+
+
+
+            this.$eventClear.$on("clear-select-id-location", message => {
+                if(this.idSelect == this.$provinciaLocation || this.idSelect == this.$comarcaLocation
+                    || this.idSelect == this.$municipiLocation) {
+                        this.selectSelected = 0;
+                }
+            })
+
+            this.$eventClear.$on("clear-select-id-personal", message => {
+                if(this.idSelect == this.$provinciaPersonal || this.idSelect == this.$comarcaPersonal
+                    || this.idSelect == this.$municipiPersonal) {
+                        this.selectSelected = 0;
+                }
+            })
+
+            this.$eventClear.$on("clear-select-tipus-location", message => {
+                if(this.idSelect == this.$tipusLocalitzacioId) {
+                    this.selectSelectedTipusLocation = 1;
+                    this.$eventSelect.$emit("change-select-localitzacio",1)
+                }
+            })
+
+            this.$eventClear.$on("clear-select-other-provincies", message => {
+                if(this.idSelect == this.$provinciaSelectProvincia) {
+                    this.selectSelected = 0;
+                }
+            })
+
+            //Clear
+
+            // this.$eventClear.$on("clear-select", message => {
+            //     if(this.name == this.$comarca || this.name == this.$provincia
+            //     || this.name == this.$municipi) {
+            //         this.selectSelected = 0
+            //     }
+            //     else if(this.name == this.$tipusLocalitzacio) {
+            //         this.selectSelectedTipusLocation = 1
+            //     }
+            //     else if(this.idSelect == this.$tipusEmergenciaId) {
+            //         this.selectSelectedTipusIncident = 1
+            //     }
+            //     else {
+            //         this.selectSelectedIncident = 1
+            //     }
+
+            // })
         }
     }
 </script>

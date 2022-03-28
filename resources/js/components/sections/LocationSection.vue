@@ -1,6 +1,8 @@
 <template>
     <div class="row d-flex justify-content-center">
-        <div class="col col-11 colSection colLocation">
+        <div class="col colSection colLocation"
+        v-bind:class="colReturn"
+        :style="{'margin-top': marginTopLocation + 'px'}">
             <div class="row">
                 <div class="col colTitle">
                     <h4 v-text="title"></h4>
@@ -73,6 +75,12 @@
 
 <script>
     export default {
+        props: {
+            marginTopLocation: {
+                type: [Number],
+                require: true
+            }
+        },
         data() {
             return {
                 title: "Localització",
@@ -85,7 +93,7 @@
                 checkedCataluna: true,
                 tipusLocalitzacioSelect: 1,
                 tipusLocalitzacio: [],
-                detalls: null
+                detalls: null,
             }
         },
         created() {
@@ -128,6 +136,25 @@
             changeSelectProvincia() {
                 console.log(2)
                 this.provinciesSelect = 2;
+            },
+            resetLoction() {
+                this.provinciesSelect = 0
+                this.comarcaSelect = 0
+
+                for(let i = 0; i < this.provincies.length; i++) {
+                    if(this.provincies[i].id == 1) {
+                        this.comarques = this.provincies[i].comarques
+                        this.municipis = this.comarques[0].municipis
+                    }
+
+                }
+
+                this.$eventClear.$emit("clear-select-id-location","clear");
+            }
+        },
+        computed: {
+            colReturn() {
+                return this.$locateCol
             }
         },
         mounted() {
@@ -229,6 +256,15 @@
             this.$eventFinal.$on("obtener-detalls-location", message => {
                 this.$eventFinal.$emit("recojer-detalls-location",this.detalls);
             })
+
+            this.$eventClear.$on("clear-select-location", message => {
+                this.resetLoction();
+            })
+
+            this.$eventClear.$on("clear-detalls", message => {
+                this.detalls = null
+            })
+
         }
     }
 </script>

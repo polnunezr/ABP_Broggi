@@ -28,7 +28,8 @@
                 data: "08/03/2022",
                 hora: "16:28:00",
                 operador: "001",
-                timeSeconds: 0
+                timeSeconds: 0,
+                intervalTime: null
             }
         },
         created() {
@@ -68,7 +69,7 @@
                 let lastCharacter,lastCharacterInt,penultimateCharacterInt,secondCharacterInt,firstCharacterInt
                 if(!this.start) {
                     this.start = true
-                    setInterval(function() {
+                    this.intervalTime = setInterval(function() {
                         lastCharacter = vueThis.time.substring(vueThis.time.length - 1, vueThis.time.length)
                         lastCharacterInt = parseInt(lastCharacter)
                         if(lastCharacterInt == 9) {
@@ -127,6 +128,16 @@
 
             this.$eventFinal.$on("obtener-tiempo-segundos", message => {
                 this.$eventFinal.$emit("recojer-tiempo-segundos",this.timeSeconds);
+            })
+
+            this.$eventClear.$on("clear-time", message => {
+                if(this.intervalTime != null) {
+                    clearInterval(this.intervalTime);
+                    this.intervalTime = null
+                    this.time ="00:00"
+                    this.start = false
+                    this.timeSeconds = 0
+                }
             })
         }
     }

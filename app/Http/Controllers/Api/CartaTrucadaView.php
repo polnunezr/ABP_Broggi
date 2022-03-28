@@ -48,28 +48,42 @@ class CartaTrucadaView extends Controller
         $dadaPersonal = null;
         $insertDadaPersonal = false;
 
-        $idDadaPersonal = $dades_personals["id"];
-        if($idDadaPersonal == null && ($dades_personals["adreca"] == null || $dades_personals["antecedents"] == null ||
-        $dades_personals["telefon"] == null)) {
-            //Data personal no relacionada, y no llenada de datos
-            $cartaTrucada->dades_personals_id = null;
-        }
-        else if($idDadaPersonal == null && $dades_personals["adreca"] != null && $dades_personals["antecedents"] != null &&
-        $dades_personals["telefon"] != null) {
-            //Data personal no relacionada pero datos rellenados | insert dades_personals
+        if($dades_personals["guardar"] && $dades_personals["adreca"] != null
+            && $dades_personals["antecedents"] != null) { //false
+
+            $insertDadaPersonal = true;
             $dadaPersonal = new DadaPersonal();
             $dadaPersonal->telefon = $dades_personals["telefon"];
             $dadaPersonal->adreca = $dades_personals["adreca"];
             $dadaPersonal->antecedents= $dades_personals["antecedents"];
 
-            $insertDadaPersonal = true;
+        }
+        else if($dades_personals["guardar"] === null){
+            $cartaTrucada->dades_personals_id = $dades_personals["id"];
+        }
 
-            //$cartaTrucada->dades_personals_id = idDada
-        }
-        else {
-            //Data personal relacionada
-            $cartaTrucada->dades_personals_id = $idDadaPersonal;
-        }
+        // $idDadaPersonal = $dades_personals["id"];
+        // if($idDadaPersonal == null && ($dades_personals["adreca"] == null || $dades_personals["antecedents"] == null ||
+        // $dades_personals["telefon"] == null)) {
+        //     //Data personal no relacionada, y no llenada de datos
+        //     $cartaTrucada->dades_personals_id = null;
+        // }
+        // else if($idDadaPersonal == null && $dades_personals["adreca"] != null && $dades_personals["antecedents"] != null &&
+        // $dades_personals["telefon"] != null) {
+        //     //Data personal no relacionada pero datos rellenados | insert dades_personals
+        //     $dadaPersonal = new DadaPersonal();
+        //     $dadaPersonal->telefon = $dades_personals["telefon"];
+        //     $dadaPersonal->adreca = $dades_personals["adreca"];
+        //     $dadaPersonal->antecedents= $dades_personals["antecedents"];
+
+        //     $insertDadaPersonal = true;
+
+        //     //$cartaTrucada->dades_personals_id = idDada
+        // }
+        // else {
+        //     //Data personal relacionada
+        //     $cartaTrucada->dades_personals_id = $idDadaPersonal;
+        // }
 
         //Expedient
         $expedient = null;
@@ -128,10 +142,10 @@ class CartaTrucadaView extends Controller
             $cartaTrucada->save();
 
             DB::commit();
-            // $response = (new CartesTrucadesResource($cartaTrucada))
-            //         ->response()
-            //         ->setStatusCode(201);
-            $response = redirect()->action([CartaTrucadaController::class,"index"]);
+            $response = (new CartesTrucadesResource($cartaTrucada))
+                    ->response()
+                    ->setStatusCode(201);
+            // $response = redirect()->action([CartaTrucadaController::class,"index"]);
 
         }
         catch(QueryException $ex) {

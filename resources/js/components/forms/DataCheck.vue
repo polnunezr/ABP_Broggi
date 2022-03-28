@@ -57,6 +57,21 @@
                     this.$eventFinal.$emit("recojer-catalonia",this.checkValueChecked)
                 }
             })
+
+            this.$eventClear.$on("clear-check-catalonia", message => {
+                if(!this.$refs.checkBox.checked) {
+                    this.$refs.checkBox.checked = true;
+                    this.checkValueChecked = true
+                    this.clickCheck();
+                }
+            })
+
+            this.$eventClear.$on("clear-check-information-save", message => {
+                if(this.idCheck == this.$checkSaveInformation) {
+                    this.$refs.checkBox.checked = true;
+                    this.checkValueChecked = true;
+                }
+            })
         }
     }
 </script>

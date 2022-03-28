@@ -29,7 +29,8 @@ class ExpedientResource extends JsonResource
             "data_creacio" => $this->data_creacio,
             "data_ultima_modificacio" => $this->data_creacio,
             "estats_expedients_id" => $this->estats_expedients_id,
-            "estat_expedient" => $this->estatExpedient
+            "estat_expedient" => $this->estatExpedient,
+            "cartesTrucada" => $this->cartesTrucada
         ];
     }
 }

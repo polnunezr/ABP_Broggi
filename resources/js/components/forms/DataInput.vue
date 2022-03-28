@@ -7,8 +7,10 @@
         </div>
         <div class="col"
             v-bind:class="colBig">
-            <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text">
-            <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime" v-model="text" >
+            <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text"
+            :disabled="disabledInput">
+            <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime"
+            v-model="text" v-on:change="changeInput">
         </div>
     </div>
 </template>
@@ -29,7 +31,9 @@
         },
         data() {
             return {
-                text: null
+                text: null,
+                disabledInput: false
+
             }
         },
         computed: {
@@ -57,16 +61,28 @@
         methods: {
             startTime() {
                 this.$eventTime.$emit("start-time","message");
+            },
+            changeInput() {
+                if(this.idInput == this.$inputTelefon) {
+                    this.$eventPersonal.$emit("change-input-telefono",this.text);
+                }
+
             }
         },
         mounted() {
             this.$eventFinal.$on("obtener-telefono", message => {
-
                 if(this.idInput == this.$inputTelefon) {
                     this.$eventFinal.$emit("recojer-telefono",this.text);
                 }
 
             })
+
+            this.$eventExpedient.$on("obtener-telefono", message => {
+                if(this.idInput == this.$inputTelefon) {
+                    this.$eventExpedient.$emit("recojer-telefono",this.text);
+                }
+            })
+
 
             this.$eventFinal.$on("obtener-procedencia", message => {
 
@@ -80,6 +96,13 @@
                     this.$eventFinal.$emit("recojer-adreca",this.text);
                 }
             })
+
+            this.$eventPersonal.$on("disabled-input-adreca", disabled => {
+                if(this.idInput == this.$inputAdreca) {
+                    this.disabledInput = disabled
+                }
+            })
+
 
             this.$eventFinal.$on("obtener-origen-llamada", message => {
                 if(this.idInput == this.$inputOrigen) {
@@ -150,6 +173,17 @@
             this.$eventFinal.$on("obtener-provincia-municipi", message => {
                 if(this.idInput == this.$inputProvinciaMunicipi) {
                     this.$eventFinal.$emit("recojer-provincia-municipi",this.text);
+                }
+            })
+
+            this.$eventClear.$on("clear-input-text", message => {
+                this.text = null
+            })
+
+
+            this.$eventPersonal.$on("set-adreca", adreca => {
+                if(this.idInput == this.$inputAdreca) {
+                    this.text = adreca
                 }
             })
 

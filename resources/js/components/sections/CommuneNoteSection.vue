@@ -1,6 +1,7 @@
 <template>
     <div class="row d-flex justify-content-center">
-        <div class="col col-9 colSection colCommuneNote">
+        <div class="col colSection colCommuneNote"
+        v-bind:class="colReturn">
             <div class="row">
                 <div class="col">
                     <h4 v-text="title"></h4>
@@ -32,10 +33,20 @@
                 this.$eventTime.$emit("start-time","message");
             }
         },
+        computed: {
+            colReturn() {
+                return this.$communeNoteCol
+            }
+        },
         mounted() {
             this.$eventFinal.$on("obtener-nota-comuna", message => {
                 this.$eventFinal.$emit("recojer-nota-comuna",this.notaComuna);
             })
+
+            this.$eventClear.$on("clear-nota-comuna", message => {
+                this.notaComuna = null
+            })
+
         }
     }
 </script>

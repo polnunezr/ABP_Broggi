@@ -99,6 +99,44 @@
 
 
             }
+        },
+        mounted() {
+            this.$eventRelation.$on("unrelate-valor", message =>{
+                let buttons = this.$refs.btns
+                if(buttons != null) {
+                    for(let i = 0; i < buttons.length; i++) {
+                        if(parseInt(buttons[i].id) == this.idClick) {
+                            buttons[i].className = "button buttonNormal"
+                            buttons[i].innerHTML = "Relacionar"
+                        }
+                    }
+
+                }
+
+                this.idClick = null
+
+            })
+
+            this.$eventRelation.$on("edit-view-modal", message =>{
+                this.$nextTick(() => {
+                    let buttons = [];
+                    if(this.expedients.length > 0) {
+                        if(this.idClick != null) {
+                            buttons = this.$refs.btns
+                            for(let i = 0; i < buttons.length; i++) {
+                                if(parseInt(buttons[i].id) == this.idClick) {
+                                    buttons[i].className = "button buttonClick"
+                                    buttons[i].innerHTML = "Relacionat"
+                                }
+                            }
+                        }
+                    }
+                    else {
+
+                    }
+                })
+
+            })
         }
 
     }

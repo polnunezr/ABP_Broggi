@@ -21,6 +21,34 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
+/*
+personalData: "Dades Personals",
+                locate: "Localitzacio",
+                agency: "Agencies",
+                emergency: "Emergencia",
+                communeNote: "Nota comuna",
+                relationExpedient: "Relacionar Expedient",
+                interactiveVideo: "video"
+*/
+
+// Vue.prototype.$selectSection="Dades Personals"
+
+
+Vue.prototype.$dadesPersonals="Dades Personals"
+Vue.prototype.$locate="Localitzacio"
+Vue.prototype.$agency="Agencies"
+Vue.prototype.$emergency="Emergencia"
+Vue.prototype.$communeNote="Nota comuna"
+Vue.prototype.$relationExpedient="Relacionar Expedient"
+Vue.prototype.$interactiveVideo="video"
+
+Vue.prototype.$dadesPersonalsCol="col-11"
+Vue.prototype.$locateCol="col-11"
+Vue.prototype.$agencyCol="col-8"
+Vue.prototype.$emergencyCol="col-8"
+Vue.prototype.$communeNoteCol="col-9"
+Vue.prototype.$relationExpedientCol="col-8"
+
 
 Vue.prototype.$checkCatalonia="Catalunya"
 
@@ -92,6 +120,7 @@ Vue.prototype.$textAreaDetalls="textAreaDetalls"
 
 
 
+Vue.prototype.$eventAlert = new Vue()
 
 Vue.prototype.$eventTime = new Vue()
 
@@ -105,6 +134,14 @@ Vue.prototype.$eventRelation = new Vue()
 
 Vue.prototype.$eventFinal = new Vue()
 
+Vue.prototype.$eventClear = new Vue()
+
+Vue.prototype.$eventExpedient = new Vue()
+
+Vue.prototype.$eventPersonal = new Vue()
+
+
+
 
 
 
@@ -117,7 +154,11 @@ Vue.component('tab-apart', require('./components/nav/TabApart.vue').default);
 
 Vue.component('apart-navbar', require('./components/nav/ApartNavbar.vue').default);
 
+Vue.component("map-section", require("./components/sections/MapSection.vue").default);
+
 Vue.component("time-section", require("./components/sections/TimeSection.vue").default);
+
+Vue.component("alert-section", require("./components/sections/AlertSection.vue").default);
 
 Vue.component("personal-section", require("./components/sections/PersonalSection.vue").default);
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ExpedientController;
 use App\Http\Controllers\Api\DadaPersonalController;
 use App\Http\Controllers\Api\CartaTrucadaController;
 use App\Http\Controllers\Api\CartaTrucadaView;
+use App\Http\Controllers\Api\AgenciaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::apiResource("agencies", AgenciaController::class);
 
 Route::apiResource("cartes_trucades_view", CartaTrucadaView::class);
 

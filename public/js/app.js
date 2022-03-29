@@ -7811,33 +7811,99 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      markers: [],
+      mark: {
+        id: null,
+        features: null,
+        popup: null
+      },
+      marker: null,
+      agencies: []
+    };
+  },
   created: function created() {
-    mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
-    var mapboxClient = mapboxSdk({
-      accessToken: mapboxgl.accessToken
+    var _this = this;
+
+    var vueThis = this;
+    axios.get("/agencies").then(function (response) {
+      vueThis.agencies = response.data;
+      vueThis.controlMap();
+    })["catch"](function (error) {
+      console.log(error);
+    })["finally"](function () {
+      return _this.loading = false;
     });
-    mapboxClient.geocoding.forwardGeocode({
-      query: 'Barcelona',
-      autocomplete: false,
-      limit: 1
-    }).send().then(function (response) {
-      if (!response || !response.body || !response.body.features || !response.body.features.length) {
-        console.error('Invalid response:');
-        console.error(response);
-        return;
+  },
+  methods: {
+    controlMap: function controlMap() {
+      mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
+      var mapboxClient = mapboxSdk({
+        accessToken: mapboxgl.accessToken
+      });
+      var mapThis = this;
+
+      var _loop = function _loop(i) {
+        mapboxClient.geocoding.forwardGeocode({
+          query: mapThis.agencies[i].carrer,
+          autocomplete: false,
+          limit: 1
+        }).send().then(function (response) {
+          if (!response || !response.body || !response.body.features || !response.body.features.length) {
+            console.error('Invalid response:');
+            console.error(response);
+            return;
+          }
+
+          mapThis.mark.id = i;
+          mapThis.mark.features = response.body.features[0];
+          mapThis.mark.popup = new mapboxgl.Popup({
+            offset: 25
+          }).setText(mapThis.agencies[i].carrer).setHTML("<div class='container container-map'>" + "<div class='row'>" + "<div class='col d-flex justify-content-center align-items-center'>" + "<p>" + mapThis.agencies[i].carrer + "</p>" + "</div>" + "</div>" + "<div class='row'>" + "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" + "<button type='button' class='button' id='buttonMap" + i + "'>Relacionar</button>" + "</div>" + "</div>" + "</div>");
+          mapThis.markers.push(Object.assign({}, mapThis.mark)); // mapThis.features.push(response.body.features[0]);
+        });
+      };
+
+      for (var i = 0; i < mapThis.agencies.length; i++) {
+        _loop(i);
       }
 
-      var feature = response.body.features[0];
-      var map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: feature.center,
-        zoom: 10
-      }); // Create a marker and add it to the map.
+      mapboxClient.geocoding.forwardGeocode({
+        query: 'Barcelona',
+        autocomplete: false,
+        limit: 1
+      }).send().then(function (response) {
+        if (!response || !response.body || !response.body.features || !response.body.features.length) {
+          console.error('Invalid response:');
+          console.error(response);
+          return;
+        }
 
-      new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
-      new mapboxgl.query("Madrid").addTo(map);
-    });
+        var feature = response.body.features[0];
+        var map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: feature.center,
+          zoom: 10
+        });
+        var el = document.createElement("div");
+        el.id = "marker1";
+        el.className = el.className + " markers"; // Create a marker and add it to the map.
+        // mapThis.marker =
+
+        new mapboxgl.Marker(el).setLngLat(feature.center).addTo(map); // mapThis.marker._element.id = "marker1";
+        // mapThis.marker._element.className = mapThis.marker._element.className + " markers";
+        // mapThis.marker.marker-color = "#b40219";
+
+        for (var _i = 0; _i < mapThis.markers.length; _i++) {
+          var elMark = document.createElement("div");
+          elMark.id = mapThis.markers[_i].id;
+          elMark.className = elMark.className + " markers";
+          new mapboxgl.Marker().setLngLat(mapThis.markers[_i].features.center).setPopup(mapThis.markers[_i].popup).addTo(map); // new mapboxgl.Marker().setLngLat(mapThis.features[i].center).addTo(map);
+        }
+      });
+    }
   }
 });
 
@@ -35705,8 +35771,6 @@ var render = function () {
   return _c(
     "div",
     [
-      _c("map-section"),
-      _vm._v(" "),
       _c("relation-modal", {
         style: _vm.modalOpen == true ? "display: block;" : "display: none;",
         attrs: { expedients: _vm.expedients },

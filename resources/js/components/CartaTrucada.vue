@@ -1,6 +1,6 @@
 <template>
     <div>
-        <map-section></map-section>
+       <!-- <map-section></map-section>-->
         <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients"></relation-modal>
         <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
         <div class="container-fluid">

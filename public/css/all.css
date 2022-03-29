@@ -17,6 +17,35 @@ body {
     width: 100%;
     z-index: 500;
 }
+.markers {
+    /* color: #b40219;
+    background-color:#b40219 ; */
+    /* cursor:context-menu; */
+    background-image: url('https://paucepnet.github.io/mediaProjecte/marks/mapbox-marker-icon-blue-custom.svg');
+    width: 27px;
+    height: 41px;
+    /* height=\"41px\" width=\"27px\ */
+    cursor: pointer;
+}
+
+/* .mapboxgl-popup {
+    max-width: 500px;
+} */
+
+.container,.container-map {
+    padding: 10px;
+    padding-bottom: 5px;
+}
+.colButtonMap {
+    padding: 0px;
+}
+.mapboxgl-popup-content {
+    padding: 40px;
+}
+
+#markCustom {
+    color: red;
+}
 
 .colCard {
     height: 100vh;

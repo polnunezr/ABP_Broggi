@@ -140,6 +140,8 @@ Vue.prototype.$eventExpedient = new Vue()
 
 Vue.prototype.$eventPersonal = new Vue()
 
+Vue.prototype.$eventMap = new Vue()
+
 
 
 
@@ -165,6 +167,8 @@ Vue.component("personal-section", require("./components/sections/PersonalSection
 Vue.component("location-section", require("./components/sections/LocationSection.vue").default);
 
 Vue.component("agency-section", require("./components/sections/AgencySection.vue").default);
+
+Vue.component("list-agency-section", require("./components/sections/ListAgencySection.vue").default);
 
 Vue.component("emergency-section", require("./components/sections/EmergencySection.vue").default);
 

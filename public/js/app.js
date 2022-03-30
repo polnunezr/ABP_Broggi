@@ -5592,6 +5592,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5611,9 +5614,13 @@ __webpack_require__.r(__webpack_exports__);
       marginTopLocation: 30,
       telefon: null,
       municipiLocation: null,
-      incident: null
+      incident: null,
+      mapOpen: false,
+      selectMarks: [],
+      agencies: []
     };
   },
+  created: function created() {},
   mounted: function mounted() {
     var _this = this;
 
@@ -5701,6 +5708,33 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         _this.incident = incident;
       }
+    });
+    this.$eventMap.$on("open-map", function (mapOpen) {
+      _this.mapOpen = mapOpen;
+    });
+    this.$eventMap.$on("close-map", function (selectMarks) {
+      _this.mapOpen = false;
+      _this.selectMarks = selectMarks;
+    });
+    this.$eventMap.$on("send-agencies", function (agencies) {
+      _this.agencies = agencies;
+    });
+    this.$eventMap.$on("delete-select-mark", function (idAgency) {
+      var positionDelete = null;
+
+      for (var i = 0; i < _this.selectMarks.length; i++) {
+        if (_this.selectMarks[i] == idAgency) {
+          positionDelete = i;
+        }
+      }
+
+      _this.selectMarks.splice(positionDelete, 1);
+    });
+    this.$eventClear.$on("clear-select-mark", function (message) {
+      _this.selectMarks = [];
+    });
+    this.$eventFinal.$on("obtener-id-agencies", function (message) {
+      _this.$eventFinal.$emit("recojer-id-agencies", _this.selectMarks);
     }); // this.$eventAlert.$on("get-section-selected", message => {
     //     debugger;
     //     let a = 4
@@ -6491,7 +6525,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    selectMarks: {
+      type: [Array],
+      require: true
+    },
+    agencies: {
+      type: [Array],
+      require: true
+    }
+  },
   data: function data() {
     return {
       title: "Agències"
@@ -6501,7 +6553,9 @@ __webpack_require__.r(__webpack_exports__);
     startTime: function startTime() {
       this.$eventTime.$emit("start-time", "message");
     },
-    buttonClickMap: function buttonClickMap() {}
+    buttonClickMap: function buttonClickMap() {
+      this.$eventMap.$emit("open-map", true);
+    }
   },
   computed: {
     colReturn: function colReturn() {
@@ -6867,6 +6921,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
 //
 //
 //
@@ -6914,7 +6970,8 @@ __webpack_require__.r(__webpack_exports__);
         timeSeconds: null,
         operador: null,
         expedientId: null,
-        dadaPersonalId: null
+        dadaPersonalId: null,
+        selectMarks: []
       },
       objectPost: {
         cartes_trucades: {
@@ -6952,6 +7009,9 @@ __webpack_require__.r(__webpack_exports__);
           data_creacio: null,
           data_ultima_modificacio: null,
           estats_expedients_id: null
+        },
+        cartes_trucades_has_agencies: {
+          agenciesId: []
         }
       },
       cartesTrucadesArray: [],
@@ -7050,7 +7110,9 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$eventFinal.$emit("obtener-id-expedient", "expedient"); //Dada personal relation
 
-      this.$eventFinal.$emit("obtener-id-dada-personal", "dada-personal");
+      this.$eventFinal.$emit("obtener-id-dada-personal", "dada-personal"); //Agencies
+
+      this.$eventFinal.$emit("obtener-id-agencies", "id-agencies");
       this.crearCartaTrucada();
     },
     crearCartaTrucada: function crearCartaTrucada() {
@@ -7239,7 +7301,9 @@ __webpack_require__.r(__webpack_exports__);
       this.objectPost.cartes_trucades.expedients_id = null; //Obtener response | cuando se crea uno
 
       this.objectPost.cartes_trucades.usuaris_id = 1; //Provisional
+      //Agencies
 
+      this.objectPost.cartes_trucades_has_agencies.agenciesId = this.finalDates.selectMarks;
       var vueThis = this;
 
       if (insertCartaTrucada) {
@@ -7254,7 +7318,11 @@ __webpack_require__.r(__webpack_exports__);
           vueThis.disabledButton = false;
         })["catch"](function (error) {
           console.log(error.response.status);
-          console.log(error.response.data);
+          console.log(_typeof(error.response.data.error));
+          vueThis.$eventAlert.$emit("open-alert", [{
+            id: 1,
+            text: error.response.data.error
+          }]);
           vueThis.$eventPersonal.$emit("update-personal-dates", "personal-dates");
           vueThis.disabledButton = false;
         });
@@ -7291,7 +7359,9 @@ __webpack_require__.r(__webpack_exports__);
         this.$eventClear.$emit("clear-dades-personals", "dades-personals");
       }
 
-      this.objectPost.dades_personals.id = null;
+      this.objectPost.dades_personals.id = null; //Vaciar select mark
+
+      this.$eventClear.$emit("clear-select-mark", "select-mark");
     }
   },
   mounted: function mounted() {
@@ -7525,7 +7595,68 @@ __webpack_require__.r(__webpack_exports__);
 
     this.$eventFinal.$on("recojer-id-dada-personal", function (dadaPersonalId) {
       _this2.finalDates.dadaPersonalId = dadaPersonalId;
+    }); //Agencies
+
+    this.$eventFinal.$on("recojer-id-agencies", function (selectMarks) {
+      _this2.finalDates.selectMarks = selectMarks;
     });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    idAgency: {
+      type: [Number],
+      require: true
+    },
+    agencies: {
+      type: [Array],
+      require: true
+    }
+  },
+  data: function data() {
+    return {
+      name: ""
+    };
+  },
+  created: function created() {
+    for (var i = 0; i < this.agencies.length; i++) {
+      if (this.agencies[i].id == this.idAgency) {
+        this.name = this.agencies[i].nom;
+      }
+    }
+  },
+  methods: {
+    clickTrash: function clickTrash() {
+      this.$eventMap.$emit("delete-select-mark", this.idAgency);
+    }
   }
 });
 
@@ -7810,7 +7941,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    selectMarks: {
+      type: [Array],
+      require: true
+    }
+  },
   data: function data() {
     return {
       markers: [],
@@ -7820,7 +7962,10 @@ __webpack_require__.r(__webpack_exports__);
         popup: null
       },
       marker: null,
-      agencies: []
+      agencies: [],
+      buttons: [],
+      selectMarksActual: [],
+      showButton: false
     };
   },
   created: function created() {
@@ -7830,6 +7975,7 @@ __webpack_require__.r(__webpack_exports__);
     axios.get("/agencies").then(function (response) {
       vueThis.agencies = response.data;
       vueThis.controlMap();
+      vueThis.showButton = true;
     })["catch"](function (error) {
       console.log(error);
     })["finally"](function () {
@@ -7856,11 +8002,65 @@ __webpack_require__.r(__webpack_exports__);
             return;
           }
 
-          mapThis.mark.id = i;
-          mapThis.mark.features = response.body.features[0];
+          mapThis.mark.id = mapThis.agencies[i].id;
+          mapThis.mark.features = response.body.features[0]; // const divContainer = window.document.createElement('div');
+          // divContainer.innerHTML = "<div class='container container-map'></div>";
+          // const divRow = window.document.createElement('div');
+          // divRow.innerHTML = "<div class='row'></div>";
+          // const divCol = window.document.createElement('div');
+          // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
+
+          var button = window.document.createElement('button');
+          button.type = "button";
+          button.className = "button buttonsMaps";
+          button.id = "buttonMap" + mapThis.agencies[i].id;
+          button.innerHTML = "Relacionar"; // button.innerHTML = "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>";
+
+          var divCol = window.document.createElement('div');
+          divCol.className = "col colButtonMap d-flex justify-content-center align-items-center"; // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
+
+          var divRow = window.document.createElement('div');
+          divRow.className = "row"; // divRow.innerHTML = "<div class='row'></div>";
+
+          var divContainer = window.document.createElement('div');
+          divContainer.className = "container container-map";
+          divContainer.innerHTML = "<div class='row'>" + "<div class='col d-flex justify-content-start align-items-center'>" + "<p>" + mapThis.agencies[i].nom + "</p>" + "</div>" + "</div>" + "<div class='row'>" + "<div class='col d-flex justify-content-start align-items-center'>" + "<p>" + mapThis.agencies[i].carrer + "</p>" + "</div>" + "</div>";
+          divCol.appendChild(button);
+          divRow.appendChild(divCol);
+          divContainer.appendChild(divRow); // const divElement = window.document.createElement('div');
+          // divElement.innerHTML =
+          // "<div class='container container-map'>" +
+          // "<div class='row'>" +
+          // "<div class='col d-flex justify-content-center align-items-center'>" +
+          // "<p>" + mapThis.agencies[i].carrer +"</p>" +
+          // "</div>" +
+          // "</div>" +
+          // "<div class='row'>" +
+          // "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" +
+          // "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>" +
+          // "</div>" +
+          // "</div>" +
+          // "</div>";
+
           mapThis.mark.popup = new mapboxgl.Popup({
             offset: 25
-          }).setText(mapThis.agencies[i].carrer).setHTML("<div class='container container-map'>" + "<div class='row'>" + "<div class='col d-flex justify-content-center align-items-center'>" + "<p>" + mapThis.agencies[i].carrer + "</p>" + "</div>" + "</div>" + "<div class='row'>" + "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" + "<button type='button' class='button' id='buttonMap" + i + "'>Relacionar</button>" + "</div>" + "</div>" + "</div>");
+          }).setDOMContent(divContainer);
+          mapThis.buttons.push(button); // mapThis.mark.popup = new mapboxgl.Popup({ offset: 25 })
+          // .setHTML(
+          //     "<div class='container container-map'>" +
+          //     "<div class='row'>" +
+          //     "<div class='col d-flex justify-content-center align-items-center'>" +
+          //     "<p>" + mapThis.agencies[i].carrer +"</p>" +
+          //     "</div>" +
+          //     "</div>" +
+          //     "<div class='row'>" +
+          //     "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" +
+          //     "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>" +
+          //     "</div>" +
+          //     "</div>" +
+          //     "</div>"
+          // );
+
           mapThis.markers.push(Object.assign({}, mapThis.mark)); // mapThis.features.push(response.body.features[0]);
         });
       };
@@ -7886,23 +8086,118 @@ __webpack_require__.r(__webpack_exports__);
           style: 'mapbox://styles/mapbox/streets-v11',
           center: feature.center,
           zoom: 10
-        });
-        var el = document.createElement("div");
-        el.id = "marker1";
-        el.className = el.className + " markers"; // Create a marker and add it to the map.
+        }); // const el = document.createElement("div");
+        // el.id = "markerOne";
+        // el.className = el.className + " markers";
+        // Create a marker and add it to the map.
         // mapThis.marker =
-
-        new mapboxgl.Marker(el).setLngLat(feature.center).addTo(map); // mapThis.marker._element.id = "marker1";
+        // new mapboxgl.Marker(el).setLngLat(feature.center).addTo(map);
+        // mapThis.marker._element.id = "marker1";
         // mapThis.marker._element.className = mapThis.marker._element.className + " markers";
         // mapThis.marker.marker-color = "#b40219";
 
         for (var _i = 0; _i < mapThis.markers.length; _i++) {
           var elMark = document.createElement("div");
-          elMark.id = mapThis.markers[_i].id;
-          elMark.className = elMark.className + " markers";
-          new mapboxgl.Marker().setLngLat(mapThis.markers[_i].features.center).setPopup(mapThis.markers[_i].popup).addTo(map); // new mapboxgl.Marker().setLngLat(mapThis.features[i].center).addTo(map);
+          elMark.id = "marker" + mapThis.markers[_i].id;
+          elMark.className = "mapboxgl-marker mapboxgl-marker-anchor-center markers";
+          new mapboxgl.Marker(elMark).setLngLat(mapThis.markers[_i].features.center).setPopup(mapThis.markers[_i].popup).addTo(map); // new mapboxgl.Marker().setLngLat(mapThis.features[i].center).addTo(map);
+        } // let button = null;
+        // let markerId = null
+        // let buttonId = null
+        // const markersGet = document.getElementsByClassName("markers");
+        // for(let i = 0; i < markersGet.length; i++) {
+        //     markersGet[i].addEventListener('click', () => {
+        //         // markerId = markersGet[i].id.substring(6,markersGet[i].id.length);
+        //         // buttonId = "buttonMap"+markerId;
+        //         // console.log(markerId)
+        //         // console.log(buttonId)
+        //         // mapThis.$nextTick(() => {
+        //         //     button = document.getElementById(buttonId)
+        //         //     console.log(button.id)
+        //         // })
+        //     })
+        // }
+
+
+        var button = null;
+        var buttonId = null;
+        var markerId = null;
+        var positionDelete = null;
+
+        for (var _i2 = 0; _i2 < mapThis.selectMarks.length; _i2++) {
+          markerId = "marker" + mapThis.selectMarks[_i2];
+          var markersGet = document.getElementsByClassName("markers");
+
+          for (var j = 0; j < markersGet.length; j++) {
+            if (markersGet[j].id == markerId) {
+              markersGet[j].className = "mapboxgl-marker mapboxgl-marker-anchor-center markers markerClick";
+            }
+          }
+
+          buttonId = "buttonMap" + mapThis.selectMarks[_i2];
+
+          for (var _j = 0; _j < mapThis.buttons.length; _j++) {
+            if (mapThis.buttons[_j].id == buttonId) {
+              mapThis.buttons[_j].className = "button buttonsMaps buttonClickMap";
+            }
+          }
+
+          mapThis.selectMarksActual.push(mapThis.selectMarks[_i2]);
         }
-      });
+
+        var _loop2 = function _loop2(_i3) {
+          mapThis.buttons[_i3].addEventListener('click', function (e) {
+            if (mapThis.buttons[_i3].className == "button buttonsMaps") {
+              mapThis.buttons[_i3].className = "button buttonsMaps buttonClickMap";
+              mapThis.buttons[_i3].innerHTML = "Relacionat";
+              buttonId = parseInt(mapThis.buttons[_i3].id.substring(9, mapThis.buttons[_i3].id.length));
+              console.log(buttonId);
+              mapThis.selectMarksActual.push(buttonId);
+
+              var _markersGet = document.getElementsByClassName("markers");
+
+              for (var _i4 = 0; _i4 < _markersGet.length; _i4++) {
+                markerId = parseInt(_markersGet[_i4].id.substring(6, _markersGet[_i4].id.length));
+
+                if (markerId == buttonId) {
+                  _markersGet[_i4].className = "mapboxgl-marker mapboxgl-marker-anchor-center markers markerClick";
+                }
+              }
+            } else {
+              mapThis.buttons[_i3].className = "button buttonsMaps";
+              mapThis.buttons[_i3].innerHTML = "Relacionar";
+              buttonId = parseInt(mapThis.buttons[_i3].id.substring(9, mapThis.buttons[_i3].id.length));
+
+              for (var _i5 = 0; _i5 < mapThis.selectMarksActual.length; _i5++) {
+                if (mapThis.selectMarksActual[_i5] == buttonId) {
+                  positionDelete = _i5;
+                }
+              }
+
+              mapThis.selectMarksActual.splice(positionDelete, 1);
+
+              var _markersGet2 = document.getElementsByClassName("markers");
+
+              for (var _i6 = 0; _i6 < _markersGet2.length; _i6++) {
+                markerId = parseInt(_markersGet2[_i6].id.substring(6, _markersGet2[_i6].id.length));
+
+                if (markerId == buttonId) {
+                  _markersGet2[_i6].className = "mapboxgl-marker mapboxgl-marker-anchor-center markers";
+                }
+              }
+            }
+          });
+        };
+
+        for (var _i3 = 0; _i3 < mapThis.buttons.length; _i3++) {
+          _loop2(_i3);
+        }
+      }); // let buttons = this.$refs.btns
+      // const buttonsMaps = document.getElementsByClassName("buttonsMaps");
+    },
+    closeMap: function closeMap() {
+      this.$eventMap.$emit("close-map", this.selectMarksActual);
+      this.$eventMap.$emit("send-agencies", this.agencies);
     }
   }
 });
@@ -8982,7 +9277,8 @@ Vue.prototype.$eventRelation = new Vue();
 Vue.prototype.$eventFinal = new Vue();
 Vue.prototype.$eventClear = new Vue();
 Vue.prototype.$eventExpedient = new Vue();
-Vue.prototype.$eventPersonal = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventPersonal = new Vue();
+Vue.prototype.$eventMap = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
 Vue.component('tab-apart', (__webpack_require__(/*! ./components/nav/TabApart.vue */ "./resources/js/components/nav/TabApart.vue")["default"]));
@@ -8993,6 +9289,7 @@ Vue.component("alert-section", (__webpack_require__(/*! ./components/sections/Al
 Vue.component("personal-section", (__webpack_require__(/*! ./components/sections/PersonalSection.vue */ "./resources/js/components/sections/PersonalSection.vue")["default"]));
 Vue.component("location-section", (__webpack_require__(/*! ./components/sections/LocationSection.vue */ "./resources/js/components/sections/LocationSection.vue")["default"]));
 Vue.component("agency-section", (__webpack_require__(/*! ./components/sections/AgencySection.vue */ "./resources/js/components/sections/AgencySection.vue")["default"]));
+Vue.component("list-agency-section", (__webpack_require__(/*! ./components/sections/ListAgencySection.vue */ "./resources/js/components/sections/ListAgencySection.vue")["default"]));
 Vue.component("emergency-section", (__webpack_require__(/*! ./components/sections/EmergencySection.vue */ "./resources/js/components/sections/EmergencySection.vue")["default"]));
 Vue.component("commune-note-section", (__webpack_require__(/*! ./components/sections/CommuneNoteSection.vue */ "./resources/js/components/sections/CommuneNoteSection.vue")["default"]));
 Vue.component("relation-section", (__webpack_require__(/*! ./components/sections/RelationSection.vue */ "./resources/js/components/sections/RelationSection.vue")["default"]));
@@ -34531,6 +34828,45 @@ component.options.__file = "resources/js/components/sections/FinishSection.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/ListAgencySection.vue":
+/*!****************************************************************!*\
+  !*** ./resources/js/components/sections/ListAgencySection.vue ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ListAgencySection.vue?vue&type=template&id=4a487f6c& */ "./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&");
+/* harmony import */ var _ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ListAgencySection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.render,
+  _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/sections/ListAgencySection.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/LocationSection.vue":
 /*!**************************************************************!*\
   !*** ./resources/js/components/sections/LocationSection.vue ***!
@@ -35168,6 +35504,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListAgencySection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js&":
 /*!***************************************************************************************!*\
   !*** ./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js& ***!
@@ -35565,6 +35917,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c& ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListAgencySection.vue?vue&type=template&id=4a487f6c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&":
 /*!*********************************************************************************************!*\
   !*** ./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c& ***!
@@ -35771,6 +36140,10 @@ var render = function () {
   return _c(
     "div",
     [
+      _vm.mapOpen
+        ? _c("map-section", { attrs: { selectMarks: _vm.selectMarks } })
+        : _vm._e(),
+      _vm._v(" "),
       _c("relation-modal", {
         style: _vm.modalOpen == true ? "display: block;" : "display: none;",
         attrs: { expedients: _vm.expedients },
@@ -35854,7 +36227,14 @@ var render = function () {
                         ? "display: block;"
                         : "display: none;",
                   },
-                  [_c("agency-section")],
+                  [
+                    _c("agency-section", {
+                      attrs: {
+                        selectMarks: _vm.selectMarks,
+                        agencies: _vm.agencies,
+                      },
+                    }),
+                  ],
                   1
                 ),
                 _vm._v(" "),
@@ -36653,11 +37033,22 @@ var render = function () {
           { staticClass: "row", staticStyle: { "margin-top": "20px" } },
           [
             _c("div", { staticClass: "col col-10" }, [
-              _c("textarea", {
-                staticClass: "form-control",
-                attrs: { id: "textAreaAgency" },
-                on: { click: _vm.startTime },
-              }),
+              _c("div", { attrs: { id: "agenciaListDiv" } }, [
+                _c(
+                  "div",
+                  {
+                    staticClass: "container-fluid",
+                    attrs: { id: "containerAgencia" },
+                  },
+                  _vm._l(_vm.selectMarks, function (selectMark) {
+                    return _c("list-agency-section", {
+                      key: selectMark,
+                      attrs: { agencies: _vm.agencies, idAgency: selectMark },
+                    })
+                  }),
+                  1
+                ),
+              ]),
             ]),
             _vm._v(" "),
             _c(
@@ -36970,6 +37361,56 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&":
+/*!**************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c& ***!
+  \**************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row rowAgenciaList" }, [
+    _c("div", { staticClass: "col col-10 d-flex align-items-center" }, [
+      _c("label", { staticClass: "labelAgenciaList" }, [
+        _vm._v(_vm._s(_vm.name)),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "col col-2 d-flex justify-content-end align-items-center",
+      },
+      [_c("i", { staticClass: "fa fa-trash-o", on: { click: _vm.clickTrash } })]
+    ),
+    _vm._v(" "),
+    _vm._m(0),
+  ])
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col col-12" }, [
+      _c("hr", { staticClass: "hrAgencia" }),
+    ])
+  },
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&":
 /*!************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c& ***!
@@ -37276,7 +37717,21 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "map" } })
+  return _c("div", { attrs: { id: "backdropMap" } }, [
+    _c("div", { attrs: { id: "map" } }, [
+      _vm.showButton
+        ? _c(
+            "button",
+            {
+              staticClass: "button buttonClick",
+              attrs: { type: "button", id: "buttonFinalizarMap" },
+              on: { click: _vm.closeMap },
+            },
+            [_vm._v("Finalitzar")]
+          )
+        : _vm._e(),
+    ]),
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

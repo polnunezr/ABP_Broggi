@@ -1,6 +1,9 @@
 <template>
     <div>
-       <!-- <map-section></map-section>-->
+       <!--<map-section v-bind:style="mapOpen == true ? 'display: block;' : 'display: none;'"
+       ></map-section>-->
+       <map-section v-if="mapOpen" :selectMarks="selectMarks"
+       ></map-section>
         <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients"></relation-modal>
         <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
         <div class="container-fluid">
@@ -25,7 +28,7 @@
                         <location-section :marginTopLocation="marginTopLocation"></location-section>
                     </div>
                     <div v-bind:style="selectSection == agency ? 'display: block;' : 'display: none;'">
-                        <agency-section></agency-section>
+                        <agency-section :selectMarks = "selectMarks" :agencies="agencies"></agency-section>
                     </div>
                     <div v-bind:style="selectSection == emergency ? 'display: block;' : 'display: none;'">
                         <emergency-section></emergency-section>
@@ -71,8 +74,14 @@
                 marginTopLocation: 30,
                 telefon: null,
                 municipiLocation: null,
-                incident: null
+                incident: null,
+                mapOpen: false,
+                selectMarks: [],
+                agencies: []
             }
+        },
+        created() {
+
         },
         mounted() {
             this.$eventTime.$on("change-section", section => {
@@ -130,7 +139,6 @@
 
             this.$eventRelation.$on("close-modal", message => {
                 this.modalOpen = false
-
             })
 
             this.$eventAlert.$on("open-alert", mensajeAlert => {
@@ -184,6 +192,37 @@
                 else {
                     this.incident = incident
                 }
+            })
+
+            this.$eventMap.$on("open-map", mapOpen => {
+                this.mapOpen = mapOpen
+            })
+
+            this.$eventMap.$on("close-map", selectMarks => {
+                this.mapOpen = false;
+                this.selectMarks = selectMarks
+            })
+
+            this.$eventMap.$on("send-agencies", agencies => {
+                this.agencies = agencies;
+            })
+
+            this.$eventMap.$on("delete-select-mark", idAgency => {
+                let positionDelete = null
+                for(let i = 0; i < this.selectMarks.length; i++) {
+                    if(this.selectMarks[i] == idAgency) {
+                        positionDelete = i;
+                    }
+                }
+                this.selectMarks.splice(positionDelete,1);
+            })
+
+            this.$eventClear.$on("clear-select-mark", message => {
+                this.selectMarks = [];
+            })
+
+            this.$eventFinal.$on("obtener-id-agencies", message => {
+                this.$eventFinal.$emit("recojer-id-agencies",this.selectMarks);
             })
 
             // this.$eventAlert.$on("get-section-selected", message => {

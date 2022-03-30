@@ -50,7 +50,9 @@
                     operador: null,
 
                     expedientId: null,
-                    dadaPersonalId: null
+                    dadaPersonalId: null,
+
+                    selectMarks: []
 
                 },
                 objectPost: {
@@ -90,6 +92,9 @@
                         data_ultima_modificacio: null,
                         estats_expedients_id: null
                     },
+                    cartes_trucades_has_agencies: {
+                        agenciesId: []
+                    }
                 },
                 cartesTrucadesArray: [],
                 disabledButton: false
@@ -195,6 +200,10 @@
 
                 this.$eventFinal.$emit("obtener-id-dada-personal","dada-personal");
 
+                //Agencies
+
+                this.$eventFinal.$emit("obtener-id-agencies","id-agencies");
+
                 this.crearCartaTrucada()
             },
             crearCartaTrucada() {
@@ -208,12 +217,15 @@
 
 
                 //dades_personals
+
                 if(this.finalDates.telefono == null) {
                     insertCartaTrucada = false
                     this.objectPost.dades_personals.telefon = null
                     mensaje.id = 1
                     mensaje.text = "Introduzca el numero de telefono!"
                     mensajeAlert.push(Object.assign({}, mensaje));
+
+
                     //Cuando se cambia los datos del objeto, también se en el array
                     //Esta funcion sube una copia del objeto, por lo tanto cuando se cambie los datos del objeto original
                     //no se cambiara los objetos del array
@@ -401,6 +413,10 @@
 
                 this.objectPost.cartes_trucades.usuaris_id = 1 //Provisional
 
+                //Agencies
+
+                this.objectPost.cartes_trucades_has_agencies.agenciesId = this.finalDates.selectMarks
+
                 let vueThis = this
 
                 if(insertCartaTrucada) {
@@ -423,7 +439,15 @@
 
                     }).catch(function(error) {
                         console.log(error.response.status)
-                        console.log(error.response.data)
+                        console.log(typeof error.response.data.error)
+                        vueThis.$eventAlert.$emit("open-alert",
+                        [
+                        {
+                            id: 1,
+                            text: error.response.data.error
+                        }
+                        ]
+                        );
                         vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
                         vueThis.disabledButton = false;
                     })
@@ -464,6 +488,9 @@
                     this.$eventClear.$emit("clear-dades-personals","dades-personals");
                 }
                 this.objectPost.dades_personals.id = null;
+
+                //Vaciar select mark
+                this.$eventClear.$emit("clear-select-mark","select-mark");
             }
         },
         mounted() {
@@ -772,6 +799,12 @@
 
             this.$eventFinal.$on("recojer-id-dada-personal", dadaPersonalId => {
                 this.finalDates.dadaPersonalId = dadaPersonalId
+            })
+
+            //Agencies
+
+            this.$eventFinal.$on("recojer-id-agencies", selectMarks => {
+                this.finalDates.selectMarks = selectMarks
             })
 
         }

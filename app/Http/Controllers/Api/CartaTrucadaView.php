@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Clases\Utilitat;
 use App\Models\Expedient;
 use App\Models\CartaTrucada;
 use App\Models\DadaPersonal;
+use App\Models\CartesTrucadesHasAgencies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -39,6 +41,7 @@ class CartaTrucadaView extends Controller
         $dades_personals = $request["dades_personals"];
         $expedients = $request["expedients"];
         $cartes_trucades = $request["cartes_trucades"];
+        $cartes_trucades_has_agencies = $request["cartes_trucades_has_agencies"];
 
         //Carta_trucada_object
         $cartaTrucada = new CartaTrucada();
@@ -105,7 +108,6 @@ class CartaTrucadaView extends Controller
         }
 
         // temps_trucada
-
         $cartaTrucada->codi_trucada = $cartes_trucades["codi_trucada"];
         $cartaTrucada->data_hora = $cartes_trucades["data_hora"];
         $cartaTrucada->temps_trucada = $cartes_trucades["temps_trucada"];
@@ -128,6 +130,13 @@ class CartaTrucadaView extends Controller
         //expedients id -> obtenido
         $cartaTrucada->usuaris_id = $cartes_trucades["usuaris_id"];
 
+        //Agencies
+        $insertAgencies = false;
+        $cartesTrucadesHasAgencies = null;
+        if(count($cartes_trucades_has_agencies["agenciesId"]) > 0) {
+            $insertAgencies = true;
+        }
+
         DB::beginTransaction();
 
         try {
@@ -138,8 +147,19 @@ class CartaTrucadaView extends Controller
             if($insertExpedient) {
                 $expedient->save();
                 $cartaTrucada->expedients_id = $expedient->id;
+
             }
             $cartaTrucada->save();
+
+            if($insertAgencies) {
+                foreach($cartes_trucades_has_agencies["agenciesId"] as $agenciesId) {
+                    $cartesTrucadesHasAgencies = new CartesTrucadesHasAgencies();
+                    $cartesTrucadesHasAgencies->cartes_trucades_id = $cartaTrucada->id;
+                    $cartesTrucadesHasAgencies->agencies_id = $agenciesId;
+                    $cartesTrucadesHasAgencies->estats_agencies_id = 1;
+                    $cartesTrucadesHasAgencies->save();
+                }
+            }
 
             DB::commit();
             $response = (new CartesTrucadesResource($cartaTrucada))
@@ -150,7 +170,11 @@ class CartaTrucadaView extends Controller
         }
         catch(QueryException $ex) {
             DB::rollBack();
-            $response = redirect()->action([CartaTrucadaView::class,"index"])->withInput();
+            $mensaje = Utilitat::errorMessage($ex);
+            $response = \response()
+                        ->json(["error" => $mensaje], 400);
+
+            // $response = redirect()->action([CartaTrucadaView::class,"index"])->withInput();
         }
 
         return $response;

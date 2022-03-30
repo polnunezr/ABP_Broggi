@@ -19,7 +19,15 @@
             -->
             <div class="row" style="margin-top: 20px">
                 <div class="col col-10">
-                    <textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>
+                    <!--<textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>-->
+                    <div id="agenciaListDiv">
+                        <div class="container-fluid" id="containerAgencia">
+                            <list-agency-section v-for="selectMark in selectMarks" :key="selectMark"
+                            :agencies="agencies" :idAgency="selectMark">
+
+                            </list-agency-section>
+                        </div>
+                    </div>
                 </div>
                 <div class="col col-2 d-flex justify-content-center align-items-end">
                     <button type="button" class="button buttonNormal"
@@ -34,6 +42,16 @@
 
 <script>
     export default {
+        props: {
+            selectMarks: {
+                type: [Array],
+                require: true
+            },
+            agencies: {
+                type: [Array],
+                require: true
+            }
+        },
         data() {
             return {
                 title: "Agències"
@@ -44,7 +62,7 @@
                 this.$eventTime.$emit("start-time","message");
             },
             buttonClickMap() {
-
+                this.$eventMap.$emit("open-map",true);
             }
         },
         computed: {

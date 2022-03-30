@@ -80,7 +80,8 @@ Vue.prototype.$yesVideo= "YES"
 Vue.prototype.$refreshVideo = "refresh"
 Vue.prototype.$refreshGeneral="refreshGeneral"
 
-Vue.prototype.$videoURL = "https://paucepnet.github.io/videosProjecte/media/videoInteractivo.mp4"
+// Vue.prototype.$videoURL = "https://paucepnet.github.io/videosProjecte/media/videoInteractivo.mp4"
+Vue.prototype.$videoURL = "http://daw.abp-politecnics.com/daw03/videoInteractivo.mp4"
 
 Vue.prototype.$v1="#t=0,24"
 Vue.prototype.$qv1 = "¿Llamada procedente?"
@@ -91,6 +92,29 @@ Vue.prototype.$v11="#t=33,53"
 Vue.prototype.$qv11 = "¿Sistema de aviso especial?"
 
 Vue.prototype.$v111="#t=59,73"
+
+Vue.prototype.$v110="#t=80,128"
+Vue.prototype.$qv110 = "¿Procedimiento específico?"
+
+Vue.prototype.$v1101="#t=131,144"
+
+Vue.prototype.$v1100="#t=147,161"
+Vue.prototype.$qv1100 = "¿Llamada asociada?"
+
+Vue.prototype.$v11001="#t=164,177"
+Vue.prototype.$qv11001 = "¿Ampliar nota común?"
+
+Vue.prototype.$v110010="#t=181,190"
+
+Vue.prototype.$v110011="#t=192,211"
+Vue.prototype.$qv110011 = "¿IRE?"
+
+Vue.prototype.$v11000="#t=214,258"
+Vue.prototype.$qv11000 = "¿IRE?"
+
+Vue.prototype.$v1100110="#t=261,273"
+
+Vue.prototype.$v1100111="#t=276,299"
 
 Vue.prototype.$inputTelefon="inputTelefon"
 Vue.prototype.$inputProcedencia="inputProcedencia"

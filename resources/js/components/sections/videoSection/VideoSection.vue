@@ -42,6 +42,33 @@
                     case "111":
                         this.show(this.$v111,true,this.tipoVideo)
                         break;
+                    case "110":
+                        this.show(this.$v110,false,this.tipoVideo)
+                        break;
+                    case "1101":
+                        this.show(this.$v1101,true,this.tipoVideo)
+                        break;
+                    case "1100":
+                        this.show(this.$v1100,false,this.tipoVideo)
+                        break;
+                    case "11001":
+                        this.show(this.$v11001,false,this.tipoVideo)
+                        break;
+                    case "11000":
+                        this.show(this.$v11000,false,this.tipoVideo)
+                        break;
+                    case "110010":
+                        this.show(this.$v110010,true,this.tipoVideo)
+                        break;
+                    case "110011":
+                        this.show(this.$v110011,false,this.tipoVideo)
+                        break;
+                    case "1100110":
+                        this.show(this.$v1100110,true,this.tipoVideo)
+                        break;
+                    case "1100111":
+                        this.show(this.$v1100111,true,this.tipoVideo)
+                        break;
 
                 }
 
@@ -54,6 +81,21 @@
                         break;
                     case "11":
                         this.$eventVideo.$emit("change-backdrop-video",this.$qv11)
+                        break;
+                    case "110":
+                        this.$eventVideo.$emit("change-backdrop-video",this.$qv110)
+                        break;
+                    case "1100":
+                        this.$eventVideo.$emit("change-backdrop-video",this.$qv1100)
+                        break;
+                    case "11000":
+                        this.$eventVideo.$emit("change-backdrop-video",this.$qv11000)
+                        break;
+                    case "11001":
+                        this.$eventVideo.$emit("change-backdrop-video",this.$qv11001)
+                        break;
+                    case "110011":
+                        this.$eventVideo.$emit("change-backdrop-video",this.$qv110011)
                         break;
                 }
 
@@ -124,9 +166,72 @@
                                 this.refresh()
                             }
                             else {
-
+                                this.timeVideo = this.$v110
+                                this.tipoVideo = "110"
+                                this.refresh()
                             }
-
+                            break;
+                        case "110":
+                            if(optionVideo == this.$yesVideo) {
+                                this.timeVideo = this.$v1101
+                                this.tipoVideo = "1101"
+                                this.refresh()
+                            }
+                            else {
+                                this.timeVideo = this.$v1100
+                                this.tipoVideo = "1100"
+                                this.refresh()
+                            }
+                            break;
+                        case "1100":
+                            if(optionVideo == this.$yesVideo) {
+                                this.timeVideo = this.$v11001
+                                this.tipoVideo = "11001"
+                                this.refresh()
+                            }
+                            else {
+                                this.timeVideo = this.$v11000
+                                this.tipoVideo = "11000"
+                                this.refresh()
+                            }
+                            break;
+                        case "11001":
+                            if(optionVideo == this.$yesVideo) {
+                                this.timeVideo = this.$v110011
+                                this.tipoVideo = "110011"
+                                this.refresh()
+                            }
+                            else {
+                                this.timeVideo = this.$v110010
+                                this.tipoVideo = "110010"
+                                this.refresh()
+                            }
+                            break;
+                        case "110011":
+                            if(optionVideo == this.$yesVideo) {
+                                // debugger;
+                                this.timeVideo = this.$v1100111
+                                this.tipoVideo = "1100111"
+                                this.refresh()
+                            }
+                            else {
+                                // debugger;
+                                this.timeVideo = this.$v1100110
+                                this.tipoVideo = "1100110"
+                                this.refresh()
+                            }
+                            break;
+                        case "11000":
+                            if(optionVideo == this.$yesVideo) {
+                                this.timeVideo = this.$v1100111
+                                this.tipoVideo = "1100111"
+                                this.refresh()
+                            }
+                            else {
+                                this.timeVideo = this.$v1100110
+                                this.tipoVideo = "1100110"
+                                this.refresh()
+                            }
                             break;
                     }
 

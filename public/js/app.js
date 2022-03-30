@@ -9076,6 +9076,42 @@ __webpack_require__.r(__webpack_exports__);
         case "111":
           this.show(this.$v111, true, this.tipoVideo);
           break;
+
+        case "110":
+          this.show(this.$v110, false, this.tipoVideo);
+          break;
+
+        case "1101":
+          this.show(this.$v1101, true, this.tipoVideo);
+          break;
+
+        case "1100":
+          this.show(this.$v1100, false, this.tipoVideo);
+          break;
+
+        case "11001":
+          this.show(this.$v11001, false, this.tipoVideo);
+          break;
+
+        case "11000":
+          this.show(this.$v11000, false, this.tipoVideo);
+          break;
+
+        case "110010":
+          this.show(this.$v110010, true, this.tipoVideo);
+          break;
+
+        case "110011":
+          this.show(this.$v110011, false, this.tipoVideo);
+          break;
+
+        case "1100110":
+          this.show(this.$v1100110, true, this.tipoVideo);
+          break;
+
+        case "1100111":
+          this.show(this.$v1100111, true, this.tipoVideo);
+          break;
       }
     },
     showBackdrop: function showBackdrop(tipoVideo) {
@@ -9088,6 +9124,26 @@ __webpack_require__.r(__webpack_exports__);
 
         case "11":
           this.$eventVideo.$emit("change-backdrop-video", this.$qv11);
+          break;
+
+        case "110":
+          this.$eventVideo.$emit("change-backdrop-video", this.$qv110);
+          break;
+
+        case "1100":
+          this.$eventVideo.$emit("change-backdrop-video", this.$qv1100);
+          break;
+
+        case "11000":
+          this.$eventVideo.$emit("change-backdrop-video", this.$qv11000);
+          break;
+
+        case "11001":
+          this.$eventVideo.$emit("change-backdrop-video", this.$qv11001);
+          break;
+
+        case "110011":
+          this.$eventVideo.$emit("change-backdrop-video", this.$qv110011);
           break;
       }
     },
@@ -9152,7 +9208,89 @@ __webpack_require__.r(__webpack_exports__);
               _this.tipoVideo = "111";
 
               _this.refresh();
-            } else {}
+            } else {
+              _this.timeVideo = _this.$v110;
+              _this.tipoVideo = "110";
+
+              _this.refresh();
+            }
+
+            break;
+
+          case "110":
+            if (optionVideo == _this.$yesVideo) {
+              _this.timeVideo = _this.$v1101;
+              _this.tipoVideo = "1101";
+
+              _this.refresh();
+            } else {
+              _this.timeVideo = _this.$v1100;
+              _this.tipoVideo = "1100";
+
+              _this.refresh();
+            }
+
+            break;
+
+          case "1100":
+            if (optionVideo == _this.$yesVideo) {
+              _this.timeVideo = _this.$v11001;
+              _this.tipoVideo = "11001";
+
+              _this.refresh();
+            } else {
+              _this.timeVideo = _this.$v11000;
+              _this.tipoVideo = "11000";
+
+              _this.refresh();
+            }
+
+            break;
+
+          case "11001":
+            if (optionVideo == _this.$yesVideo) {
+              _this.timeVideo = _this.$v110011;
+              _this.tipoVideo = "110011";
+
+              _this.refresh();
+            } else {
+              _this.timeVideo = _this.$v110010;
+              _this.tipoVideo = "110010";
+
+              _this.refresh();
+            }
+
+            break;
+
+          case "110011":
+            if (optionVideo == _this.$yesVideo) {
+              // debugger;
+              _this.timeVideo = _this.$v1100111;
+              _this.tipoVideo = "1100111";
+
+              _this.refresh();
+            } else {
+              // debugger;
+              _this.timeVideo = _this.$v1100110;
+              _this.tipoVideo = "1100110";
+
+              _this.refresh();
+            }
+
+            break;
+
+          case "11000":
+            if (optionVideo == _this.$yesVideo) {
+              _this.timeVideo = _this.$v1100111;
+              _this.tipoVideo = "1100111";
+
+              _this.refresh();
+            } else {
+              _this.timeVideo = _this.$v1100110;
+              _this.tipoVideo = "1100110";
+
+              _this.refresh();
+            }
 
             break;
         }
@@ -9241,14 +9379,29 @@ Vue.prototype.$incidentsId = "selectEmergencySpecific";
 Vue.prototype.$noVideo = "NO";
 Vue.prototype.$yesVideo = "YES";
 Vue.prototype.$refreshVideo = "refresh";
-Vue.prototype.$refreshGeneral = "refreshGeneral";
-Vue.prototype.$videoURL = "https://paucepnet.github.io/videosProjecte/media/videoInteractivo.mp4";
+Vue.prototype.$refreshGeneral = "refreshGeneral"; // Vue.prototype.$videoURL = "https://paucepnet.github.io/videosProjecte/media/videoInteractivo.mp4"
+
+Vue.prototype.$videoURL = "http://daw.abp-politecnics.com/daw03/videoInteractivo.mp4";
 Vue.prototype.$v1 = "#t=0,24";
 Vue.prototype.$qv1 = "¿Llamada procedente?";
 Vue.prototype.$v10 = "#t=25,32";
 Vue.prototype.$v11 = "#t=33,53";
 Vue.prototype.$qv11 = "¿Sistema de aviso especial?";
 Vue.prototype.$v111 = "#t=59,73";
+Vue.prototype.$v110 = "#t=80,128";
+Vue.prototype.$qv110 = "¿Procedimiento específico?";
+Vue.prototype.$v1101 = "#t=131,144";
+Vue.prototype.$v1100 = "#t=147,161";
+Vue.prototype.$qv1100 = "¿Llamada asociada?";
+Vue.prototype.$v11001 = "#t=164,177";
+Vue.prototype.$qv11001 = "¿Ampliar nota común?";
+Vue.prototype.$v110010 = "#t=181,190";
+Vue.prototype.$v110011 = "#t=192,211";
+Vue.prototype.$qv110011 = "¿IRE?";
+Vue.prototype.$v11000 = "#t=214,258";
+Vue.prototype.$qv11000 = "¿IRE?";
+Vue.prototype.$v1100110 = "#t=261,273";
+Vue.prototype.$v1100111 = "#t=276,299";
 Vue.prototype.$inputTelefon = "inputTelefon";
 Vue.prototype.$inputProcedencia = "inputProcedencia";
 Vue.prototype.$inputAdreca = "inputAdreca";

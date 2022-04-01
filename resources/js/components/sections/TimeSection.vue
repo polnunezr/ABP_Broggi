@@ -16,6 +16,9 @@
 
             </div>
         </div>
+        <help-box-icon></help-box-icon>
+        <help-box v-if="helpBoxOpen" :selectTab="selectTab"></help-box>
+
     </div>
 </template>
 
@@ -29,7 +32,9 @@
                 hora: "16:28:00",
                 operador: "001",
                 timeSeconds: 0,
-                intervalTime: null
+                intervalTime: null,
+                helpBoxOpen: false,
+                selectTab: 1
             }
         },
         created() {
@@ -138,6 +143,45 @@
                     this.start = false
                     this.timeSeconds = 0
                 }
+            })
+
+            this.$eventHelpBox.$on("open-help-box", helpBoxOpen => {
+                this.helpBoxOpen = helpBoxOpen
+            })
+
+            this.$eventHelpBox.$on("close-help-box", helpBoxOpen => {
+                this.helpBoxOpen = helpBoxOpen
+            })
+
+            this.$eventHelpBox.$on("change-section", section => {
+                let selectTabActual = null
+                switch(section) {
+                    case this.$dadesPersonals:
+                        this.selectTab = 1
+                        selectTabActual = 1
+                    break;
+                    case this.$locate:
+                        this.selectTab = 2
+                        selectTabActual = 2
+                    break;
+                    case this.$agency:
+                        this.selectTab = 3
+                        selectTabActual = 3
+                    break;
+                    case this.$emergency:
+                        this.selectTab = 4
+                        selectTabActual = 4
+                    break;
+                    case this.$communeNote:
+                        this.selectTab = 5
+                        selectTabActual = 5
+                    break;
+                    case this.$relationExpedient:
+                        this.selectTab = 6
+                        selectTabActual = 6
+                    break;
+                }
+                this.$eventHelpBox.$emit("change-section-in-help-box",selectTabActual);
             })
         }
     }

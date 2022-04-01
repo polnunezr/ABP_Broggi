@@ -27,6 +27,18 @@ body {
     z-index: 400;
 }
 
+#spinnerEarth {
+    position: absolute;
+    top: calc(50% - 200px);
+    left: calc(50% - 200px);
+    width: 400px;
+    height: 400px;
+    background-image: url("http://daw.abp-politecnics.com/daw03/filesSVG/earth.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 #map {
     position: absolute;
     top: 10%;
@@ -241,6 +253,78 @@ body {
     max-height: 500px;
 }
 
+/*1.66778149386845*/
+/*1.66778149386845*/
+
+#divHelpBoxIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: #636AF2;
+    cursor: pointer;
+    /* background-image: url("https://paucepnet.github.io/mediaProjecte/flagEngland.svg"); */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+
+#containerHelpBox {
+    position: relative;
+}
+
+#divSpinnerHelpBox {
+    position: absolute;
+    /*32 37.25*/
+    top: calc(50% - 16px);
+    left: calc(50% - 18.625px) ;
+}
+
+.spinner {
+    color:#636AF2;
+}
+
+.colHelpBoxIcon {
+    height:100px;
+}
+
+.colHelpBox {
+    min-height: 300px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.hrHelpBox {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.colQuestionHelpBox {
+    /* padding-top: 18px;
+    padding-left: 10px; */
+    height: 70px;
+}
+.colAudioHelpBox {
+    height: 70px;
+}
+
+.divAudio {
+    cursor: pointer;
+}
+
+.fa-volume-up:hover {
+    cursor: pointer;
+    color: gray
+}
+
+
+.fa-info {
+    color: white
+}
+
+
+
 
 .table, .table td{
     border-color: black;
@@ -267,6 +351,7 @@ p {
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+    margin-bottom: 0px
 }
 
 h4 {

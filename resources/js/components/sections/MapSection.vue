@@ -1,7 +1,8 @@
 <template>
     <div id="backdropMap">
+        <div id="spinnerEarth" v-if="loaded == false"></div>
         <div id="map">
-        <button v-if="showButton" type="button" class="button buttonClick" id="buttonFinalizarMap"
+            <button v-if="showButton" type="button" class="button buttonClick" id="buttonFinalizarMap"
             v-on:click="closeMap">Finalitzar</button>
         </div>
     </div>
@@ -28,7 +29,8 @@
                 agencies: [],
                 buttons: [],
                 selectMarksActual: [],
-                showButton: false
+                showButton: false,
+                loaded: false
             }
         },
         created() {
@@ -40,6 +42,7 @@
                 vueThis.agencies = response.data
                 vueThis.controlMap()
                 vueThis.showButton = true
+
             })
             .catch(error => {
                 console.log(error)
@@ -298,6 +301,8 @@
 
                 // let buttons = this.$refs.btns
                 // const buttonsMaps = document.getElementsByClassName("buttonsMaps");
+
+                this.loaded = true
             },
             closeMap() {
                 this.$eventMap.$emit("close-map",this.selectMarksActual);

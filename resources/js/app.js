@@ -166,6 +166,8 @@ Vue.prototype.$eventPersonal = new Vue()
 
 Vue.prototype.$eventMap = new Vue()
 
+Vue.prototype.$eventHelpBox = new Vue()
+
 
 
 
@@ -175,6 +177,12 @@ Vue.prototype.$eventMap = new Vue()
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', require('./components/CartaTrucada.vue').default);
+
+Vue.component('help-box-icon', require('./components/sections/helpBox/helpBoxIcon.vue').default);
+
+Vue.component('help-box', require('./components/sections/helpBox/helpBox.vue').default);
+
+Vue.component('help-box-question', require('./components/sections/helpBox/helpBoxQuestion.vue').default);
 
 Vue.component('tab-apart', require('./components/nav/TabApart.vue').default);
 

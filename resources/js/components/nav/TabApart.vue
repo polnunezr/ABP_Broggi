@@ -27,6 +27,7 @@
             changeSection(section) {
                 this.$eventAlert.$emit("change-section",section);
                 this.$eventTime.$emit("change-section",section);
+                this.$eventHelpBox.$emit("change-section",section);
             }
         }
     }

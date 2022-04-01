@@ -1,38 +1,37 @@
 <template>
 
-    <div id="backdropRelation">
-        <div id="relationModal">
-            <div id="closeModal"
-                class="d-flex align-items-center justify-content-center"
-                v-on:click="clickCloseModal">
-                <i class="fa fa-times fa-lg"></i>
-            </div>
-            <div id="divTableExpedient">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Data Creació</th>
-                        <th scope="col">Data última Modificació</th>
-                        <th scope="col">Estats expedients</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="expedient in expedients" :key="expedient.id">
-                            <th scope="row">{{expedient.id}}</th>
-                            <td>{{expedient.data_creacio}}</td>
-                            <td>{{expedient.data_ultima_modificacio}}</td>
-                            <td>{{expedient.estat_expedient.estat}}</td>
-                            <td><button :id="expedient.id"
-                            type="button" class="button buttonNormal"
-                            @click="btnRelacionarClick(expedient.id)"
-                            ref="btns">Relacionar</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
 
+    <div id="relationModal">
+        <div id="closeModal"
+            class="d-flex align-items-center justify-content-center"
+            v-on:click="clickCloseModal">
+            <i class="fa fa-times fa-lg"></i>
         </div>
+        <div id="divTableExpedient">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Data Creació</th>
+                    <th scope="col">Data última Modificació</th>
+                    <th scope="col">Estats expedients</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="expedient in expedients" :key="expedient.id">
+                        <th scope="row">{{expedient.id}}</th>
+                        <td>{{expedient.data_creacio}}</td>
+                        <td>{{expedient.data_ultima_modificacio}}</td>
+                        <td>{{expedient.estat_expedient.estat}}</td>
+                        <td><button :id="expedient.id"
+                        type="button" class="button buttonNormal"
+                        @click="btnRelacionarClick(expedient.id)"
+                        ref="btns">Relacionar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
 </template>

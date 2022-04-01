@@ -4,6 +4,7 @@
        ></map-section>-->
        <map-section v-if="mapOpen" :selectMarks="selectMarks"
        ></map-section>
+       <div id="backdropRelation" v-if="backdropRelationOpen"></div>
         <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients"></relation-modal>
         <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
         <div class="container-fluid">
@@ -77,7 +78,8 @@
                 incident: null,
                 mapOpen: false,
                 selectMarks: [],
-                agencies: []
+                agencies: [],
+                backdropRelationOpen: false
             }
         },
         created() {
@@ -93,6 +95,8 @@
             })
 
             this.$eventRelation.$on("open-valor-modal", message => {
+
+                this.backdropRelationOpen = true
 
                 let vueThis = this;
 
@@ -138,6 +142,7 @@
             })
 
             this.$eventRelation.$on("close-modal", message => {
+                this.backdropRelationOpen = false
                 this.modalOpen = false
             })
 

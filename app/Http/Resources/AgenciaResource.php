@@ -14,6 +14,16 @@ class AgenciaResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "nom" => $this->nom,
+            "data_ultima_modificacio" => $this->data_creacio,
+            "carrer" => $this->carrer,
+            "codi_postal" => $this->codi_postal,
+            "correu" => $this->correu,
+            "municipis_id" => $this->municipis_id,
+            "municipi" => $this->municipi,
+        ];
     }
 }

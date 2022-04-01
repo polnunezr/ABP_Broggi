@@ -154,6 +154,7 @@ class CartaTrucadaView extends Controller
             if($insertAgencies) {
                 foreach($cartes_trucades_has_agencies["agenciesId"] as $agenciesId) {
                     $cartesTrucadesHasAgencies = new CartesTrucadesHasAgencies();
+                    
                     $cartesTrucadesHasAgencies->cartes_trucades_id = $cartaTrucada->id;
                     $cartesTrucadesHasAgencies->agencies_id = $agenciesId;
                     $cartesTrucadesHasAgencies->estats_agencies_id = 1;

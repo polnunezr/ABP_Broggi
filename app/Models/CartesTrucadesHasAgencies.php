@@ -9,7 +9,7 @@ class CartesTrucadesHasAgencies extends Model
 {
     use HasFactory;
     protected $table = "cartes_trucades_has_agencies";
-    protected $primaryKey = ["agencies_id","cartes_trucades_id"];
+    protected $primaryKey = ["cartes_trucades_id","agencies_id"];
     public $incremneting = false;
     // protected $keyType = "string"
     public $timestamps = false;

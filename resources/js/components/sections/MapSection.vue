@@ -51,6 +51,7 @@
         },
         methods: {
             controlMap() {
+                // debugger;
                 mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
                 const mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
                 let mapThis = this
@@ -58,7 +59,8 @@
                 for(let i = 0; i < mapThis.agencies.length; i++) {
                     mapboxClient.geocoding
                     .forwardGeocode({
-                        query: mapThis.agencies[i].carrer,
+                        query: mapThis.agencies[i].carrer + ", "     +
+                        mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain",
                         autocomplete: false,
                         limit: 1
                     })
@@ -77,6 +79,16 @@
                         mapThis.mark.id = mapThis.agencies[i].id
                         mapThis.mark.features = response.body.features[0];
 
+
+
+                        if(mapThis.mark.id == 352) {
+                            console.log(mapThis.agencies[i].carrer + ", "     +
+                        mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain")
+                            console.log(mapThis.mark.features.center)
+                        }
+
+                        // console.log(mapThis.agencies[i].carrer + ", " +
+                        // mapThis.agencies[i].municipi.nom + ", " +  mapThis.agencies[i].codi_postal)
 
 
                         // const divContainer = window.document.createElement('div');

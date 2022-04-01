@@ -7991,6 +7991,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     controlMap: function controlMap() {
+      // debugger;
       mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
       var mapboxClient = mapboxSdk({
         accessToken: mapboxgl.accessToken
@@ -7999,7 +8000,7 @@ __webpack_require__.r(__webpack_exports__);
 
       var _loop = function _loop(i) {
         mapboxClient.geocoding.forwardGeocode({
-          query: mapThis.agencies[i].carrer,
+          query: mapThis.agencies[i].carrer + ", " + mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain",
           autocomplete: false,
           limit: 1
         }).send().then(function (response) {
@@ -8010,12 +8011,20 @@ __webpack_require__.r(__webpack_exports__);
           }
 
           mapThis.mark.id = mapThis.agencies[i].id;
-          mapThis.mark.features = response.body.features[0]; // const divContainer = window.document.createElement('div');
+          mapThis.mark.features = response.body.features[0];
+
+          if (mapThis.mark.id == 352) {
+            console.log(mapThis.agencies[i].carrer + ", " + mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain");
+            console.log(mapThis.mark.features.center);
+          } // console.log(mapThis.agencies[i].carrer + ", " +
+          // mapThis.agencies[i].municipi.nom + ", " +  mapThis.agencies[i].codi_postal)
+          // const divContainer = window.document.createElement('div');
           // divContainer.innerHTML = "<div class='container container-map'></div>";
           // const divRow = window.document.createElement('div');
           // divRow.innerHTML = "<div class='row'></div>";
           // const divCol = window.document.createElement('div');
           // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
+
 
           var button = window.document.createElement('button');
           button.type = "button";
@@ -10415,7 +10424,7 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.baseURL = "/projects/M12/projecte2/broggi/public/api/";
+window.axios.defaults.baseURL = "/api/";
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

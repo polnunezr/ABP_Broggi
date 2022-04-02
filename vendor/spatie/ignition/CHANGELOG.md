@@ -2,6 +2,77 @@
 
 All notable changes to `ignition` will be documented in this file
 
+## 1.2.6 - 2022-03-23
+
+## What's Changed
+
+- Enable (slightly bigger) development build to make debugging Ignition issues easier
+- Speed up tests run process by @kudashevs in https://github.com/spatie/ignition/pull/105
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.5...1.2.6###
+
+## 1.2.5 - 2022-03-19
+
+- Disable "Share to Flare" feature based on Ignition config value
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.4...1.2.5
+
+## 1.2.4 - 2022-03-11
+
+- Pass an already initialised `Report` object to Flare client (instead of creating a new instance)
+- Bump `spatie/flare-client-php` version to support passing an initialised report to flare
+- Fix the `renderException` method to only render the Ignition error page (without also sending a report)
+- Remove `spatie/ray` dependency
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.3...1.2.4
+
+## 1.2.3 - 2022-03-08
+
+## What's Changed
+
+- Suppress file check by @kudashevs in https://github.com/spatie/ignition/pull/91
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.2...1.2.3
+
+## 1.2.2 - 2022-03-08
+
+## What's Changed
+
+- fix exception caused by file_exists by @dianfishekqi in https://github.com/spatie/ignition/pull/90
+
+## New Contributors
+
+- @dianfishekqi made their first contribution in https://github.com/spatie/ignition/pull/90
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.1...1.2.2
+
+## 1.2.1 - 2022-03-04
+
+- Ignition UI bugfix: stacktrace with only one vendor frame no longer crashes Ignition
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.2.0...1.2.1
+
+## 1.2.0 - 2022-03-04
+
+## What's Changed
+
+- The possibility to specify a path to the settings file using a new `ConfigManager` interface by @kudashevs in https://github.com/spatie/ignition/pull/57
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.1.1...1.2.0
+
+## 1.1.1 - 2022-03-02
+
+## What's Changed
+
+- Create new build for Ignition-UI changes
+- Update README.md by @biscuit-deluxe in https://github.com/spatie/ignition/pull/54
+
+## New Contributors
+
+- @biscuit-deluxe made their first contribution in https://github.com/spatie/ignition/pull/54
+
+**Full Changelog**: https://github.com/spatie/ignition/compare/1.1.0...1.1.1
+
 ## 1.1.0 - 2022-03-01
 
 ## What's Changed

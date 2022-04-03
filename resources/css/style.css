@@ -246,6 +246,21 @@ body {
     background-color: #f29b9b;
 }
 
+#divMessageAnyExpedient {
+    position: absolute;
+    /*528.92 28.8*/
+    top: calc(50% - 14.4px);
+    left: calc(50% - 264.46px);
+    z-index: 400;
+}
+
+#messageAnyExpedient {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 
 #divTableExpedient {
     overflow-y: scroll;
@@ -277,6 +292,13 @@ body {
     /*32 37.25*/
     top: calc(50% - 16px);
     left: calc(50% - 18.625px) ;
+}
+
+#messageAnyAudio {
+    position: absolute;
+    /*189.73 23.05*/
+    top: calc(50% - 11.525px);
+    left: calc(50% - 94.865px);
 }
 
 .spinner {
@@ -344,6 +366,9 @@ label {
 
 p {
     user-select: none;
+}
+
+.pQuestionHelpBox {
     margin-bottom: 0px
 }
 

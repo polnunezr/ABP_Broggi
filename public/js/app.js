@@ -7999,8 +7999,25 @@ __webpack_require__.r(__webpack_exports__);
       var mapThis = this;
 
       var _loop = function _loop(i) {
+        var query = void 0;
+        query = mapThis.agencies[i].carrer + " " + mapThis.agencies[i].municipi.nom + " " + "Spain"; //131
+
+        if (mapThis.agencies[i].id == 131) {
+          query = "Cassa de la Selva, Girona, Spain";
+        } //236
+
+
+        if (mapThis.agencies[i].id == 236) {
+          query = mapThis.agencies[i].nom + mapThis.agencies[i].municipi.nom + " 25287 Lleida Spain";
+        } //311
+
+
+        if (mapThis.agencies[i].id == 311) {
+          query = "Carrer de la Pau, 60, 17244 Cassà de la Selva, Girona";
+        }
+
         mapboxClient.geocoding.forwardGeocode({
-          query: mapThis.agencies[i].carrer + ", " + mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain",
+          query: query,
           autocomplete: false,
           limit: 1
         }).send().then(function (response) {
@@ -8011,12 +8028,13 @@ __webpack_require__.r(__webpack_exports__);
           }
 
           mapThis.mark.id = mapThis.agencies[i].id;
-          mapThis.mark.features = response.body.features[0];
-
-          if (mapThis.mark.id == 352) {
-            console.log(mapThis.agencies[i].carrer + ", " + mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain");
-            console.log(mapThis.mark.features.center);
-          } // console.log(mapThis.agencies[i].carrer + ", " +
+          mapThis.mark.features = response.body.features[0]; // console.log(mapThis.agencies[i].carrer + " " + mapThis.agencies[i].municipi.nom);
+          // if(mapThis.mark.id == 352) {
+          //     console.log(mapThis.agencies[i].carrer + ", "     +
+          // mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain")
+          //     console.log(mapThis.mark.features.center)
+          // }
+          // console.log(mapThis.agencies[i].carrer + ", " +
           // mapThis.agencies[i].municipi.nom + ", " +  mapThis.agencies[i].codi_postal)
           // const divContainer = window.document.createElement('div');
           // divContainer.innerHTML = "<div class='container container-map'></div>";
@@ -8024,7 +8042,6 @@ __webpack_require__.r(__webpack_exports__);
           // divRow.innerHTML = "<div class='row'></div>";
           // const divCol = window.document.createElement('div');
           // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
-
 
           var button = window.document.createElement('button');
           button.type = "button";
@@ -8525,6 +8542,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     expedients: {
@@ -8534,7 +8554,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      idClick: null
+      idClick: null,
+      showTable: true
     };
   },
   methods: {
@@ -8600,6 +8621,7 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventRelation.$on("edit-view-modal", function (message) {
       _this.$nextTick(function () {
+        _this.showTable = true;
         var buttons = [];
 
         if (_this.expedients.length > 0) {
@@ -8613,7 +8635,9 @@ __webpack_require__.r(__webpack_exports__);
               }
             }
           }
-        } else {}
+        } else {
+          _this.showTable = false;
+        }
       });
     });
   }
@@ -8946,6 +8970,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     selectTab: {
@@ -8958,7 +8985,8 @@ __webpack_require__.r(__webpack_exports__);
       audios: null,
       loaded: false,
       selectTabActual: null,
-      cartes_trucades_partes: null
+      cartes_trucades_partes: null,
+      anyAudio: false
     };
   },
   created: function created() {
@@ -8974,6 +9002,10 @@ __webpack_require__.r(__webpack_exports__);
           vueThis.loaded = true;
         }
       }
+
+      if (vueThis.audios.length == 0) {
+        vueThis.anyAudio = true;
+      }
     })["catch"](function (error) {
       console.log(error);
     })["finally"](function () {
@@ -8984,12 +9016,17 @@ __webpack_require__.r(__webpack_exports__);
     var _this2 = this;
 
     this.$eventHelpBox.$on("change-section-in-help-box", function (selectTabActual) {
+      _this2.anyAudio = false;
       _this2.selectTabActual = selectTabActual;
 
       for (var i = 0; i < _this2.cartes_trucades_partes.length; i++) {
         if (_this2.cartes_trucades_partes[i].id == selectTabActual) {
           _this2.audios = _this2.cartes_trucades_partes[i].audios;
         }
+      }
+
+      if (_this2.audios.length == 0) {
+        _this2.anyAudio = true;
       }
     });
   }
@@ -10424,7 +10461,8 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.baseURL = "/api/";
+window.axios.defaults.baseURL = "/api/"; // window.axios.defaults.baseURL = "/projects/M12/projecte2/broggi/public/api/";
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -38562,47 +38600,59 @@ var render = function () {
       [_c("i", { staticClass: "fa fa-times fa-lg" })]
     ),
     _vm._v(" "),
-    _c("div", { attrs: { id: "divTableExpedient" } }, [
-      _c("table", { staticClass: "table table-hover" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c(
-          "tbody",
-          _vm._l(_vm.expedients, function (expedient) {
-            return _c("tr", { key: expedient.id }, [
-              _c("th", { attrs: { scope: "row" } }, [
-                _vm._v(_vm._s(expedient.id)),
-              ]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(expedient.data_creacio))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(expedient.data_ultima_modificacio))]),
-              _vm._v(" "),
-              _c("td", [_vm._v(_vm._s(expedient.estat_expedient.estat))]),
-              _vm._v(" "),
-              _c("td", [
-                _c(
-                  "button",
-                  {
-                    ref: "btns",
-                    refInFor: true,
-                    staticClass: "button buttonNormal",
-                    attrs: { id: expedient.id, type: "button" },
-                    on: {
-                      click: function ($event) {
-                        return _vm.btnRelacionarClick(expedient.id)
+    _vm.showTable == false
+      ? _c("div", { attrs: { id: "divMessageAnyExpedient" } }, [
+          _c("p", { attrs: { id: "messageAnyExpedient" } }, [
+            _vm._v(
+              "No hay expedientes disponibles con los que los puedas relacionar"
+            ),
+          ]),
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.showTable
+      ? _c("div", { attrs: { id: "divTableExpedient" } }, [
+          _c("table", { staticClass: "table table-hover" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "tbody",
+              _vm._l(_vm.expedients, function (expedient) {
+                return _c("tr", { key: expedient.id }, [
+                  _c("th", { attrs: { scope: "row" } }, [
+                    _vm._v(_vm._s(expedient.id)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(expedient.data_creacio))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(expedient.data_ultima_modificacio))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(expedient.estat_expedient.estat))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        ref: "btns",
+                        refInFor: true,
+                        staticClass: "button buttonNormal",
+                        attrs: { id: expedient.id, type: "button" },
+                        on: {
+                          click: function ($event) {
+                            return _vm.btnRelacionarClick(expedient.id)
+                          },
+                        },
                       },
-                    },
-                  },
-                  [_vm._v("Relacionar")]
-                ),
-              ]),
-            ])
-          }),
-          0
-        ),
-      ]),
-    ]),
+                      [_vm._v("Relacionar")]
+                    ),
+                  ]),
+                ])
+              }),
+              0
+            ),
+          ]),
+        ])
+      : _vm._e(),
   ])
 }
 var staticRenderFns = [
@@ -38826,6 +38876,14 @@ var render = function () {
                 )
               : _vm._e(),
           ]),
+          _vm._v(" "),
+          _vm.anyAudio
+            ? _c("div", { attrs: { id: "messageAnyAudio" } }, [
+                _vm._v(
+                  "\n                There is no audio for this part\n            "
+                ),
+              ])
+            : _vm._e(),
         ],
         2
       ),
@@ -38908,7 +38966,11 @@ var render = function () {
         staticClass:
           "col col-10 d-flex align-items-center justify-content-start colQuestionHelpBox",
       },
-      [_c("p", [_vm._v(" " + _vm._s(_vm.text))])]
+      [
+        _c("p", { staticClass: "pQuestionHelpBox" }, [
+          _vm._v(" " + _vm._s(_vm.text)),
+        ]),
+      ]
     ),
     _vm._v(" "),
     _c(

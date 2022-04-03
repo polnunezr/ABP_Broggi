@@ -1,13 +1,12 @@
 @extends('plantillas.index')
 
-@section("title", "Expedients")
+@section("title", "Usuaris")
 
 @section("container")
 
+    {{-- Incluimos la decoración de fondo: --}}
     @include('partials.backgroundDecoration')
 
-    <div class="container-fluid">
-        {{ $usuari->perfils_id }}
-    </div>
+
 
 @endsection

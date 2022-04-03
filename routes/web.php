@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
     // Ruta 'resource' para el controlador 'CartaTrucadaController':
     Route::resource('/cartes_trucades', CartaTrucadaController::class);
 
+    // Ruta 'resource' para el controlador 'UsuariController':
+    Route::resource('/usuaris', UsuariController::class);
+
     // Ruta 'get' para el controlador 'UsuariController::class' para salir de la cuenta:
     // Route::get('/logout', UsuariController::class);
 });

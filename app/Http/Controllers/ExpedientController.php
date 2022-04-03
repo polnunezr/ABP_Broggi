@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expedient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExpedientController extends Controller
 {
@@ -14,7 +15,11 @@ class ExpedientController extends Controller
      */
     public function index()
     {
-        //
+        // Recogemos el usuario con el que gemos iniciado sesión para enviarlo a la vista:
+        $usuari = Auth::user();
+
+        // Devolvemos la vista 'expedientsForm' enviandole el usuario:
+        return view('expedients.expedientsForm', compact('usuari'));
     }
 
     /**

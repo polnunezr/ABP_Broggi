@@ -6,46 +6,60 @@ use App\Models\Usuari;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ExpedientController;
+use App\Http\Controllers\CartaTrucadaController;
 
 class UsuariController extends Controller
 {
 
     public function showLogin()
     {
-        // $user = new Usuari();
-
-        // $user->correu = 'ffernandez@politecnics.barcelona';
-        // $user->nom = 'Francisco';
-        // $user->cognoms = 'Fernández Fernández';
-        // $user->contrasenya = \bcrypt('pepe');
-        // $user->actiu = true;
-        // $user->rols_id = 1;
-
-        // $user->save();
-
         return view('auth.login');
     }
 
     public function login(Request $request)
     {
+        // Recogemos el valor del input 'codigo' y del input 'passwd':
         $codi = $request->input('codigo');
         $passwd = $request->input('passwd');
 
-        // Recogemos la primera coincidencia con el correo en la base de datos:
+        // Recogemos la primera coincidencia en la base de datos, con el codigo que nos llega:
         $usuari = Usuari::where('codi', $codi)->first();
 
         // Si se ha encontrado un usuario y la contraseña coincide con la encriptada de la base de datos:
         if ($usuari !=null && Hash::check($passwd, $usuari->contrassenya)) {
-            // Guardamos el usuario en una sesión,
-            // y usaremos la clase 'Auth' para acceder a los datos del usuario que gardamos en la sesión
+            // Al iniciar sesión se guarda el usuario en una sesión, usaremos la clase 'Auth' para acceder a
+            // los datos del usuario guardado en la sesión:
             Auth::login($usuari);
-            $response = redirect('/menu');
+
+            // Si el usuario es 'operador' redireccionaremos al método index del
+            // 'CartaTrucadaController' para que se abra la carta de llamada:
+            if($usuari->perfils_id == 1)
+            {
+                $response = redirect()->action([CartaTrucadaController::class, 'index']);
+            }
+            // Si el usuario es 'supervisor' redireccionaremos al método index del
+            // 'ExpedienteController' para que se muestren los expedientes:
+            elseif($usuari->perfils_id == 2)
+            {
+                $response = redirect()->action([ExpedientController::class, 'index']);
+            }
+            // Si el usuario es 'administrador' redireccionaremos a la ruta /menu'
+            // donde se mostrará un menú con todas las acciones que puede realizar un administrador:
+            else
+            {
+                $response = redirect('/menu');
+            }
         }
-        else {
-            $request->session()->flash('error', 'Usuari o contrasenya incorrectes');
+        else
+        {
+            // Si no se encuentra ningún usuario con el código y contraseña introducidos,
+            // devolvemos un error y volvemos a la página de login:
+            $request->session()->flash('error', 'Usuari o contrasenya incorrectes!');
             $response = redirect('/login')->withInput();
         }
 
+        // Dependiendo del tipo de usuario devolvemos una respuesta o otra:
         return $response;
     }
 

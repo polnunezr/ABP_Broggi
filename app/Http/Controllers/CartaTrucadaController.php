@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CartaTrucada;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
 
 class CartaTrucadaController extends Controller
 {
@@ -15,7 +16,9 @@ class CartaTrucadaController extends Controller
      */
     public function index()
     {
-        return view("cartaTrucada.index");
+        $usuari = Auth::user();
+
+        return view("cartaTrucada.index", compact('usuari'));
         // Route::view('/cartes_trucades',"cartaTrucada.index");
     }
 

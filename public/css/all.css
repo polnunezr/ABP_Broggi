@@ -517,32 +517,32 @@ margin: 0;
 
 .parteLogoArribaIzquierda
 {
-    margin-top: -20px;
-    margin-left: -20px;
+    /* margin-top: -20px;
+    margin-left: -20px; */
     opacity: 0.15;
     filter: blur(5px);
 }
 
 .parteLogoAbajoIzquierda
 {
-    margin-bottom: -20px;
-    margin-left: -20px;
+    /* margin-bottom: -20px;
+    margin-left: -20px; */
     opacity: 0.15;
     filter: blur(5px);
 }
 
 .parteLogoAbajoDerecha
 {
-    margin-bottom: -20px;
-    margin-right: -20px;
+    /* margin-bottom: -20px;
+    margin-right: -20px; */
     opacity: 0.15;
     filter: blur(5px);
 }
 
 .parteLogoArribaDerecha
 {
-    margin-top: -20px;
-    margin-right: -20px;
+    /* margin-top: -20px;
+    margin-right: -20px; */
     opacity: 0.15;
     filter: blur(5px);
 }

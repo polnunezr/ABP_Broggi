@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuariController;
+use App\Http\Controllers\ExpedientController;
 use App\Http\Controllers\CartaTrucadaController;
 
 /*
@@ -16,27 +17,33 @@ use App\Http\Controllers\CartaTrucadaController;
 |
 */
 
+// Ruta para la raíz de la aplicación que nos redirecciona a la ruta llamada 'login':
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Ruta 'get' que llama el método 'showLogin' del controlador 'UsuariController':
 Route::get('/login', [UsuariController::class, 'showLogin'])->name('login');
-Route::post('/login', [UsuariController::class, 'login']);
 
-// Route::resource('/login', UsuariController::class);
+// Ruta 'post' que llama el método 'login' del controlador 'UsuariController':
+Route::post('/login', [UsuariController::class, 'login']);
 
 // Cualquier ruta que pongamos aquí solo se podrá acceder si estamos conectados a la aplicación,
 // es decir, solo se podrá acceder si nos hemos logeado:
 Route::middleware(['auth'])->group(function () {
 
+    // Ruta 'get' para ir al menú del usuario administrador:
     Route::get('/menu', function () {
         $usuari = Auth::user();
 
-        return view('cartaTrucada.index', compact('usuari'));
+        return view('administrador.menu', compact('usuari'));
     });
 
+    // Ruta 'resource' para el controlador 'ExpedientController':
+    Route::resource('/expedients', ExpedientController::class);
+
     // Ruta 'resource' para el controlador 'CartaTrucadaController':
-    Route::resource('cartes_trucades', CartaTrucadaController::class);
+    Route::resource('/cartes_trucades', CartaTrucadaController::class);
 
     // Ruta 'get' para el controlador 'UsuariController::class' para salir de la cuenta:
     // Route::get('/logout', UsuariController::class);

@@ -4,26 +4,16 @@
 
 @section("container")
 
-    {{-- Imagen esquina superior izquierda: --}}
-    <img src="{{ asset('images/pinkSquare.svg') }}" alt="Logo Broggi" width="150" height="150"
-    class="parteLogoArribaIzquierda animationPink p-0 position-absolute top-0 start-0">
+    {{-- Incluimos la sección de errores o mensajes: --}}
+    @include('partials.missatges')
 
-    {{-- Imagen esquina inferior izquierda: --}}
-    <img src="{{ asset('images/yellowSquare.svg') }}" alt="Logo Broggi" width="325" height="325"
-    class="parteLogoAbajoIzquierda partesSeparadasLogoRotar animationYellow p-0 position-absolute start-0 bottom-0">
-
-    {{-- Imagen esquina inferior derecha: --}}
-    <img src="{{ asset('images/pinkSquare.svg') }}" alt="Logo Broggi" width="150" height="150"
-    class="parteLogoAbajoDerecha rotarParteAbajoIzquierda animationPink p-0 position-absolute bottom-0 end-0">
-
-    {{-- Imagen esquina superior derecha: --}}
-    <img src="{{ asset('images/blueSquare.svg') }}" alt="Logo Broggi" width="325" height="325"
-    class="parteLogoArribaDerecha partesSeparadasLogoRotar animationBlue p-0 position-absolute top-0 end-0">
+    {{-- Incluimos la decoración de fondo: --}}
+    @include('partials.backgroundDecoration')
 
     {{-- Formulario para el login --}}
-    <div class="container-fluid d-flex justify-content-center align-items-center position-absolute rounded overflow-hidden w-100 h-100">
-        <div class="card d-flex flex-row rounded-2" style="width: 65%; height: 40%; box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px; outline: none; border: none;">
-            <div class=" rounded bg-light text-light p-0 m-0 d-flex justify-content-center align-items-center">
+    <div class="container-fluid m-0 p-0 d-flex justify-content-center align-items-center position-absolute rounded overflow-hidden w-100 h-100 overflow-hidden">
+        <div class="m-0 p-0 card d-flex flex-row rounded-2" style="width: 65%; height: 40%; box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px; outline: none; border: none;">
+            <div class="rounded bg-light text-light p-0 m-0 d-flex justify-content-center align-items-center">
                 <img class="m-2 p-0" src="{{ asset('images/LogoHorizontal.svg') }}" width="150" height="150" alt="Broggi Logo">
             </div>
             <div class="card-body h-100">

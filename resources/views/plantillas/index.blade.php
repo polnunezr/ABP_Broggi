@@ -13,7 +13,7 @@
 </head>
 <body>
 
-    <div id="app">
+    <div id="app" class="m-0 p-0">
         @yield("container")
     </div>
 

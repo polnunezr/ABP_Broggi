@@ -16,8 +16,8 @@ class Localitzacio extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function carta()
+    public function expedientCarta()
     {
-        return $this->belongsTo(Carta::class, 'tipus_localitzacio_id');
+        return $this->hasMany(Carta::class, 'tipus_localitzacions_id');
     }
 }

@@ -8,6 +8,7 @@
     <title>Document</title>
 
 </head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <title>@yield('titol')</title>
@@ -27,7 +28,10 @@
                         Dades mestres
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url('/carta') }} ">Carta</a>
+                        <a class="dropdown-item" href="{{ url('/expedient') }} ">Expedient</a>
+                        <a class="dropdown-item" href="{{ url('/grafica') }} ">Grafica</a>
+
+
 
                     </div>
                 </li>
@@ -42,6 +46,11 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script>
+        yield('script')
+    </script>
+    <script src="https://unpkg.com/feather-icons"></script>
+
     <script src="https://kit.fontawesome.com/606a75912f.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
@@ -51,6 +60,10 @@
     </script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
 </body>
 

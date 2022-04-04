@@ -10,7 +10,7 @@ class Accident extends Model
     use HasFactory;
     protected $table = 'tipus_incidents';
     public $timestamps = false;
-    public function carta()
+    public function accident()
     {
         return $this->belongsTo(AccidentTipus::class, 'classes_incidents_id');
     }

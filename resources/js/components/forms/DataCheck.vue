@@ -51,8 +51,7 @@
         data() {
             return {
                 checkValue: false,
-                checkValueChecked: true,
-                disabledCheck: false
+                checkValueChecked: true
             }
         },
         methods: {

@@ -8,7 +8,7 @@
         <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients">
         </relation-modal>
         <finish-section  v-if="(selectSection != interactiveVideo) && (show == false)"></finish-section>
-        <background-decoration-derecha></background-decoration-derecha>
+        <!--<background-decoration-derecha></background-decoration-derecha>-->
         <div class="container-fluid">
             <div class="row">
 
@@ -19,7 +19,7 @@
                 </div>
                 <div v-bind:class = "selectSection != interactiveVideo ? 'col col-7 colCard' : 'col col-10 colCard'">
 
-                    <background-decoration-izquierda></background-decoration-izquierda>
+                    <!--<background-decoration-izquierda></background-decoration-izquierda>-->
 
                     <div v-if="selectSection != interactiveVideo && alertShow == true">
                         <alert-section :mensajeAlert="mensajeAlert" :alertDanger="alertDanger"

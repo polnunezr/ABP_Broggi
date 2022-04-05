@@ -1,3 +1,9 @@
+/*Thin 100*/
+/*@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap');*/
+/*Light 300*/
+/*@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');*/
+/*Regular 400*/
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 body {
     /* background-color: #f2a0a0; */
@@ -150,7 +156,6 @@ body {
 ------------------------------------------------------
 */
 
-
 #buttonFinalizarMap {
     position: absolute;
     bottom: 50px;
@@ -272,6 +277,33 @@ body {
     rgba(215,85,217,1) 60%, rgba(242,160,160,1) 100%); */
     background-color: #f2a0a0;
 }
+
+/*Logo*/
+#rowLogo {
+    margin-top: 20px;
+}
+/*Logo Horizontal*/
+/*1505 972.99*/
+/*0,646504983388704*/
+
+/*Logo*/
+/*1504.99 972.98*/
+
+/*Logo Cropp*/
+/*1504.99 972.98*/
+/*0,6465*/
+#imgLogo {
+    width: 70px;
+    height: 45.255px;
+}
+
+.colLogo {
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+}
+
 
 .colApart {
     color: white;
@@ -505,11 +537,25 @@ input, textarea {
 
 label {
     font-size: 16px;
+    font-family: 'Lato', sans-serif;
     user-select: none;
 }
 
 p {
+    font-family: 'Lato', sans-serif;
     user-select: none;
+}
+
+h4 {
+    font-family: 'Lato', sans-serif;
+}
+
+button {
+    font-family: 'Lato', sans-serif;
+}
+
+div {
+    font-family: 'Lato', sans-serif;
 }
 
 .pQuestionHelpBox {

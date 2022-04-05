@@ -5900,8 +5900,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       checkValue: false,
-      checkValueChecked: true,
-      disabledCheck: false
+      checkValueChecked: true
     };
   },
   methods: {
@@ -6600,6 +6599,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     name: {
@@ -6608,6 +6608,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     emoticon: {
       type: [String],
+      require: true
+    },
+    marginTopApart: {
+      type: [Number],
       require: true
     },
     video: Boolean
@@ -6627,6 +6631,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -10070,7 +10083,9 @@ personalData: "Dades Personals",
                 interactiveVideo: "video"
 */
 // Vue.prototype.$selectSection="Dades Personals"
+//Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
 
+Vue.prototype.$logoSrc = "http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg";
 Vue.prototype.$dadesPersonals = "Dades Personals";
 Vue.prototype.$locate = "Localitzacio";
 Vue.prototype.$agency = "Agencies";
@@ -37403,8 +37418,6 @@ var render = function () {
         ? _c("finish-section")
         : _vm._e(),
       _vm._v(" "),
-      _c("background-decoration-derecha"),
-      _vm._v(" "),
       _c("div", { staticClass: "container-fluid" }, [
         _c(
           "div",
@@ -37426,8 +37439,6 @@ var render = function () {
                     : "col col-10 colCard",
               },
               [
-                _c("background-decoration-izquierda"),
-                _vm._v(" "),
                 _vm.selectSection != _vm.interactiveVideo &&
                 _vm.alertShow == true
                   ? _c(
@@ -37568,8 +37579,7 @@ var render = function () {
                   [_c("video-section")],
                   1
                 ),
-              ],
-              1
+              ]
             ),
             _vm._v(" "),
             _vm.selectSection != _vm.interactiveVideo
@@ -38277,10 +38287,7 @@ var render = function () {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    {
-      staticClass: "row",
-      style: _vm.video ? "margin-top: 210px;" : "margin-top: 60px;",
-    },
+    { staticClass: "row", style: { "margin-top": _vm.marginTopApart + "px" } },
     [
       _c("div", { staticClass: "col colApart" }, [
         _c("div", { staticClass: "row form-row" }, [
@@ -38332,8 +38339,27 @@ var render = function () {
   return _c(
     "div",
     [
+      _c("div", { staticClass: "row", attrs: { id: "rowLogo" } }, [
+        _c("div", { staticClass: "col colLogo" }, [
+          _c("div", { staticClass: "row" }, [
+            _c(
+              "div",
+              {
+                staticClass:
+                  "col col-12 d-flex justify-content-start align-items-center",
+              },
+              [_c("img", { attrs: { src: this.$logoSrc, id: "imgLogo" } })]
+            ),
+          ]),
+        ]),
+      ]),
+      _vm._v(" "),
       _c("apart-navbar", {
-        attrs: { name: "Dades personals", emoticon: "fa fa-solid fa-user" },
+        attrs: {
+          marginTopApart: 30,
+          name: "Dades personals",
+          emoticon: "fa fa-solid fa-user",
+        },
         nativeOn: {
           click: function ($event) {
             return _vm.changeSection(_vm.personalData)
@@ -38342,7 +38368,11 @@ var render = function () {
       }),
       _vm._v(" "),
       _c("apart-navbar", {
-        attrs: { name: "Localització", emoticon: "fa fa-map-marker" },
+        attrs: {
+          marginTopApart: 60,
+          name: "Localització",
+          emoticon: "fa fa-map-marker",
+        },
         nativeOn: {
           click: function ($event) {
             return _vm.changeSection(_vm.locate)
@@ -38351,7 +38381,11 @@ var render = function () {
       }),
       _vm._v(" "),
       _c("apart-navbar", {
-        attrs: { name: "Agències", emoticon: "fa fa-solid fa-car-side" },
+        attrs: {
+          marginTopApart: 60,
+          name: "Agències",
+          emoticon: "fa fa-solid fa-car-side",
+        },
         nativeOn: {
           click: function ($event) {
             return _vm.changeSection(_vm.agency)
@@ -38360,7 +38394,11 @@ var render = function () {
       }),
       _vm._v(" "),
       _c("apart-navbar", {
-        attrs: { name: "Emergencia", emoticon: "fas fa-ambulance" },
+        attrs: {
+          marginTopApart: 60,
+          name: "Emergencia",
+          emoticon: "fas fa-ambulance",
+        },
         nativeOn: {
           click: function ($event) {
             return _vm.changeSection(_vm.emergency)
@@ -38369,7 +38407,11 @@ var render = function () {
       }),
       _vm._v(" "),
       _c("apart-navbar", {
-        attrs: { name: "Nota comuna", emoticon: "fa fa-sticky-note-o" },
+        attrs: {
+          marginTopApart: 60,
+          name: "Nota comuna",
+          emoticon: "fa fa-sticky-note-o",
+        },
         nativeOn: {
           click: function ($event) {
             return _vm.changeSection(_vm.communeNote)
@@ -38380,6 +38422,7 @@ var render = function () {
       _vm.show == false
         ? _c("apart-navbar", {
             attrs: {
+              marginTopApart: 60,
               name: "Relacionar Expedient",
               emoticon: "fa fa-solid fa-book",
             },
@@ -38394,6 +38437,7 @@ var render = function () {
       _vm.show == false
         ? _c("apart-navbar", {
             attrs: {
+              marginTopApart: 140,
               name: "Vídeo interactiu",
               emoticon: "fas fa-video",
               video: "",

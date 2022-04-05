@@ -34,6 +34,9 @@ personalData: "Dades Personals",
 // Vue.prototype.$selectSection="Dades Personals"
 
 
+//Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
+Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg"
+
 Vue.prototype.$dadesPersonals="Dades Personals"
 Vue.prototype.$locate="Localitzacio"
 Vue.prototype.$agency="Agencies"

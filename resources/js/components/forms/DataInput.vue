@@ -8,9 +8,9 @@
         <div class="col"
             v-bind:class="colBig">
             <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text"
-            v-on:change="changeInput" :disabled="disabledInput">
+            :disabled="disabledInput">
             <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime"
-            v-model="text" v-on:change="changeInput" :disabled="disabledInput">
+            v-model="text" v-on:change="changeInput">
         </div>
     </div>
 </template>
@@ -26,14 +26,6 @@
                 type:[String],
                 require: true
             },
-            show: {
-                type:[Boolean],
-                require: true
-            },
-            valor: {
-                type:[String],
-                require: true
-            },
             small: Boolean,
             number: Boolean
         },
@@ -42,12 +34,6 @@
                 text: null,
                 disabledInput: false
 
-            }
-        },
-        created() {
-            if(this.show) {
-                this.disabledInput = true
-                this.text = this.valor
             }
         },
         computed: {
@@ -77,43 +63,8 @@
                 this.$eventTime.$emit("start-time","message");
             },
             changeInput() {
-                switch(this.idInput) {
-                    case this.$inputTelefon:
-                        this.$eventPersonal.$emit("change-input-telefono",this.text);
-                    break;
-                    case this.$inputTipusDeVia:
-                    case this.$inputNom:
-                    case this.$inputNumero:
-                    case this.$inputEscala:
-                    case this.$inputPis:
-                    case this.$inputPorta:
-                    case this.$inputNomCarretera:
-                    case this.$inputPuntKilometric:
-                    case this.$inputSentit:
-                    case this.$inputNomPuntSingular:
-                    case this.$inputProvinciaMunicipi:
-
-                        if(!this.number) {
-                            let finish = false;
-                            do {
-                                if(this.text.includes(",")) {
-                                    this.text = this.text.replace(",","")
-                                }
-                                else {
-                                    finish = true
-                                }
-                            } while(!finish);
-                        }
-                        else {
-                            if(parseInt(this.text)) {
-                                let number = parseInt(this.text)
-                                number = Math.round(number)
-                                this.text = number.toString()
-                            }
-                        }
-
-
-                    break;
+                if(this.idInput == this.$inputTelefon) {
+                    this.$eventPersonal.$emit("change-input-telefono",this.text);
                 }
 
             }

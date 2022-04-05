@@ -9,24 +9,20 @@
                 </div>
             </div>
 
-            <data-check :name="this.$checkCatalonia" :idCheck="this.$checkCatalunya"
-            :show="show" :tipusLocalitzacioSelect="tipusLocalitzacioSelect" :disabledCheck="disabledCheck" checked></data-check>
+            <data-check :name="this.$checkCatalonia" :idCheck="this.$checkCatalunya" checked></data-check>
 
             <div class="row" v-if="checkedCataluna">
                 <div class="col">
                     <data-select :name="this.$provincia" :idSelect="this.$provinciaLocation"
-                    :arrayElements = "provincies"
-                     :show="show" small></data-select>
+                    :arrayElements = "provincies" small></data-select>
                 </div>
                 <div class="col">
                     <data-select :name="this.$comarca" :idSelect="this.$comarcaLocation"
-                    :arrayElements = "comarques"
-                     :show="show" small></data-select>
+                    :arrayElements = "comarques" small></data-select>
                 </div>
                 <div class="col">
                     <data-select :name="this.$municipi" :idSelect="this.$municipiLocation"
-                    :arrayElements = "municipis"
-                     :show="show" small></data-select>
+                    :arrayElements = "municipis" small></data-select>
                 </div>
             </div>
 
@@ -34,42 +30,31 @@
 
             <data-select :name="this.$tipusLocalitzacio" :idSelect="this.$tipusLocalitzacioId"
             :arrayElements = "tipusLocalitzacio" style="margin-top: 30px; marginBottom: 20px;"
-             :show="show"></data-select>
+            ></data-select>
 
             <div v-bind:style="checkedCataluna == false ? 'display: block;' : 'display: none;'" >
                 <data-select :name="this.$provincia" :idSelect="this.$provinciaSelectProvincia"
-                :arrayElements="otrasProvincias" :show="show"></data-select>
-                <data-input name="Municipi" :idInput="this.$inputProvinciaMunicipi"
-                :valor="municipiNomShow" :show="show" small></data-input>
+                :arrayElements = "otrasProvincias"></data-select>
+                <data-input name="Municipi" :idInput="this.$inputProvinciaMunicipi" small></data-input>
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 1 ? 'display: block;' : 'display: none;'">
-                <data-input name="Tipus de via" :idInput="this.$inputTipusDeVia"
-                 :valor="tipusDeViaShow" :show="show" small></data-input>
-                <data-input name="Nom" :idInput="this.$inputNom"
-                :valor="nomShow" :show="show" small></data-input>
-                <data-input name="Número" :idInput="this.$inputNumero"
-                :valor="numeroShow" :show="show" small number></data-input>
-                <data-input name="Escala" :idInput="this.$inputEscala"
-                :valor="escalaShow" :show="show" small number></data-input>
-                <data-input name="Pis" :idInput="this.$inputPis"
-                :valor="pisShow" :show="show" small number></data-input>
-                <data-input name="Porta" :idInput="this.$inputPorta"
-                :valor="portaShow" :show="show" small number></data-input>
+                <data-input name="Tipus de via" :idInput="this.$inputTipusDeVia" small></data-input>
+                <data-input name="Nom" :idInput="this.$inputNom" small></data-input>
+                <data-input name="Número" :idInput="this.$inputNumero" small number></data-input>
+                <data-input name="Escala" :idInput="this.$inputEscala" small number></data-input>
+                <data-input name="Pis" :idInput="this.$inputPis" small number></data-input>
+                <data-input name="Porta" :idInput="this.$inputPorta" small number></data-input>
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 4 ? 'display: block;' : 'display: none;'">
-                <data-input name="Nom carretera" :idInput="this.$inputNomCarretera"
-                :valor="nomCarreteraShow" :show="show" small></data-input>
-                <data-input name="Punt kilomètric " :idInput="this.$inputPuntKilometric"
-                :valor="puntKilometricShow" :show="show" small number></data-input>
-                <data-input name="Sentit" :idInput="this.$inputSentit"
-                :valor="sentitShow" :show="show" small></data-input>
+                <data-input name="Nom carretera" :idInput="this.$inputNomCarretera" small></data-input>
+                <data-input name="Punt kilomètric " :idInput="this.$inputPuntKilometric" small number></data-input>
+                <data-input name="Sentit" :idInput="this.$inputSentit" small></data-input>
             </div>
 
             <div v-bind:style="tipusLocalitzacioSelect == 2 ? 'display: block;' : 'display: none;'">
-                <data-input name="Nom" :idInput="this.$inputNomPuntSingular"
-                :valor="nomPuntSingular" :show="show" small></data-input>
+                <data-input name="Nom" :idInput="this.$inputNomPuntSingular" small></data-input>
             </div>
 
             <div class="row" style="margin-top: 40px">
@@ -77,7 +62,7 @@
                     <div class="form-floating">
                         <textarea class="form-control" :id="this.$textAreaDetalls"
                         style="height: 130px; resize: none" v-on:click="startTime"
-                        v-model="detalls" :disabled="disabledDetalls"></textarea>
+                        v-model="detalls"></textarea>
                         <label :for="this.$textAreaDetalls">Detalls</label>
                     </div>
                 </div>
@@ -94,22 +79,6 @@
             marginTopLocation: {
                 type: [Number],
                 require: true
-            },
-            cartaTrucadaShow: {
-                type: [Object],
-                require: true
-            },
-            localitzacioShow: {
-                type: [Object],
-                require: true
-            },
-            tipusLocalitzacioShow: {
-                type: [Object],
-                require: true
-            },
-            show: {
-                type: [Boolean],
-                require: true
             }
         },
         data() {
@@ -125,31 +94,12 @@
                 tipusLocalitzacioSelect: 1,
                 tipusLocalitzacio: [],
                 detalls: null,
-                disabledCheck: true,
-                //Show
-                tipusDeViaShow: null,
-                nomShow: null,
-                numeroShow: null,
-                escalaShow: null,
-                pisShow: null,
-                portaShow: null,
-
-                nomPuntSingular: null,
-
-                nomCarreteraShow: null,
-                puntKilometricShow: null,
-                sentitShow: null,
-
-                municipiNomShow: null,
-
-                disabledDetalls: false
             }
         },
         created() {
-            if(!this.show) {
-                let meThis = this
+            let meThis = this
 
-                axios
+            axios
                 .get("/provincies")
                 .then(response => {
                     for(let i = 0; i < response.data.length; i++) {
@@ -168,81 +118,15 @@
                 })
                 .finally(() => this.loading = false)
 
-                axios
+            axios
                 .get("/tipus_localitzacions")
                 .then(response => {
-                    meThis.disabledCheck = false
                     meThis.tipusLocalitzacio = response.data
                 })
                 .catch(error => {
                     console.log(error)
                 })
                 .finally(() => this.loading = false)
-            }
-            else {
-                if(this.localitzacioShow.provincia != null) {
-                    let provincia = {
-                        id: 1,
-                        nom: this.localitzacioShow.provincia
-                    }
-                    this.provincies.push(provincia)
-                    if(this.localitzacioShow.municipi != null) {
-                        let municipi = {
-                            id: 1,
-                            nom: this.localitzacioShow.municipi
-                        }
-                        this.municipis.push(municipi);
-                        let comarca = {
-                            id: 1,
-                            nom: this.localitzacioShow.comarca
-                        }
-                        this.comarques.push(comarca);
-                    }
-                }
-
-                let tipus = {
-                    id: 1,
-                    tipus: this.tipusLocalitzacioShow.nomTipus
-                }
-
-                this.tipusLocalitzacio.push(tipus);
-
-                this.tipusLocalitzacioSelect = this.tipusLocalitzacioShow.id
-
-                switch(this.tipusLocalitzacioShow.id) {
-                    case 1: //Carrers
-                        this.tipusDeViaShow = this.tipusLocalitzacioShow.tipusDeVia
-                        this.nomShow = this.tipusLocalitzacioShow.nom
-                        this.numeroShow = this.tipusLocalitzacioShow.numero
-                        this.escalaShow = this.tipusLocalitzacioShow.escala
-                        this.pisShow = this.tipusLocalitzacioShow.pis
-                        this.portaShow = this.tipusLocalitzacioShow.porta
-                    break;
-                    case 2: //Punt Singular
-                        this.nomPuntSingular = this.tipusLocalitzacioShow.nomPuntSingular
-                    break;
-                    case 4: //Carretera
-                        this.nomCarreteraShow= this.tipusLocalitzacioShow.nomCarretera
-                        this.puntKilometricShow= this.tipusLocalitzacioShow.puntKilometric
-                        this.sentitShow= this.tipusLocalitzacioShow.sentit
-
-                    break;
-                    case 5: //Provincia
-                        this.checkedCataluna = false;
-                        let otrasProvincia = {
-                            id: 1,
-                            nom: this.tipusLocalitzacioShow.provinciaNom
-                        }
-                        this.otrasProvincias.push(otrasProvincia)
-                        this.municipiNomShow = this.tipusLocalitzacioShow.municipiNom
-                    break;
-                }
-
-                this.disabledDetalls = true;
-                this.detalls = this.cartaTrucadaShow.altres_ref_localitzacio;
-
-            }
-
 
         },
         methods: {
@@ -379,10 +263,6 @@
 
             this.$eventClear.$on("clear-detalls", message => {
                 this.detalls = null
-            })
-
-            this.$eventShow.$on("change-select-disabled", valor => {
-                this.disabledCheck = valor
             })
 
         }

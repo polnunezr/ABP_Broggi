@@ -1,6 +1,5 @@
 <template>
-<!--v-bind:style="video ? 'margin-top: 210px;' : 'margin-top: 60px;'"-->
-    <div class="row" :style="{'margin-top': marginTopApart + 'px'}">
+    <div class="row" v-bind:style="video ? 'margin-top: 210px;' : 'margin-top: 60px;'">
         <div class="col colApart">
             <div class="row form-row">
                 <div class="col col-2 d-flex justify-content-end align-items-center">
@@ -23,10 +22,6 @@
             },
             emoticon: {
                 type: [String],
-                require: true
-            },
-            marginTopApart: {
-                type: [Number],
                 require: true
             },
             video:Boolean

@@ -28,8 +28,7 @@ class CartaTrucadaController extends Controller
      */
     public function store(Request $request)
     {
-        // $cartaTrucada = CartaTrucada::find(111);
-        // return CartesTrucadesResource::collection($cartaTrucada);
+        //
     }
 
     /**

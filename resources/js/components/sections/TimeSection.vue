@@ -1,6 +1,5 @@
 <template>
     <div class="col col-3 colTimeExit">
-
         <div class="row">
             <div class="col col-4">
                 <button type="button" class="button buttonNormal">Sortir</button>
@@ -25,16 +24,6 @@
 
 <script>
     export default {
-        props: {
-            cartaTrucadaShow: {
-                type: [Object],
-                require: true
-            },
-            show: {
-                type: [Boolean],
-                require: true
-            }
-        },
         data() {
             return {
                 time:"00:00",
@@ -49,34 +38,22 @@
             }
         },
         created() {
-            if(!this.show) {
-                let today = new Date();
-                let dia = today.getDate();
-                if(dia <= 9) {
-                    dia = "0" + dia
-                }
-                let mes = today.getMonth() + 1;
-                if(mes <= 9) {
-                    mes = "0" + mes
-                }
-                let year = today.getFullYear();
-
-                this.data = dia +"/"+ mes +"/"+year;
-
-                this.updateHour();
-
-                setInterval(this.updateHour,1000)
+            let today = new Date();
+            let dia = today.getDate();
+            if(dia <= 9) {
+                dia = "0" + dia
             }
-            else {
-                let dataHoraSplit = this.cartaTrucadaShow.data_hora.split(" ");
-                this.data = dataHoraSplit[0].replace("-","/");
-                this.data = this.data.replace("-","/");
-
-                this.hora = dataHoraSplit[1];
-
-                this.time = this.cartaTrucadaShow.temps_trucada + "s"
+            let mes = today.getMonth() + 1;
+            if(mes <= 9) {
+                mes = "0" + mes
             }
+            let year = today.getFullYear();
 
+            this.data = dia +"/"+ mes +"/"+year;
+
+            this.updateHour();
+
+            setInterval(this.updateHour,1000)
 
         },
         methods: {

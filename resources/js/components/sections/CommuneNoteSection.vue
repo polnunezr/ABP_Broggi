@@ -11,7 +11,7 @@
                 <div class="col">
                     <div class="form-floating">
                         <textarea v-on:click="startTime" class="form-control" id="textAreaCommuneNote"
-                        style="height: 200px; resize:none" v-model="notaComuna" :disabled="disabledNotaComuna"></textarea>
+                        style="height: 200px; resize:none" v-model="notaComuna"></textarea>
                     </div>
                 </div>
             </div>
@@ -22,28 +22,11 @@
 
 <script>
     export default {
-        props: {
-            cartaTrucadaShow: {
-                type: [Object],
-                require: true
-            },
-            show: {
-                type: [Boolean],
-                require: true
-            }
-        },
-        created() {
-            if(this.show) {
-                this.notaComuna = this.cartaTrucadaShow.nota_comuna;
-                this.disabledNotaComuna = true;
-            }
-        },
         data() {
-            return {
-                title: "Nota comuna",
-                notaComuna: null,
-                disabledNotaComuna: false
-            }
+        return {
+            title: "Nota comuna",
+            notaComuna: null
+        }
         },
         methods: {
             startTime() {

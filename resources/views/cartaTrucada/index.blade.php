@@ -1,10 +1,10 @@
-@extends("layouts.layoutCard.index")
+@extends("plantillas.index")
 
 @section("title","Carta de trucada")
 
 @section("container")
     <div>
-        <carta-trucada :show="false"></carta-trucada>
+        <carta-trucada></carta-trucada>
     </div>
 
 @endsection

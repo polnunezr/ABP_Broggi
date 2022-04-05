@@ -34,9 +34,6 @@ personalData: "Dades Personals",
 // Vue.prototype.$selectSection="Dades Personals"
 
 
-//Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
-Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg"
-
 Vue.prototype.$dadesPersonals="Dades Personals"
 Vue.prototype.$locate="Localitzacio"
 Vue.prototype.$agency="Agencies"
@@ -171,8 +168,6 @@ Vue.prototype.$eventMap = new Vue()
 
 Vue.prototype.$eventHelpBox = new Vue()
 
-Vue.prototype.$eventShow = new Vue()
-
 
 
 
@@ -182,10 +177,6 @@ Vue.prototype.$eventShow = new Vue()
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', require('./components/CartaTrucada.vue').default);
-
-Vue.component('background-decoration-izquierda', require('./components/background-decoration/BackgroundDecorationIzquierda.vue').default);
-
-Vue.component('background-decoration-derecha', require('./components/background-decoration/BackgroundDecorationDerecha.vue').default);
 
 Vue.component('help-box-icon', require('./components/sections/helpBox/helpBoxIcon.vue').default);
 
@@ -241,6 +232,8 @@ Vue.component("data-check", require("./components/forms/DataCheck.vue").default)
 
 Vue.component("data-select", require("./components/forms/DataSelect.vue").default);
 
+// Le ponemos al componente de usuarios el nombre que usaremos como etiqueta:
+Vue.component('usuaris-component', require('./components/gestionUsuarios/UsuarisComponent.vue').default);
 
 
 

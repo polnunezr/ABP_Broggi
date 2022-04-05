@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col col-10 d-flex align-items-center justify-content-start colQuestionHelpBox">
-            <p class="pQuestionHelpBox"> {{text}}</p>
+            <p> {{text}}</p>
         </div>
         <div class="col col-2 d-flex align-items-center justify-content-center colAudioHelpBox">
             <div v-on:click="clickAudio" class="divAudio">

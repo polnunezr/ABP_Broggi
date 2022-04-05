@@ -57,29 +57,10 @@
                 let mapThis = this
 
                 for(let i = 0; i < mapThis.agencies.length; i++) {
-
-                    let query;
-
-                    query = mapThis.agencies[i].carrer +  " " + mapThis.agencies[i].municipi.nom+ " " + "Spain";
-
-                    //131
-                    if(mapThis.agencies[i].id == 131) {
-                        query = "Cassa de la Selva, Girona, Spain";
-                    }
-
-                    //236
-                    if(mapThis.agencies[i].id == 236) {
-                        query = mapThis.agencies[i].nom + mapThis.agencies[i].municipi.nom+ " 25287 Lleida Spain";
-                    }
-
-                    //311
-                    if(mapThis.agencies[i].id == 311) {
-                        query = "Carrer de la Pau, 60, 17244 Cassà de la Selva, Girona";
-                    }
-
                     mapboxClient.geocoding
                     .forwardGeocode({
-                        query: query,
+                        query: mapThis.agencies[i].carrer + ", "     +
+                        mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain",
                         autocomplete: false,
                         limit: 1
                     })
@@ -98,13 +79,13 @@
                         mapThis.mark.id = mapThis.agencies[i].id
                         mapThis.mark.features = response.body.features[0];
 
-                        // console.log(mapThis.agencies[i].carrer + " " + mapThis.agencies[i].municipi.nom);
 
-                        // if(mapThis.mark.id == 352) {
-                        //     console.log(mapThis.agencies[i].carrer + ", "     +
-                        // mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain")
-                        //     console.log(mapThis.mark.features.center)
-                        // }
+
+                        if(mapThis.mark.id == 352) {
+                            console.log(mapThis.agencies[i].carrer + ", "     +
+                        mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain")
+                            console.log(mapThis.mark.features.center)
+                        }
 
                         // console.log(mapThis.agencies[i].carrer + ", " +
                         // mapThis.agencies[i].municipi.nom + ", " +  mapThis.agencies[i].codi_postal)
@@ -232,7 +213,6 @@
                     // mapThis.marker._element.className = mapThis.marker._element.className + " markers";
 
                     // mapThis.marker.marker-color = "#b40219";
-
 
                     for(let i = 0; i < mapThis.markers.length; i++) {
                         const elMark = document.createElement("div");

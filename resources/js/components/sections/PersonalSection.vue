@@ -8,33 +8,29 @@
                 </div>
             </div>
 
-            <data-input name="Telefon" :idInput="this.$inputTelefon" :show="show" :valor="telefonShow"
+            <data-input name="Telefon" :idInput="this.$inputTelefon"
             small number></data-input>
 
-            <data-input name="Procedencia" :idInput="this.$inputProcedencia" :show="show" :valor="this.procedenciaShow"
-            small></data-input>
+            <data-input name="Procedencia" :idInput="this.$inputProcedencia" small></data-input>
 
 
 
             <div class="row">
                 <div class="col">
-                   <data-select :name="this.$provincia" :idSelect="this.$provinciaPersonal" :arrayElements = "provincies"
-                   :show="show"></data-select>
+                   <data-select :name="this.$provincia" :idSelect="this.$provinciaPersonal" :arrayElements = "provincies"></data-select>
                 </div>
                 <div class="col">
-                    <data-select :name="this.$comarca" :idSelect="this.$comarcaPersonal" :arrayElements = "comarques"
-                    :show="show"></data-select>
+                    <data-select :name="this.$comarca" :idSelect="this.$comarcaPersonal" :arrayElements = "comarques"></data-select>
                 </div>
                 <div class="col">
-                   <data-select :name="this.$municipi" :idSelect="this.$municipiPersonal" :arrayElements = "municipis"
-                    :show="show"></data-select>
+                   <data-select :name="this.$municipi" :idSelect="this.$municipiPersonal" :arrayElements = "municipis"></data-select>
                 </div>
             </div>
 
 
-            <data-input name="Adreça" :idInput="this.$inputAdreca" :show="show" :valor="adrecaShow" small></data-input>
+            <data-input name="Adreça" :idInput="this.$inputAdreca" small></data-input>
 
-            <data-input name="Origen llamada" :idInput="this.$inputOrigen" :show="show" :valor="origenShow" small></data-input>
+            <data-input name="Origen llamada" :idInput="this.$inputOrigen" small></data-input>
 
             <div class="row" style="margin-top: 40px">
                 <div class="col">
@@ -47,7 +43,7 @@
                 </div>
             </div>
 
-            <data-check v-bind:style="(showCheckSaveInformation == true && show == false) ? 'display: block;' : 'display: none;'"
+            <data-check v-bind:style="showCheckSaveInformation == true ? 'display: block;' : 'display: none;'"
             name="Guardar informació" :idCheck="this.$checkSaveInformation" checked></data-check>
 
 
@@ -57,24 +53,6 @@
 
 <script>
     export default {
-        props: {
-            cartaTrucadaShow: {
-                type: [Object],
-                require: true
-            },
-            dadaPersonalShow: {
-                type: [Object],
-                require: true
-            },
-            localitzacioTrucadaShow: {
-                type: [Object],
-                require: true
-            },
-            show: {
-                type: [Boolean],
-                require: true
-            }
-        },
         data() {
             return {
                 title: "Dades personals",
@@ -88,22 +66,14 @@
                 telefono: null,
                 disabledAntecedents: false,
                 dadesPersonalsId: null,
-                showCheckSaveInformation: true,
-                //Show
-                telefonShow: null,
-                procedenciaShow: null,
-                adrecaShow: null,
-                origenShow: null,
-                municipiShow: null
+                showCheckSaveInformation: true
             }
         },
         created() {
 
-            if(this.show == false) {
+            let meThis = this
 
-                let meThis = this
-
-                axios
+            axios
                 .get("/provincies")
                 .then(response => {
                     for(let i = 0; i < response.data.length; i++) {
@@ -120,40 +90,6 @@
                     console.log(error)
                 })
                 .finally(() => this.loading = false)
-
-            }
-            else {
-                this.telefonShow = this.cartaTrucadaShow.telefon
-                this.procedenciaShow = this.cartaTrucadaShow.procedencia_trucada
-                this.adrecaShow = this.cartaTrucadaShow.adreca_trucada
-                this.origenShow = this.cartaTrucadaShow.origen_trucada
-
-                this.disabledAntecedents = true
-                if(this.dadaPersonalShow != null) {
-                    this.antecedentes = this.dadaPersonalShow.antecedents
-                }
-                if(this.localitzacioTrucadaShow != null) {
-                    let municipi = {
-                        id: 1,
-                        nom: this.localitzacioTrucadaShow.municipi
-                    }
-                    this.municipis.push(municipi);
-                    let comarca = {
-                        id: 1,
-                        nom: this.localitzacioTrucadaShow.comarca
-                    }
-                    this.comarques.push(comarca);
-                    let provincia = {
-                        id: 1,
-                        nom: this.localitzacioTrucadaShow.provincia
-                    }
-                    this.provincies.push(provincia);
-                }
-
-
-            }
-
-
 
         },
         methods: {

@@ -6,9 +6,8 @@
                 {{ name }}
             </label>
             <input ref="checkBox" v-on:click="clickCheck" v-if="checked" class="form-check-input" type="checkbox" value=""
-            :id="idCheck" checked v-model="checkValueChecked" :disabled="disabledCheck">
-            <input v-else class="form-check-input" type="checkbox" value="" :id="idCheck" v-model="checkValue"
-            :disabled="disabledCheck">
+            :id="idCheck" checked v-model="checkValueChecked">
+            <input v-else class="form-check-input" type="checkbox" value="" :id="idCheck" v-model="checkValue">
             </div>
         </div>
     </div>
@@ -25,33 +24,12 @@
                 type:[String],
                 require: true
             },
-            show: {
-                type:[Boolean],
-                require: true
-            },
-            tipusLocalitzacioSelect: {
-                type:[Number],
-                require: true
-            },
-            disabledCheck: {
-                type:[Boolean],
-                require: true
-            },
             checked: Boolean
-        },
-        created() {
-            if(this.show) {
-                // this.disabledCheck = true;
-                this.$eventShow.$emit("change-select-disabled",true);
-                if(this.tipusLocalitzacioSelect == 5) {
-                    this.checked = false
-                }
-            }
         },
         data() {
             return {
                 checkValue: false,
-                checkValueChecked: true
+                checkValueChecked: true,
             }
         },
         methods: {

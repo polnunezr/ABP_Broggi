@@ -9,11 +9,9 @@
 
             <select v-if="name == this.$comarca || name == this.$provincia || name == this.$municipi"
                 ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
-                v-model="selectSelected" :disabled="disabledSelect">
+                v-model="selectSelected">
 
-                <!--<option v-if="show" :value="valor">{{valor}}</option>-->
-
-                <option value="0" v-if="show == false"></option>
+                <option value="0"></option>
 
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.nom}}</option>
@@ -23,24 +21,21 @@
 
             <select v-else-if="name == this.$tipusLocalitzacio"
                 ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
-                v-model="selectSelectedTipusLocation"
-                :disabled="disabledSelect">
+                v-model="selectSelectedTipusLocation">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.tipus}}</option>
             </select>
 
             <select v-else-if="idSelect == this.$tipusEmergenciaId"
                 ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
-                v-model="selectSelectedTipusIncident"
-                :disabled="disabledSelect">
+                v-model="selectSelectedTipusIncident">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.descripcio}}</option>
             </select>
 
             <select v-else
                 ref="select" v-on:change="changeSelect" v-on:click="startTime" class="form-select" :id="idSelect"
-                v-model="selectSelectedIncident"
-                :disabled="disabledSelect">
+                v-model="selectSelectedIncident">
                 <option v-for="arrayElement in arrayElements" :key="arrayElement.id" :value="arrayElement.id">
                 {{arrayElement.descripcio}}</option>
             </select>
@@ -63,10 +58,6 @@
                 type:[Array],
                 require: true
             },
-            show: {
-                type:[Boolean],
-                require: true
-            },
             small: Boolean
         },
         data() {
@@ -74,17 +65,7 @@
                 selectSelected: 0,
                 selectSelectedTipusLocation: 1,
                 selectSelectedTipusIncident: 1,
-                selectSelectedIncident: 1,
-                disabledSelect: false
-            }
-        },
-        created() {
-            if(this.show) {
-                this.selectSelected = 1;
-                this.selectSelectedTipusLocation = 1;
-                this.selectSelectedTipusIncident = 1;
-                this.selectSelectedIncident = 1;
-                this.disabledSelect = true;
+                selectSelectedIncident: 1
             }
         },
         computed: {
@@ -154,9 +135,9 @@
                     case this.$tipusEmergenciaId:
                         this.$eventSelect.$emit("change-select-emergencia",this.selectSelectedTipusIncident)
                     break;
-                    case this.$incidentsId:
-                        this.$eventSelect.$emit("change-select-incident",this.selectSelectedIncident)
-                    break;
+                    // case this.$incidentsId:
+                    //     this.$eventSelect.$emit("change-select-incident",this.selectSelectedIncident)
+                    // break;
                 }
 
 

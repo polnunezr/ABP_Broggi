@@ -168,6 +168,8 @@ Vue.prototype.$eventMap = new Vue()
 
 Vue.prototype.$eventHelpBox = new Vue()
 
+Vue.prototype.$eventShow = new Vue()
+
 
 
 

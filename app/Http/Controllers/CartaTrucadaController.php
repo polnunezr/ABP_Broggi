@@ -55,9 +55,10 @@ class CartaTrucadaController extends Controller
      * @param  \App\Models\CartaTrucada  $cartaTrucada
      * @return \Illuminate\Http\Response
      */
-    public function show(CartaTrucada $cartaTrucada)
+    public function show($cartaTrucadaId)
     {
-        $cartaTrucadaShow = CartaTrucada::find(151);
+        $cartaTrucadaShow = CartaTrucada::find($cartaTrucadaId);
+        // $cartaTrucadaShow = $cartaTrucada;
         // $cartaTrucadaShow->dades_personals_id = null;
         $dadaPersonalShow = json_encode(null);
         // $dadaPersonalShow = (Object)[];

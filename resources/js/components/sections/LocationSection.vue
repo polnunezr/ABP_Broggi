@@ -10,7 +10,7 @@
             </div>
 
             <data-check :name="this.$checkCatalonia" :idCheck="this.$checkCatalunya"
-            :show="show" :checked="(tipusLocalitzacioSelect!=5) && (show == true)"></data-check>
+            :show="show" :tipusLocalitzacioSelect="tipusLocalitzacioSelect" :disabledCheck="disabledCheck" checked></data-check>
 
             <div class="row" v-if="checkedCataluna">
                 <div class="col">
@@ -125,6 +125,7 @@
                 tipusLocalitzacioSelect: 1,
                 tipusLocalitzacio: [],
                 detalls: null,
+                disabledCheck: true,
                 //Show
                 tipusDeViaShow: null,
                 nomShow: null,
@@ -145,8 +146,6 @@
             }
         },
         created() {
-
-
             if(!this.show) {
                 let meThis = this
 
@@ -172,6 +171,7 @@
                 axios
                 .get("/tipus_localitzacions")
                 .then(response => {
+                    meThis.disabledCheck = false
                     meThis.tipusLocalitzacio = response.data
                 })
                 .catch(error => {
@@ -379,6 +379,10 @@
 
             this.$eventClear.$on("clear-detalls", message => {
                 this.detalls = null
+            })
+
+            this.$eventShow.$on("change-select-disabled", valor => {
+                this.disabledCheck = valor
             })
 
         }

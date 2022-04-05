@@ -5877,11 +5877,24 @@ __webpack_require__.r(__webpack_exports__);
       type: [Boolean],
       require: true
     },
+    tipusLocalitzacioSelect: {
+      type: [Number],
+      require: true
+    },
+    disabledCheck: {
+      type: [Boolean],
+      require: true
+    },
     checked: Boolean
   },
   created: function created() {
     if (this.show) {
-      this.disabledCheck = true;
+      // this.disabledCheck = true;
+      this.$eventShow.$emit("change-select-disabled", true);
+
+      if (this.tipusLocalitzacioSelect == 5) {
+        this.checked = false;
+      }
     }
   },
   data: function data() {
@@ -6062,8 +6075,41 @@ __webpack_require__.r(__webpack_exports__);
       this.$eventTime.$emit("start-time", "message");
     },
     changeInput: function changeInput() {
-      if (this.idInput == this.$inputTelefon) {
-        this.$eventPersonal.$emit("change-input-telefono", this.text);
+      switch (this.idInput) {
+        case this.$inputTelefon:
+          this.$eventPersonal.$emit("change-input-telefono", this.text);
+          break;
+
+        case this.$inputTipusDeVia:
+        case this.$inputNom:
+        case this.$inputNumero:
+        case this.$inputEscala:
+        case this.$inputPis:
+        case this.$inputPorta:
+        case this.$inputNomCarretera:
+        case this.$inputPuntKilometric:
+        case this.$inputSentit:
+        case this.$inputNomPuntSingular:
+        case this.$inputProvinciaMunicipi:
+          if (!this.number) {
+            var finish = false;
+
+            do {
+              if (this.text.includes(",")) {
+                this.text = this.text.replace(",", "");
+              } else {
+                finish = true;
+              }
+            } while (!finish);
+          } else {
+            if (parseInt(this.text)) {
+              var number = parseInt(this.text);
+              number = Math.round(number);
+              this.text = number.toString();
+            }
+          }
+
+          break;
       }
     }
   },
@@ -6675,8 +6721,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
+    show: {
+      type: [Boolean],
+      require: true
+    },
     selectMarks: {
       type: [Array],
       require: true
@@ -6688,8 +6739,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      title: "Agències"
+      title: "Agències",
+      styleDivAgencia: {
+        background: "#ffffff"
+      },
+      disabledButtonMap: false
     };
+  },
+  created: function created() {
+    if (this.show) {
+      //#e8edef
+      this.styleDivAgencia.background = "#e8edef";
+      this.disabledButtonMap = true;
+    }
   },
   methods: {
     startTime: function startTime() {
@@ -7989,6 +8051,7 @@ __webpack_require__.r(__webpack_exports__);
       tipusLocalitzacioSelect: 1,
       tipusLocalitzacio: [],
       detalls: null,
+      disabledCheck: true,
       //Show
       tipusDeViaShow: null,
       nomShow: null,
@@ -8026,6 +8089,7 @@ __webpack_require__.r(__webpack_exports__);
         return _this.loading = false;
       });
       axios.get("/tipus_localitzacions").then(function (response) {
+        meThis.disabledCheck = false;
         meThis.tipusLocalitzacio = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -8221,6 +8285,9 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventClear.$on("clear-detalls", function (message) {
       _this2.detalls = null;
+    });
+    this.$eventShow.$on("change-select-disabled", function (valor) {
+      _this2.disabledCheck = valor;
     });
   }
 });
@@ -8670,10 +8737,10 @@ __webpack_require__.r(__webpack_exports__);
       this.procedenciaShow = this.cartaTrucadaShow.procedencia_trucada;
       this.adrecaShow = this.cartaTrucadaShow.adreca_trucada;
       this.origenShow = this.cartaTrucadaShow.origen_trucada;
+      this.disabledAntecedents = true;
 
       if (this.dadaPersonalShow != null) {
         this.antecedentes = this.dadaPersonalShow.antecedents;
-        this.disabledAntecedents = true;
       }
 
       if (this.localitzacioTrucadaShow != null) {
@@ -10090,7 +10157,8 @@ Vue.prototype.$eventClear = new Vue();
 Vue.prototype.$eventExpedient = new Vue();
 Vue.prototype.$eventPersonal = new Vue();
 Vue.prototype.$eventMap = new Vue();
-Vue.prototype.$eventHelpBox = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventHelpBox = new Vue();
+Vue.prototype.$eventShow = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
 Vue.component('background-decoration-izquierda', (__webpack_require__(/*! ./components/background-decoration/BackgroundDecorationIzquierda.vue */ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue")["default"]));
@@ -37433,6 +37501,7 @@ var render = function () {
                       attrs: {
                         selectMarks: _vm.selectMarks,
                         agencies: _vm.agencies,
+                        show: _vm.show,
                       },
                     }),
                   ],
@@ -37851,6 +37920,7 @@ var render = function () {
               domProps: { value: _vm.text },
               on: {
                 click: _vm.startTime,
+                change: _vm.changeInput,
                 input: function ($event) {
                   if ($event.target.composing) {
                     return
@@ -38378,22 +38448,26 @@ var render = function () {
           { staticClass: "row", staticStyle: { "margin-top": "20px" } },
           [
             _c("div", { staticClass: "col col-10" }, [
-              _c("div", { attrs: { id: "agenciaListDiv" } }, [
-                _c(
-                  "div",
-                  {
-                    staticClass: "container-fluid",
-                    attrs: { id: "containerAgencia" },
-                  },
-                  _vm._l(_vm.selectMarks, function (selectMark) {
-                    return _c("list-agency-section", {
-                      key: selectMark,
-                      attrs: { agencies: _vm.agencies, idAgency: selectMark },
-                    })
-                  }),
-                  1
-                ),
-              ]),
+              _c(
+                "div",
+                { style: _vm.styleDivAgencia, attrs: { id: "agenciaListDiv" } },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "container-fluid",
+                      attrs: { id: "containerAgencia" },
+                    },
+                    _vm._l(_vm.selectMarks, function (selectMark) {
+                      return _c("list-agency-section", {
+                        key: selectMark,
+                        attrs: { agencies: _vm.agencies, idAgency: selectMark },
+                      })
+                    }),
+                    1
+                  ),
+                ]
+              ),
             ]),
             _vm._v(" "),
             _c(
@@ -38407,7 +38481,9 @@ var render = function () {
                   "button",
                   {
                     staticClass: "button buttonNormal",
-                    attrs: { type: "button" },
+                    class:
+                      _vm.disabledButtonMap == true ? "buttonDisabled" : "",
+                    attrs: { type: "button", disabled: _vm.disabledButtonMap },
                     on: { click: _vm.buttonClickMap },
                   },
                   [_vm._v("Mapa")]
@@ -38797,7 +38873,9 @@ var render = function () {
             name: this.$checkCatalonia,
             idCheck: this.$checkCatalunya,
             show: _vm.show,
-            checked: _vm.tipusLocalitzacioSelect != 5 && _vm.show == true,
+            tipusLocalitzacioSelect: _vm.tipusLocalitzacioSelect,
+            disabledCheck: _vm.disabledCheck,
+            checked: "",
           },
         }),
         _vm._v(" "),

@@ -127,9 +127,10 @@
                 this.procedenciaShow = this.cartaTrucadaShow.procedencia_trucada
                 this.adrecaShow = this.cartaTrucadaShow.adreca_trucada
                 this.origenShow = this.cartaTrucadaShow.origen_trucada
+
+                this.disabledAntecedents = true
                 if(this.dadaPersonalShow != null) {
                     this.antecedentes = this.dadaPersonalShow.antecedents
-                    this.disabledAntecedents = true
                 }
                 if(this.localitzacioTrucadaShow != null) {
                     let municipi = {

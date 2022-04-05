@@ -8,7 +8,7 @@
         <div class="col"
             v-bind:class="colBig">
             <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text"
-            :disabled="disabledInput">
+            v-on:change="changeInput" :disabled="disabledInput">
             <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime"
             v-model="text" v-on:change="changeInput" :disabled="disabledInput">
         </div>
@@ -77,8 +77,43 @@
                 this.$eventTime.$emit("start-time","message");
             },
             changeInput() {
-                if(this.idInput == this.$inputTelefon) {
-                    this.$eventPersonal.$emit("change-input-telefono",this.text);
+                switch(this.idInput) {
+                    case this.$inputTelefon:
+                        this.$eventPersonal.$emit("change-input-telefono",this.text);
+                    break;
+                    case this.$inputTipusDeVia:
+                    case this.$inputNom:
+                    case this.$inputNumero:
+                    case this.$inputEscala:
+                    case this.$inputPis:
+                    case this.$inputPorta:
+                    case this.$inputNomCarretera:
+                    case this.$inputPuntKilometric:
+                    case this.$inputSentit:
+                    case this.$inputNomPuntSingular:
+                    case this.$inputProvinciaMunicipi:
+
+                        if(!this.number) {
+                            let finish = false;
+                            do {
+                                if(this.text.includes(",")) {
+                                    this.text = this.text.replace(",","")
+                                }
+                                else {
+                                    finish = true
+                                }
+                            } while(!finish);
+                        }
+                        else {
+                            if(parseInt(this.text)) {
+                                let number = parseInt(this.text)
+                                number = Math.round(number)
+                                this.text = number.toString()
+                            }
+                        }
+
+
+                    break;
                 }
 
             }

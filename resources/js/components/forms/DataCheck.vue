@@ -29,11 +29,23 @@
                 type:[Boolean],
                 require: true
             },
+            tipusLocalitzacioSelect: {
+                type:[Number],
+                require: true
+            },
+            disabledCheck: {
+                type:[Boolean],
+                require: true
+            },
             checked: Boolean
         },
         created() {
             if(this.show) {
-                this.disabledCheck = true;
+                // this.disabledCheck = true;
+                this.$eventShow.$emit("change-select-disabled",true);
+                if(this.tipusLocalitzacioSelect == 5) {
+                    this.checked = false
+                }
             }
         },
         data() {

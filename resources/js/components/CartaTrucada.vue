@@ -36,7 +36,7 @@
                          :tipusLocalitzacioShow="tipusLocalitzacioShow" :show="show"></location-section>
                     </div>
                     <div v-bind:style="selectSection == agency ? 'display: block;' : 'display: none;'">
-                        <agency-section :selectMarks = "selectMarks" :agencies="agencies"></agency-section>
+                        <agency-section :selectMarks = "selectMarks" :agencies="agencies" :show="show"></agency-section>
                     </div>
                     <div v-bind:style="selectSection == emergency ? 'display: block;' : 'display: none;'">
                         <emergency-section :incidentShow="incidentShow" :show="show"></emergency-section>

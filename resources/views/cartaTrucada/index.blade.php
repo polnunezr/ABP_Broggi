@@ -4,7 +4,7 @@
 
 @section("container")
     <div>
-        <carta-trucada></carta-trucada>
+        <carta-trucada :show="false"></carta-trucada>
     </div>
 
 @endsection

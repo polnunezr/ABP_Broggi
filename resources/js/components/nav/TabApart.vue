@@ -5,13 +5,19 @@
         <apart-navbar name="Agències" emoticon="fa fa-solid fa-car-side" v-on:click.native="changeSection(agency)"></apart-navbar>
         <apart-navbar name="Emergencia" emoticon="fas fa-ambulance" v-on:click.native="changeSection(emergency)"></apart-navbar>
         <apart-navbar name="Nota comuna" emoticon="fa fa-sticky-note-o" v-on:click.native="changeSection(communeNote)"></apart-navbar>
-        <apart-navbar name="Relacionar Expedient" emoticon="fa fa-solid fa-book" v-on:click.native="changeSection(relationExpedient)"></apart-navbar>
-        <apart-navbar name="Vídeo interactiu" emoticon="fas fa-video" v-on:click.native="changeSection(interactiveVideo)" video></apart-navbar>
+        <apart-navbar v-if="show == false" name="Relacionar Expedient" emoticon="fa fa-solid fa-book" v-on:click.native="changeSection(relationExpedient)"></apart-navbar>
+        <apart-navbar v-if="show == false" name="Vídeo interactiu" emoticon="fas fa-video" v-on:click.native="changeSection(interactiveVideo)" video></apart-navbar>
     </div>
 </template>
 
 <script>
     export default {
+        props: {
+            show: {
+                type: [Boolean],
+                require: true
+            }
+        },
         data() {
             return {
                 personalData: this.$dadesPersonals,

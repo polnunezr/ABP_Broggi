@@ -9,6 +9,148 @@ body {
     padding: 0;
 }
 
+/*Background decoration*/
+
+/*
+------------------------------------------------------
+    Diseño Login
+------------------------------------------------------
+*/
+
+.parteLogoArribaIzquierda
+{
+    /* margin-top: -20px;
+    margin-left: -20px; */
+    opacity: 0.15;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.parteLogoAbajoIzquierda
+{
+    /* margin-bottom: -20px;
+    margin-left: -20px; */
+    opacity: 0.15;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.parteLogoAbajoDerecha
+{
+    /* margin-bottom: -20px;
+    margin-right: -20px; */
+    opacity: 0.15;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.parteLogoArribaDerecha
+{
+    /* margin-top: -20px;
+    margin-right: -20px; */
+    opacity: 0.15;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+.partesSeparadasLogoRotar
+{
+    transform: scaleX(-1);
+}
+
+.rotarParteAbajoIzquierda
+{
+    transform: rotate(180deg);
+}
+
+/* Diseño animación del elemento de color amarillo: */
+.animationYellow
+{
+    animation: animationYellow 7.5s infinite linear;
+}
+
+@keyframes animationYellow {
+    0%
+    {
+        opacity: 0.15;
+        width: 325px;
+        height: 325px;
+    }
+    50%
+    {
+        opacity: 0.4;
+        width: 375px;
+        height: 375px;
+    }
+    100%
+    {
+        opacity: 0.15;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+/* Diseño animación del elemento de color azul: */
+.animationBlue
+{
+    animation: animationBlue 10s infinite linear;
+}
+
+@keyframes animationBlue {
+    0%
+    {
+        opacity: 0.15;
+        width: 325px;
+        height: 325px;
+    }
+    50%
+    {
+        opacity: 0.4;
+        width: 375px;
+        height: 375px;
+    }
+    100%
+    {
+        opacity: 0.15;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+/* Diseño animación del elemento de color rosa: */
+.animationPink
+{
+    animation: animationPink 5s infinite linear;
+}
+
+@keyframes animationPink {
+    0%
+    {
+        opacity: 0.15;
+        width: 150px;
+        height: 150px;
+    }
+    50%
+    {
+        opacity: 0.3;
+        width: 175px;
+        height: 175px;
+    }
+    100%
+    {
+        opacity: 0.15;
+        width: 150px;
+        height: 150px;
+    }
+}
+
+/*
+------------------------------------------------------
+    Fin Login
+------------------------------------------------------
+*/
+
+
 #buttonFinalizarMap {
     position: absolute;
     bottom: 50px;
@@ -81,6 +223,7 @@ body {
 }
 
 .colCard {
+    position: relative;
     height: 100vh;
     min-height: 917.01px;
 }
@@ -191,6 +334,7 @@ body {
     margin-top: 0px;
 }
 .colTimeExit {
+    position: relative;
     margin-top: 30px;
 }
 .colCommuneNote {
@@ -458,6 +602,7 @@ h4 {
     position: absolute;
     bottom: 20px;
     right: 20px;
+    z-index: 600;
 }
 
 #video {

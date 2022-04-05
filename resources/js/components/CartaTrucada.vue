@@ -5,17 +5,21 @@
        <map-section v-if="mapOpen" :selectMarks="selectMarks"
        ></map-section>
        <div id="backdropRelation" v-if="backdropRelationOpen"></div>
-        <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients"></relation-modal>
-        <finish-section  v-if="selectSection != interactiveVideo"></finish-section>
+        <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients">
+        </relation-modal>
+        <finish-section  v-if="(selectSection != interactiveVideo) && (show == false)"></finish-section>
+        <background-decoration-derecha></background-decoration-derecha>
         <div class="container-fluid">
             <div class="row">
 
                 <div class="col col-2 colCard colNavBarHorizontal">
-                    <tab-apart></tab-apart>
+                    <tab-apart :show="show"></tab-apart>
 
 
                 </div>
                 <div v-bind:class = "selectSection != interactiveVideo ? 'col col-7 colCard' : 'col col-10 colCard'">
+
+                    <background-decoration-izquierda></background-decoration-izquierda>
 
                     <div v-if="selectSection != interactiveVideo && alertShow == true">
                         <alert-section :mensajeAlert="mensajeAlert" :alertDanger="alertDanger"
@@ -23,31 +27,34 @@
                     </div>
 
                     <div v-bind:style="selectSection == personalData ? 'display: block;' : 'display: none;'">
-                        <personal-section></personal-section>
+                        <personal-section :cartaTrucadaShow="cartaTrucadaShow" :dadaPersonalShow="dadaPersonalShow"
+                         :localitzacioTrucadaShow="localitzacioTrucadaShow" :show="show"></personal-section>
                     </div>
                     <div v-bind:style="selectSection == locate ? 'display: block;' : 'display: none;'">
-                        <location-section :marginTopLocation="marginTopLocation"></location-section>
+                        <location-section :marginTopLocation="marginTopLocation" :cartaTrucadaShow="cartaTrucadaShow"
+                        :localitzacioShow="localitzacioShow"
+                         :tipusLocalitzacioShow="tipusLocalitzacioShow" :show="show"></location-section>
                     </div>
                     <div v-bind:style="selectSection == agency ? 'display: block;' : 'display: none;'">
                         <agency-section :selectMarks = "selectMarks" :agencies="agencies"></agency-section>
                     </div>
                     <div v-bind:style="selectSection == emergency ? 'display: block;' : 'display: none;'">
-                        <emergency-section></emergency-section>
+                        <emergency-section :incidentShow="incidentShow" :show="show"></emergency-section>
                     </div>
                     <div v-bind:style="selectSection == communeNote ? 'display: block;' : 'display: none;'">
-                        <commune-note-section></commune-note-section>
+                        <commune-note-section :cartaTrucadaShow="cartaTrucadaShow" :show="show"></commune-note-section>
                     </div>
-                    <div v-bind:style="selectSection == relationExpedient ? 'display: block;' : 'display: none;'">
+                    <div v-bind:style="(selectSection == relationExpedient) && (show == false) ? 'display: block;' : 'display: none;'">
                         <relation-section></relation-section>
                     </div>
-                    <div v-bind:style="selectSection == interactiveVideo ? 'display: block;' : 'display: none;'">
+                    <div v-bind:style="(selectSection == interactiveVideo) && (show == false) ? 'display: block;' : 'display: none;'">
                         <video-section></video-section>
                     </div>
 
 
                 </div>
 
-                <time-section v-if="selectSection != interactiveVideo"></time-section>
+                <time-section v-if="selectSection != interactiveVideo" :cartaTrucadaShow="cartaTrucadaShow" :show="show"></time-section>
 
 
             </div>
@@ -57,6 +64,12 @@
 
 <script>
     export default {
+        props: {
+            show: {
+                type: [Boolean],
+                require: true
+            }
+        },
         data() {
             return {
                 selectSection: this.$dadesPersonals,
@@ -79,13 +92,33 @@
                 mapOpen: false,
                 selectMarks: [],
                 agencies: [],
-                backdropRelationOpen: false
+                backdropRelationOpen: false,
+                //Show
+                cartaTrucadaShow: null,
+                dadaPersonalShow: null,
+                localitzacioTrucadaShow: null,
+                localitzacioShow: null,
+                tipusLocalitzacioShow: null,
+                incidentShow: null
             }
         },
         created() {
 
+            if(this.show) {
+                console.log(this.$attrs['cartatrucadashow'])
+                this.cartaTrucadaShow = this.$attrs['cartatrucadashow']
+                this.dadaPersonalShow = this.$attrs['dadapersonalshow']
+                this.localitzacioTrucadaShow = this.$attrs['localitzaciotrucadashow']
+                this.localitzacioShow = this.$attrs['localitzacioshow']
+                this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow']
+                this.incidentShow = this.$attrs['incidentshow']
+            }
+
+
         },
         mounted() {
+            // console.log(this.cartaTrucadaShow)
+
             this.$eventTime.$on("change-section", section => {
                 this.selectSection = section
                 if(section == this.$locate && this.alertShow == false) {

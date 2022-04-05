@@ -178,6 +178,10 @@ Vue.prototype.$eventHelpBox = new Vue()
 
 Vue.component('carta-trucada', require('./components/CartaTrucada.vue').default);
 
+Vue.component('background-decoration-izquierda', require('./components/background-decoration/BackgroundDecorationIzquierda.vue').default);
+
+Vue.component('background-decoration-derecha', require('./components/background-decoration/BackgroundDecorationDerecha.vue').default);
+
 Vue.component('help-box-icon', require('./components/sections/helpBox/helpBoxIcon.vue').default);
 
 Vue.component('help-box', require('./components/sections/helpBox/helpBox.vue').default);

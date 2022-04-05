@@ -10,7 +10,7 @@
             <input v-if="number == false" type="text" class="form-control" :id="idInput" v-on:click="startTime" v-model="text"
             :disabled="disabledInput">
             <input v-else maxlength="12" type="number" class="form-control noFlechaNumber" :id="idInput" v-on:click="startTime"
-            v-model="text" v-on:change="changeInput">
+            v-model="text" v-on:change="changeInput" :disabled="disabledInput">
         </div>
     </div>
 </template>
@@ -26,6 +26,14 @@
                 type:[String],
                 require: true
             },
+            show: {
+                type:[Boolean],
+                require: true
+            },
+            valor: {
+                type:[String],
+                require: true
+            },
             small: Boolean,
             number: Boolean
         },
@@ -34,6 +42,12 @@
                 text: null,
                 disabledInput: false
 
+            }
+        },
+        created() {
+            if(this.show) {
+                this.disabledInput = true
+                this.text = this.valor
             }
         },
         computed: {

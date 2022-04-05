@@ -232,6 +232,8 @@ Vue.component("data-check", require("./components/forms/DataCheck.vue").default)
 
 Vue.component("data-select", require("./components/forms/DataSelect.vue").default);
 
+// Le ponemos al componente de usuarios el nombre que usaremos como etiqueta:
+Vue.component('usuaris-component', require('./components/gestionUsuarios/UsuarisComponent.vue').default);
 
 
 

@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartaController;
+use App\Http\Controllers\CartaTrucadaController;
+use App\Http\Controllers\ExpedientController;
+use App\Http\Controllers\GraficaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +18,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view("welcome");
+    return view("index");
 });
+
+Route::resource('cartes_trucades_controller', CartaTrucadaController::class);
+
+Route::resource('carta', CartaController::class);
+Route::resource('expedient', ExpedientController::class);
+Route::resource('grafica', GraficaController::class);

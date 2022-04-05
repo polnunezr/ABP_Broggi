@@ -7,7 +7,10 @@
             v-on:click="clickCloseModal">
             <i class="fa fa-times fa-lg"></i>
         </div>
-        <div id="divTableExpedient">
+        <div id="divMessageAnyExpedient" v-if="showTable == false">
+            <p id="messageAnyExpedient">No hay expedientes disponibles con los que los puedas relacionar</p>
+        </div>
+        <div id="divTableExpedient" v-if="showTable">
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -46,7 +49,8 @@
         },
         data() {
             return {
-                idClick: null
+                idClick: null,
+                showTable: true
             }
         },
         methods: {
@@ -118,6 +122,7 @@
 
             this.$eventRelation.$on("edit-view-modal", message =>{
                 this.$nextTick(() => {
+                    this.showTable = true;
                     let buttons = [];
                     if(this.expedients.length > 0) {
                         if(this.idClick != null) {
@@ -131,7 +136,7 @@
                         }
                     }
                     else {
-
+                        this.showTable = false;
                     }
                 })
 

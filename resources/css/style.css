@@ -1,3 +1,8 @@
+/*Thin 100*/
+/*@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100&display=swap');*/
+/*Light 300*/
+/*@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap');*/
+/*Regular 400*/
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
 
 body {
@@ -10,515 +15,7 @@ body {
     padding: 0;
 }
 
-#buttonFinalizarMap {
-    position: absolute;
-    bottom: 50px;
-    right: 50px;
-    z-index: 600;
-}
-
-#backdropMap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgb(0,0,0,0.3);
-    z-index: 400;
-}
-
-#spinnerEarth {
-    position: absolute;
-    top: calc(50% - 200px);
-    left: calc(50% - 200px);
-    width: 400px;
-    height: 400px;
-    background-image: url("http://daw.abp-politecnics.com/daw03/filesSVG/earth.svg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-#map {
-    position: absolute;
-    top: 10%;
-    left: 10%;
-    width: 80%;
-    height: 80%;
-    z-index: 500;
-}
-.markers {
-    /* color: #b40219;
-    background-color:#b40219 ; */
-    /* cursor:context-menu; */
-    background-image: url('https://paucepnet.github.io/mediaProjecte/marks/mapbox-marker-icon-blue-custom.svg');
-    /**/
-    width: 20px;
-    height: 48px;
-    /* height=\"41px\" width=\"27px\ */
-    cursor: pointer;
-}
-.markerClick {
-    background-image: url('https://paucepnet.github.io/mediaProjecte/marks/mapbox-marker-icon-pink-custom.svg');
-}
-
-/* .mapboxgl-popup {
-    max-width: 500px;
-} */
-
-.container,.container-map {
-    padding: 10px;
-    padding-bottom: 5px;
-}
-.colButtonMap {
-    padding: 0px;
-}
-.mapboxgl-popup-content {
-    padding: 40px;
-}
-
-#markCustom {
-    color: red;
-}
-
-.colCard {
-    height: 100vh;
-    min-height: 917.01px;
-}
-
-.colSection {
-    margin-top: 30px;
-    background-color: #f2c49b;
-    /* box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
-    -webkit-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
-    -moz-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8); */
-    box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
--webkit-box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
--moz-box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
-    border-radius: 10px;
-    padding-top: 30px;
-    padding-left: 40px;
-    padding-right: 30px;
-    padding-bottom: 30px;
-
-}
-
-.colAlert {
-    padding-top: 30px;
-    padding-bottom: 0px;
-    padding-left: 40px;
-    margin-right: 20px;
-}
-
-.alert-danger {
-    color: white;
-    background-color: #D962A3;
-    border-color: #f5c2c7;
-}
-
-.alert {
-    padding-top: 30px;
-    padding-left: 40px;
-}
-
-.colTitle {
-    margin-bottom: 10px;
-}
-
-.colNavBarHorizontal {
-    /* background-image: linear-gradient(90deg, rgba(215,85,217,1) 0%,
-    rgba(215,85,217,1) 60%, rgba(242,160,160,1) 100%); */
-    background-color: #f2a0a0;
-}
-
-.colApart {
-    color: white;
-    padding-top: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-bottom: 10px;
-    cursor: pointer;
-}
-
-.colApart:hover{
-    /* border-radius: 0px 10px 10px 0px;
-    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
--webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
--moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75); */
-    /* box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
-    -webkit-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
-    -moz-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76); */
-    transform: scale(1.1);
-    transition: 0.5s;
-    cursor: pointer;
-}
-
-.pApart {
-    font-size: 18px;
-    margin-bottom: 0px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-
-.colPersonalDates {
-    /* height: 36vh;
-    min-height: 340px; */
-    margin-right: 20px;
-
-}
-.colLocation {
-    /* height: 40vh;
-    min-height: 387px; */
-    /* margin-top: 30px; */
-    /*?¿?¿?¡'*/
-}
-
-.colAgency {
-    /* height: 28vh;
-    min-height: 270px; */
-}
-
-.colEmergency {
-    /* height: 24vh;
-    min-height: 220px; */
-    margin-right: 20px;
-}
-.colTime {
-    /* height: 17vh;
-    min-height: 175px; */
-    margin-top: 0px;
-}
-.colTimeExit {
-    margin-top: 30px;
-}
-.colCommuneNote {
-    height: 32vh;
-    min-height: 300px;
-    margin-right: 20px;
-}
-.colRelationSection {
-    /* height: 17vh;
-    min-height: 175px; */
-    margin-right: 20px;
-    padding-top: 60px;
-    padding-bottom: 60px;
-}
-.colFinishSection {
-    height: 150px;
-    margin-right: 20px;
-}
-
-#backdropRelation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgb(0,0,0,0.3);
-    z-index: 300;
-}
-
-#relationModal {
-    position: absolute;
-    width: 1400px;
-    height: 700px;
-    top: calc(50% - 350px);
-    left: calc(50% - 700px);
-    background-color: #f2c49b;
-    z-index: 400;
-    padding: 100px;
-
-}
-
-#closeModal {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    z-index: 400;
-    cursor: pointer;
-}
-#closeModal:hover {
-    color: white;
-    background-color: #f29b9b;
-}
-
-
-#divTableExpedient {
-    overflow-y: scroll;
-    max-height: 500px;
-}
-
-/*1.66778149386845*/
-/*1.66778149386845*/
-
-#divHelpBoxIcon {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background-color: #636AF2;
-    cursor: pointer;
-    /* background-image: url("https://paucepnet.github.io/mediaProjecte/flagEngland.svg"); */
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-
-}
-
-#containerHelpBox {
-    position: relative;
-}
-
-#divSpinnerHelpBox {
-    position: absolute;
-    /*32 37.25*/
-    top: calc(50% - 16px);
-    left: calc(50% - 18.625px) ;
-}
-
-.spinner {
-    color:#636AF2;
-}
-
-.colHelpBoxIcon {
-    height:100px;
-}
-
-.colHelpBox {
-    min-height: 300px;
-    background-color: white;
-    border-radius: 10px;
-}
-
-.hrHelpBox {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 0px;
-}
-
-.colQuestionHelpBox {
-    /* padding-top: 18px;
-    padding-left: 10px; */
-    height: 70px;
-}
-.colAudioHelpBox {
-    height: 70px;
-}
-
-.divAudio {
-    cursor: pointer;
-}
-
-.fa-volume-up:hover {
-    cursor: pointer;
-    color: gray
-}
-
-
-.fa-info {
-    color: white
-}
-
-
-
-
-.table, .table td{
-    border-color: black;
-}
-
-
-input, textarea {
-    background-color: #f0f0f2;
-}
-
-
-
-
-label {
-    font-size: 16px;
-    user-select: none;
-}
-
-p {
-    user-select: none;
-    margin-bottom: 0px
-}
-
-h4 {
-    font-weight: bold;
-    line-height: 0.5;
-}
-
-.button {
-    background-color: #636AF2;
-    font-weight: 400;
-    line-height: 1.6;
-    border-color: #636AF2;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.9rem;
-    border-radius: 0.25rem;
-    color: #fff;
-
-}
-.buttonClick {
-    background-color: #D962A3;
-    border-color: #D962A3;
-}
-
-.buttonClickMap {
-    background-color: #D962A3;
-    border-color: #D962A3;
-}
-
-.buttonClick:hover{
-    box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
--webkit-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
--moz-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
-}
-
-.buttonDisabled {
-    background-color: gray;
-}
-
-.buttonNormal:hover{
-    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
--webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
--moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
-}
-
-.buttonDisabled:hover{
-    box-shadow: none
-}
-
-#agenciaListDiv {
-    max-height: 180px;
-    min-height: 180px;
-    overflow-y: scroll;
-    background-color: white;
-}
-
-#containerAgencia {
-
-
-}
-
-.rowAgenciaList {
-    padding-top: 10px;
-    padding-left: 5px;
-}
-.hrAgencia {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 0px;
-}
-
-.labelAgenciaList {
-    font-size: 13px;
-}
-
-.fa-trash-o {
-    color: gray;
-}
-
-.fa-trash-o:hover {
-    color:#D962A3;
-    cursor: pointer;
-}
-
-#finishSection {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-}
-
-#video {
-    background-color: black;
-}
-
-#containerVideo {
-    position: relative;
-    width:1066.2px;
-    height:600px;
-
-}
-
-.backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgb(0,0,0,0.8);
-    z-index: 100;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
-
-#titleVideo {
-    font-size: 60px;
-    font-family: 'Bowlby One SC', cursive;
-    color: white;
-}
-.questions {
-    width: 350px;
-    height: 150px;
-    background-color: #636AF2;
-    border-radius: 10px;
-    cursor: pointer;
-
-}
-.questions:hover {
-    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
-    -webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
-    -moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
-}
-.answers {
-    color: white;
-    font-size: 50px;
-    font-family: 'Bowlby One SC', cursive;
-}
-
-#video::-webkit-media-controls-fullscreen-button {
-    display: none;
-}
-
-.fa-refresh {
-    z-index: 500;
-    color: white;
-    cursor: pointer;
-}
-
-.noFlechaNumber {
--moz-appearance: textfield;
-}
-.noFlechaNumber::-webkit-inner-spin-button {
-display: none;
-}
-.noFlechaNumber::-webkit-outer-spin-button,
-.noFlechaNumber::-webkit-inner-spin-button {
--webkit-appearance: none;
-margin: 0;
-}
-
-/*
-------------------------------------------------------
-    Letra del proyecto
-------------------------------------------------------
-*/
-*
-{
-    font-family: 'Lato', sans-serif;
-}
-/*
-------------------------------------------------------
-    Fin Letra del proyecto
-------------------------------------------------------
-*/
+/*Background decoration*/
 
 /*
 ------------------------------------------------------
@@ -532,6 +29,7 @@ margin: 0;
     margin-left: -20px; */
     opacity: 0.15;
     filter: blur(5px);
+    z-index: -1;
 }
 
 .parteLogoAbajoIzquierda
@@ -540,6 +38,7 @@ margin: 0;
     margin-left: -20px; */
     opacity: 0.15;
     filter: blur(5px);
+    z-index: -1;
 }
 
 .parteLogoAbajoDerecha
@@ -548,6 +47,7 @@ margin: 0;
     margin-right: -20px; */
     opacity: 0.15;
     filter: blur(5px);
+    z-index: -1;
 }
 
 .parteLogoArribaDerecha
@@ -556,6 +56,7 @@ margin: 0;
     margin-right: -20px; */
     opacity: 0.15;
     filter: blur(5px);
+    z-index: -1;
 }
 
 .partesSeparadasLogoRotar
@@ -655,15 +156,566 @@ margin: 0;
 ------------------------------------------------------
 */
 
-/*
-------------------------------------------------------
-    Diseño tabla usuarios
-------------------------------------------------------
-*/
+#buttonFinalizarMap {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    z-index: 600;
+}
+
+#backdropMap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0,0,0,0.3);
+    z-index: 400;
+}
+
+#spinnerEarth {
+    position: absolute;
+    top: calc(50% - 200px);
+    left: calc(50% - 200px);
+    width: 400px;
+    height: 400px;
+    background-image: url("http://daw.abp-politecnics.com/daw03/filesSVG/earth.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#map {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    z-index: 500;
+}
+.markers {
+    /* color: #b40219;
+    background-color:#b40219 ; */
+    /* cursor:context-menu; */
+    background-image: url('https://paucepnet.github.io/mediaProjecte/marks/mapbox-marker-icon-blue-custom.svg');
+    /**/
+    width: 20px;
+    height: 48px;
+    /* height=\"41px\" width=\"27px\ */
+    cursor: pointer;
+}
+.markerClick {
+    background-image: url('https://paucepnet.github.io/mediaProjecte/marks/mapbox-marker-icon-pink-custom.svg');
+}
+
+/* .mapboxgl-popup {
+    max-width: 500px;
+} */
+
+.container,.container-map {
+    padding: 10px;
+    padding-bottom: 5px;
+}
+.colButtonMap {
+    padding: 0px;
+}
+.mapboxgl-popup-content {
+    padding: 40px;
+}
+
+#markCustom {
+    color: red;
+}
+
+.colCard {
+    position: relative;
+    height: 100vh;
+    min-height: 917.01px;
+}
+
+.colSection {
+    margin-top: 30px;
+    background-color: #f2c49b;
+    /* box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
+    -webkit-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8);
+    -moz-box-shadow: 0px 0px 33px 15px rgba(242,196,155,0.8); */
+    box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
+-webkit-box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
+-moz-box-shadow: 2px -1px 18px -2px rgba(0,0,0,0.06);
+    border-radius: 10px;
+    padding-top: 30px;
+    padding-left: 40px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+
+}
+
+.colAlert {
+    padding-top: 30px;
+    padding-bottom: 0px;
+    padding-left: 40px;
+    margin-right: 20px;
+}
+
+.alert-danger {
+    color: white;
+    background-color: #D962A3;
+    border-color: #f5c2c7;
+}
+
+.alert {
+    padding-top: 30px;
+    padding-left: 40px;
+}
+
+.colTitle {
+    margin-bottom: 10px;
+}
+
+.colNavBarHorizontal {
+    /* background-image: linear-gradient(90deg, rgba(215,85,217,1) 0%,
+    rgba(215,85,217,1) 60%, rgba(242,160,160,1) 100%); */
+    background-color: #f2a0a0;
+}
+
+/*Logo*/
+#rowLogo {
+    margin-top: 20px;
+}
+/*Logo Horizontal*/
+/*1505 972.99*/
+/*0,646504983388704*/
+
+/*Logo*/
+/*1504.99 972.98*/
+
+/*Logo Cropp*/
+/*1504.99 972.98*/
+/*0,6465*/
+#imgLogo {
+    width: 70px;
+    height: 45.255px;
+}
+
+.colLogo {
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+}
 
 
-/*
-------------------------------------------------------
-    Fin Tabla usuarios
-------------------------------------------------------
-*/
+.colApart {
+    color: white;
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    cursor: pointer;
+}
+
+.colApart:hover{
+    /* border-radius: 0px 10px 10px 0px;
+    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+-webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+-moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75); */
+    /* box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
+    -webkit-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76);
+    -moz-box-shadow: -1px -2px 40px -3px rgba(242,160,160,0.76); */
+    transform: scale(1.1);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.pApart {
+    font-size: 18px;
+    margin-bottom: 0px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+.colPersonalDates {
+    /* height: 36vh;
+    min-height: 340px; */
+    margin-right: 20px;
+
+}
+.colLocation {
+    /* height: 40vh;
+    min-height: 387px; */
+    /* margin-top: 30px; */
+    /*?¿?¿?¡'*/
+}
+
+.colAgency {
+    /* height: 28vh;
+    min-height: 270px; */
+}
+
+.colEmergency {
+    /* height: 24vh;
+    min-height: 220px; */
+    margin-right: 20px;
+}
+.colTime {
+    /* height: 17vh;
+    min-height: 175px; */
+    margin-top: 0px;
+}
+.colTimeExit {
+    position: relative;
+    margin-top: 30px;
+}
+.colCommuneNote {
+    height: 32vh;
+    min-height: 300px;
+    margin-right: 20px;
+}
+.colRelationSection {
+    /* height: 17vh;
+    min-height: 175px; */
+    margin-right: 20px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+.colFinishSection {
+    height: 150px;
+    margin-right: 20px;
+}
+
+#backdropRelation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0,0,0,0.3);
+    z-index: 300;
+}
+
+#relationModal {
+    position: absolute;
+    width: 1400px;
+    height: 700px;
+    top: calc(50% - 350px);
+    left: calc(50% - 700px);
+    background-color: #f2c49b;
+    z-index: 400;
+    padding: 100px;
+
+}
+
+#closeModal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    z-index: 400;
+    cursor: pointer;
+}
+#closeModal:hover {
+    color: white;
+    background-color: #f29b9b;
+}
+
+#divMessageAnyExpedient {
+    position: absolute;
+    /*528.92 28.8*/
+    top: calc(50% - 14.4px);
+    left: calc(50% - 264.46px);
+    z-index: 400;
+}
+
+#messageAnyExpedient {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+#divTableExpedient {
+    overflow-y: scroll;
+    max-height: 500px;
+}
+
+/*1.66778149386845*/
+/*1.66778149386845*/
+
+#divHelpBoxIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: #636AF2;
+    cursor: pointer;
+    /* background-image: url("https://paucepnet.github.io/mediaProjecte/flagEngland.svg"); */
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+
+#containerHelpBox {
+    position: relative;
+}
+
+#divSpinnerHelpBox {
+    position: absolute;
+    /*32 37.25*/
+    top: calc(50% - 16px);
+    left: calc(50% - 18.625px) ;
+}
+
+#messageAnyAudio {
+    position: absolute;
+    /*189.73 23.05*/
+    top: calc(50% - 11.525px);
+    left: calc(50% - 94.865px);
+}
+
+.spinner {
+    color:#636AF2;
+}
+
+.colHelpBoxIcon {
+    height:100px;
+}
+
+.colHelpBox {
+    min-height: 300px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.hrHelpBox {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.colQuestionHelpBox {
+    /* padding-top: 18px;
+    padding-left: 10px; */
+    height: 70px;
+}
+.colAudioHelpBox {
+    height: 70px;
+}
+
+.divAudio {
+    cursor: pointer;
+}
+
+.fa-volume-up:hover {
+    cursor: pointer;
+    color: gray
+}
+
+
+.fa-info {
+    color: white
+}
+
+
+
+
+.table, .table td{
+    border-color: black;
+}
+
+
+input, textarea {
+    background-color: #f0f0f2;
+}
+
+
+
+
+label {
+    font-size: 16px;
+    font-family: 'Lato', sans-serif;
+    user-select: none;
+}
+
+p {
+    font-family: 'Lato', sans-serif;
+    user-select: none;
+}
+
+h4 {
+    font-family: 'Lato', sans-serif;
+}
+
+button {
+    font-family: 'Lato', sans-serif;
+}
+
+div {
+    font-family: 'Lato', sans-serif;
+}
+
+.pQuestionHelpBox {
+    margin-bottom: 0px
+}
+
+h4 {
+    font-weight: bold;
+    line-height: 0.5;
+}
+
+.button {
+    background-color: #636AF2;
+    font-weight: 400;
+    line-height: 1.6;
+    border-color: #636AF2;
+    border: 1px solid transparent;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9rem;
+    border-radius: 0.25rem;
+    color: #fff;
+
+}
+.buttonClick {
+    background-color: #D962A3;
+    border-color: #D962A3;
+}
+
+.buttonClickMap {
+    background-color: #D962A3;
+    border-color: #D962A3;
+}
+
+.buttonClick:hover{
+    box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+-webkit-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+-moz-box-shadow: 2px 1px 26px 3px rgba(217,98,163,0.75);
+}
+
+.buttonDisabled {
+    background-color: gray;
+}
+
+.buttonNormal:hover{
+    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+-webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+-moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+}
+
+.buttonDisabled:hover{
+    box-shadow: none
+}
+
+#agenciaListDiv {
+    max-height: 180px;
+    min-height: 180px;
+    overflow-y: scroll;
+
+}
+
+#containerAgencia {
+
+
+}
+
+.rowAgenciaList {
+    padding-top: 10px;
+    padding-left: 5px;
+}
+.hrAgencia {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.labelAgenciaList {
+    font-size: 13px;
+}
+
+.fa-trash-o {
+    color: gray;
+}
+
+.fa-trash-o:hover {
+    color:#D962A3;
+    cursor: pointer;
+}
+
+#finishSection {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 600;
+}
+
+#video {
+    background-color: black;
+}
+
+#containerVideo {
+    position: relative;
+    width:1066.2px;
+    height:600px;
+
+}
+
+.backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgb(0,0,0,0.8);
+    z-index: 100;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
+
+#titleVideo {
+    font-size: 60px;
+    font-family: 'Bowlby One SC', cursive;
+    color: white;
+}
+.questions {
+    width: 350px;
+    height: 150px;
+    background-color: #636AF2;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+.questions:hover {
+    box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+    -webkit-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+    -moz-box-shadow: 2px 1px 26px 3px rgba(99,106,242,0.75);
+}
+.answers {
+    color: white;
+    font-size: 50px;
+    font-family: 'Bowlby One SC', cursive;
+}
+
+#video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
+.fa-refresh {
+    z-index: 500;
+    color: white;
+    cursor: pointer;
+}
+
+.noFlechaNumber {
+-moz-appearance: textfield;
+}
+.noFlechaNumber::-webkit-inner-spin-button {
+display: none;
+}
+.noFlechaNumber::-webkit-outer-spin-button,
+.noFlechaNumber::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}

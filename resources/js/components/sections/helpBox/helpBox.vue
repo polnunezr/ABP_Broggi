@@ -12,6 +12,9 @@
                         <span class="sr-only">Loading...</span>
                     </div>
                 </div>
+                <div v-if="anyAudio" id="messageAnyAudio">
+                    There is no audio for this part
+                </div>
 
             </div>
         </div>
@@ -31,7 +34,8 @@
                 audios: null,
                 loaded: false,
                 selectTabActual: null,
-                cartes_trucades_partes: null
+                cartes_trucades_partes: null,
+                anyAudio: false
             }
         },
         created() {
@@ -46,6 +50,9 @@
                         vueThis.loaded = true
                     }
                 }
+                if(vueThis.audios.length == 0) {
+                    vueThis.anyAudio = true
+                }
             })
             .catch(error => {
                     console.log(error)
@@ -54,11 +61,15 @@
         },
         mounted() {
             this.$eventHelpBox.$on("change-section-in-help-box", selectTabActual => {
+                this.anyAudio = false;
                 this.selectTabActual = selectTabActual
                 for(let i = 0; i < this.cartes_trucades_partes.length; i++) {
                     if(this.cartes_trucades_partes[i].id == selectTabActual) {
                         this.audios = this.cartes_trucades_partes[i].audios
                     }
+                }
+                if(this.audios.length == 0) {
+                    this.anyAudio = true
                 }
             })
         }

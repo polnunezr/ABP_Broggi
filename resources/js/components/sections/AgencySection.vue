@@ -20,7 +20,7 @@
             <div class="row" style="margin-top: 20px">
                 <div class="col col-10">
                     <!--<textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>-->
-                    <div id="agenciaListDiv">
+                    <div id="agenciaListDiv" :style="styleDivAgencia">
                         <div class="container-fluid" id="containerAgencia">
                             <list-agency-section v-for="selectMark in selectMarks" :key="selectMark"
                             :agencies="agencies" :idAgency="selectMark">
@@ -31,7 +31,8 @@
                 </div>
                 <div class="col col-2 d-flex justify-content-center align-items-end">
                     <button type="button" class="button buttonNormal"
-                    v-on:click="buttonClickMap">Mapa</button>
+                    v-on:click="buttonClickMap" :disabled="disabledButtonMap"
+                    v-bind:class = "disabledButtonMap == true ? 'buttonDisabled' : ''">Mapa</button>
                 </div>
 
             </div>
@@ -43,6 +44,10 @@
 <script>
     export default {
         props: {
+            show: {
+                type: [Boolean],
+                require: true
+            },
             selectMarks: {
                 type: [Array],
                 require: true
@@ -54,7 +59,18 @@
         },
         data() {
             return {
-                title: "Agències"
+                title: "Agències",
+                styleDivAgencia: {
+                    background: "#ffffff"
+                },
+                disabledButtonMap: false
+            }
+        },
+        created() {
+            if(this.show) {
+                //#e8edef
+                this.styleDivAgencia.background = "#e8edef"
+                this.disabledButtonMap = true
             }
         },
         methods: {

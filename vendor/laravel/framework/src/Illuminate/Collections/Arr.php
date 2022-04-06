@@ -25,7 +25,7 @@ class Arr
      * Add an element to an array using "dot" notation if it doesn't exist.
      *
      * @param  array  $array
-     * @param  string|int|float  $key
+     * @param  string  $key
      * @param  mixed  $value
      * @return array
      */
@@ -142,7 +142,7 @@ class Arr
      * Get all of the given array except for a specified array of keys.
      *
      * @param  array  $array
-     * @param  array|string|int|float  $keys
+     * @param  array|string  $keys
      * @return array
      */
     public static function except($array, $keys)
@@ -167,10 +167,6 @@ class Arr
 
         if ($array instanceof ArrayAccess) {
             return $array->offsetExists($key);
-        }
-
-        if (is_float($key)) {
-            $key = (string) $key;
         }
 
         return array_key_exists($key, $array);
@@ -256,7 +252,7 @@ class Arr
      * Remove one or many array items from a given array using "dot" notation.
      *
      * @param  array  $array
-     * @param  array|string|int|float  $keys
+     * @param  array|string  $keys
      * @return void
      */
     public static function forget(&$array, $keys)
@@ -603,7 +599,7 @@ class Arr
      * If no key is given to the method, the entire array will be replaced.
      *
      * @param  array  $array
-     * @param  string|int|null  $key
+     * @param  string|null  $key
      * @param  mixed  $value
      * @return array
      */

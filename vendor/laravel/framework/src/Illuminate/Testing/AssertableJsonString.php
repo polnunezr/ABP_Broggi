@@ -3,7 +3,6 @@
 namespace Illuminate\Testing;
 
 use ArrayAccess;
-use Closure;
 use Countable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
@@ -220,11 +219,7 @@ class AssertableJsonString implements ArrayAccess, Countable
      */
     public function assertPath($path, $expect)
     {
-        if ($expect instanceof Closure) {
-            PHPUnit::assertTrue($expect($this->json($path)));
-        } else {
-            PHPUnit::assertSame($expect, $this->json($path));
-        }
+        PHPUnit::assertSame($expect, $this->json($path));
 
         return $this;
     }

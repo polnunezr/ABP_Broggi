@@ -492,6 +492,10 @@ class Str
             return $string;
         }
 
+        if (is_null($length) && PHP_MAJOR_VERSION < 8) {
+            $length = mb_strlen($string, $encoding);
+        }
+
         $segment = mb_substr($string, $index, $length, $encoding);
 
         if ($segment === '') {
@@ -984,17 +988,6 @@ class Str
     }
 
     /**
-     * Make a string's first character lowercase.
-     *
-     * @param  string  $string
-     * @return string
-     */
-    public static function lcfirst($string)
-    {
-        return static::lower(static::substr($string, 0, 1)).static::substr($string, 1);
-    }
-
-    /**
      * Make a string's first character uppercase.
      *
      * @param  string  $string
@@ -1020,12 +1013,11 @@ class Str
      * Get the number of words a string contains.
      *
      * @param  string  $string
-     * @param  string|null  $characters
      * @return int
      */
-    public static function wordCount($string, $characters = null)
+    public static function wordCount($string)
     {
-        return str_word_count($string, 0, $characters);
+        return str_word_count($string);
     }
 
     /**

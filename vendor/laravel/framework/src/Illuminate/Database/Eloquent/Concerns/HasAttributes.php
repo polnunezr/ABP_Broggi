@@ -345,7 +345,7 @@ trait HasAttributes
         $attributes = [];
 
         foreach ($this->getArrayableRelations() as $key => $value) {
-            // If the values implement the Arrayable interface we can just call this
+            // If the values implements the Arrayable interface we can just call this
             // toArray method on the instances which will convert both models and
             // collections to their proper array form and we'll set the values.
             if ($value instanceof Arrayable) {
@@ -353,8 +353,8 @@ trait HasAttributes
             }
 
             // If the value is null, we'll still go ahead and set it in this list of
-            // attributes, since null is used to represent empty relationships if
-            // it has a has one or belongs to type relationships on the models.
+            // attributes since null is used to represent empty relationships if
+            // if it a has one or belongs to type relationships on the models.
             elseif (is_null($value)) {
                 $relation = $value;
             }
@@ -520,10 +520,6 @@ trait HasAttributes
             return call_user_func(static::$lazyLoadingViolationCallback, $this, $key);
         }
 
-        if (! $this->exists || $this->wasRecentlyCreated) {
-            return;
-        }
-
         throw new LazyLoadingViolationException($this, $key);
     }
 
@@ -630,7 +626,7 @@ trait HasAttributes
      */
     protected function mutateAttributeMarkedAttribute($key, $value)
     {
-        if (array_key_exists($key, $this->attributeCastCache)) {
+        if (isset($this->attributeCastCache[$key])) {
             return $this->attributeCastCache[$key];
         }
 
@@ -640,10 +636,10 @@ trait HasAttributes
             return $value;
         }, $value, $this->attributes);
 
-        if ($attribute->withCaching || (is_object($value) && $attribute->withObjectCaching)) {
-            $this->attributeCastCache[$key] = $value;
-        } else {
+        if (! is_object($value) || ! $attribute->withObjectCaching) {
             unset($this->attributeCastCache[$key]);
+        } else {
+            $this->attributeCastCache[$key] = $value;
         }
 
         return $value;
@@ -1023,10 +1019,10 @@ trait HasAttributes
             )
         );
 
-        if ($attribute->withCaching || (is_object($value) && $attribute->withObjectCaching)) {
-            $this->attributeCastCache[$key] = $value;
-        } else {
+        if (! is_object($value) || ! $attribute->withObjectCaching) {
             unset($this->attributeCastCache[$key]);
+        } else {
+            $this->attributeCastCache[$key] = $value;
         }
     }
 

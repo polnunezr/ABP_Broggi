@@ -20,8 +20,6 @@ class ConfigClearCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
-     *
-     * @deprecated
      */
     protected static $defaultName = 'config:clear';
 
@@ -61,6 +59,6 @@ class ConfigClearCommand extends Command
     {
         $this->files->delete($this->laravel->getCachedConfigPath());
 
-        $this->info('Configuration cache cleared successfully.');
+        $this->info('Configuration cache cleared!');
     }
 }

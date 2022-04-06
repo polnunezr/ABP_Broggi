@@ -24,8 +24,6 @@ class MailMakeCommand extends GeneratorCommand
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
-     *
-     * @deprecated
      */
     protected static $defaultName = 'make:mail';
 
@@ -104,11 +102,7 @@ class MailMakeCommand extends GeneratorCommand
         $view = $this->option('markdown');
 
         if (! $view) {
-            $name = str_replace('\\', '/', $this->argument('name'));
-
-            $view = 'mail.'.collect(explode('/', $name))
-                ->map(fn ($part) => Str::kebab($part))
-                ->implode('.');
+            $view = 'mail.'.Str::kebab(class_basename($this->argument('name')));
         }
 
         return $view;

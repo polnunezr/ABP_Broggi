@@ -8,8 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class EstatAgencia extends Model
 {
     use HasFactory;
-    public function estatAgencia()
+    protected $table = "estats_agencies";
+    // protected $primaryKey = "id";
+    // public $incremneting = false;
+    // protected $keyType = "string"
+    public $timestamps = false;
+
+
+    public function cartes_trucades_has_agencies()
     {
-        return $this->belongsTo(EstatAgencia::class, "estats_agencies_id");
+        return $this->belongsTo(CartesTrucadesHasAgencies::class, 'estats_agencies_id');
+
     }
+
+
 }

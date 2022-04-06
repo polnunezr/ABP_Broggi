@@ -21,8 +21,6 @@ class SessionTableCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
-     *
-     * @deprecated
      */
     protected static $defaultName = 'session:table';
 
@@ -71,7 +69,7 @@ class SessionTableCommand extends Command
 
         $this->files->put($fullPath, $this->files->get(__DIR__.'/stubs/database.stub'));
 
-        $this->info('Migration created successfully.');
+        $this->info('Migration created successfully!');
 
         $this->composer->dumpAutoloads();
     }

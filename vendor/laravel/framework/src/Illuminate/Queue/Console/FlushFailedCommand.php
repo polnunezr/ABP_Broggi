@@ -19,8 +19,6 @@ class FlushFailedCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
-     *
-     * @deprecated
      */
     protected static $defaultName = 'queue:flush';
 
@@ -41,11 +39,11 @@ class FlushFailedCommand extends Command
         $this->laravel['queue.failer']->flush($this->option('hours'));
 
         if ($this->option('hours')) {
-            $this->info("All jobs that failed more than {$this->option('hours')} hours ago have been deleted successfully.");
+            $this->info("All jobs that failed more than {$this->option('hours')} hours ago have been deleted successfully!");
 
             return;
         }
 
-        $this->info('All failed jobs deleted successfully.');
+        $this->info('All failed jobs deleted successfully!');
     }
 }

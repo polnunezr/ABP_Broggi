@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class EstatExpedient extends Model
 {
-    protected $table = 'estats_expedients';
-    public $timestamps = false;
     use HasFactory;
+    protected $table = "estats_expedients";
+    // protected $primaryKey = "id";
+    // public $incremneting = false;
+    // protected $keyType = "string"
+    public $timestamps = false;
 
-    public function expedientEstatus()
-    {
+    public function expedients(){
         return $this->hasMany(Expedient::class, 'estats_expedients_id');
     }
 }

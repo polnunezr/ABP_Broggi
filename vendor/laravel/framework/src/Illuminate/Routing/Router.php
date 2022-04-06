@@ -1152,7 +1152,7 @@ class Router implements BindingRegistrar, RegistrarContract
     /**
      * Check if a route with the given name exists.
      *
-     * @param  string|array  $name
+     * @param  string  $name
      * @return bool
      */
     public function has($name)

@@ -8,15 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Expedient extends Model
 {
     use HasFactory;
-    protected $table = 'expedients';
+    protected $table = "expedients";
+    // protected $primaryKey = "id";
+    // public $incremneting = false;
+    // protected $keyType = "string"
     public $timestamps = false;
 
-    public function expedientCarta()
-    {
-        return $this->hasMany(Carta::class, 'expedients_id');
+    public function cartesTrucada(){
+        return $this->hasMany(CartaTrucada::class, 'expedients_id');
     }
-    public function expedientEstatus()
-    {
-        return $this->belongsTo(EstatExpedient::class, 'estats_expedients_id');
+
+    public function estatExpedient() {
+        return $this->belongsTo(EstatExpedient::class, "estats_expedients_id");
     }
 }

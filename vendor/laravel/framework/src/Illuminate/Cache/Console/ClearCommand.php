@@ -23,8 +23,6 @@ class ClearCommand extends Command
      * This name is used to identify the command during lazy loading.
      *
      * @var string|null
-     *
-     * @deprecated
      */
     protected static $defaultName = 'cache:clear';
 
@@ -87,7 +85,7 @@ class ClearCommand extends Command
             'cache:cleared', [$this->argument('store'), $this->tags()]
         );
 
-        $this->info('Application cache cleared successfully.');
+        $this->info('Application cache cleared!');
     }
 
     /**

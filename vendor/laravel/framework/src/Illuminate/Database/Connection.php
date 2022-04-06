@@ -829,8 +829,6 @@ class Connection implements ConnectionInterface
     public function disconnect()
     {
         $this->setPdo(null)->setReadPdo(null);
-
-        $this->doctrineConnection = null;
     }
 
     /**
@@ -854,7 +852,9 @@ class Connection implements ConnectionInterface
      */
     public function listen(Closure $callback)
     {
-        $this->events?->listen(Events\QueryExecuted::class, $callback);
+        if (isset($this->events)) {
+            $this->events->listen(Events\QueryExecuted::class, $callback);
+        }
     }
 
     /**
@@ -865,7 +865,11 @@ class Connection implements ConnectionInterface
      */
     protected function fireConnectionEvent($event)
     {
-        return $this->events?->dispatch(match ($event) {
+        if (! isset($this->events)) {
+            return;
+        }
+
+        return $this->events->dispatch(match ($event) {
             'beganTransaction' => new TransactionBeginning($this),
             'committed' => new TransactionCommitted($this),
             'rollingBack' => new TransactionRolledBack($this),
@@ -881,7 +885,9 @@ class Connection implements ConnectionInterface
      */
     protected function event($event)
     {
-        $this->events?->dispatch($event);
+        if (isset($this->events)) {
+            $this->events->dispatch($event);
+        }
     }
 
     /**

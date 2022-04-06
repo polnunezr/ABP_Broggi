@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Accident;
-use App\Models\AccidentTipus;
-use App\Models\Carta;
+// use App\Models\Accident;
+use App\Models\TipusIncident;
+// use App\Models\Carta;
+use App\Models\CartaTrucada;
 use App\Models\Expedient;
 use App\Models\Grafica;
 use Illuminate\Http\Request;
@@ -19,10 +20,10 @@ class GraficaController extends Controller
     public function index()
     {
         //
-        $accidents = Accident::all();
+        $accidents = TipusIncident::all();
         foreach ($accidents as $incident) {
             $tipus[] = $incident->descripcio;
-            $carta = Carta::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
+            $carta = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_incidents.descripcio')

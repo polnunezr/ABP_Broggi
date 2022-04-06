@@ -122,9 +122,11 @@ class ExpedientController extends Controller
         $tipusEmgs =  $request->input('emer');
         $tel =  $request->input('telf');
         $id = $request->input('id');
-        $hola = 'xd';
-        if (empty($fecha) && empty($id) && empty($tel) && $tipusEmgs == 'todos' && $tipusLocs == 'todos') {
 
+
+
+
+        if (empty($fecha) && empty($id) && empty($tel) && $tipusEmgs == 'todos' && $tipusLocs == 'todos') {
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
@@ -266,6 +268,28 @@ class ExpedientController extends Controller
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.expedients_id', '=', $expedient->id)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
+                ->orderBy('codi_trucada')
+                ->paginate(5)
+                ->withQueryString();
+        } else if ($tipusLocs == 'todos') {
+            //Funciona
+            $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
+                ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
+                ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
+                ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
+                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->orderBy('codi_trucada')
+                ->paginate(5)
+                ->withQueryString();
+        } else if ($tipusLocs != 'todos') {
+            //Funciona
+            $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
+                ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
+                ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
+                ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
+                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
+
                 ->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();

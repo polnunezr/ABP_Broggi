@@ -11,13 +11,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+
+<link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
+
 <title>@yield('titol')</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-fixed-top  navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="/ABP_Pol_Nunez/public/"><img src="{{ asset('img/logo.jpg') }}" alt="tag"
-                height="75" width="175">
+    <nav class="navbar navbar-fixed-top  navbar-expand-lg navbar-dark" id="">
+        <a class="navbar-brand" href="/ABP_Pol_Nunez/public/"><img
+                src="https://raw.githubusercontent.com/polnunezr/ABP_Broggi/main/LogoVertical.svg" alt="tag" height="75"
+                width="175">
         </a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">

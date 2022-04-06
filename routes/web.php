@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartaController;
-use App\Http\Controllers\CartaTrucadaController;
-use App\Http\Controllers\ExpedientController;
+use App\Http\Controllers\UsuariController;
 use App\Http\Controllers\GraficaController;
+use App\Http\Controllers\ExpedientController;
+use App\Http\Controllers\CartaTrucadaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,13 +19,25 @@ use App\Http\Controllers\GraficaController;
 |
 */
 
+// Ruta para la raíz de la aplicación que nos redirecciona a la ruta llamada 'login':
 Route::get('/', function () {
-    return view("index");
+    return redirect()->route('login');
 });
 
-Route::resource('cartes_trucades_controller', CartaTrucadaController::class);
+// Ruta 'get' que llama el método 'showLogin' del controlador 'UsuariController':
+Route::get('/login', [UsuariController::class, 'showLogin'])->name('login');
 
-<<<<<<< HEAD
+// Ruta 'post' que llama el método 'login' del controlador 'UsuariController':
+Route::post('/login', [UsuariController::class, 'login']);
+
+// Cualquier ruta que pongamos aquí solo se podrá acceder si estamos conectados a la aplicación,
+// es decir, solo se podrá acceder si nos hemos logeado:
+Route::middleware(['auth'])->group(function () {
+
+    // Ruta 'get' para ir al menú del usuario administrador:
+    Route::get('/menu', function () {
+        $usuari = Auth::user();
+
         return view('administrador.menu', compact('usuari'));
     });
 
@@ -43,8 +57,3 @@ Route::resource('cartes_trucades_controller', CartaTrucadaController::class);
     // Ruta 'get' para el controlador 'UsuariController::class' para salir de la cuenta:
     // Route::get('/logout', UsuariController::class);
 });
-=======
-Route::resource('carta', CartaController::class);
-Route::resource('expedient', ExpedientController::class);
-Route::resource('grafica', GraficaController::class);
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14

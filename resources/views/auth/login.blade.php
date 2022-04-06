@@ -1,8 +1,8 @@
-@extends('layouts.layout')
+@extends('layouts.layoutS.plantilla')
 
 @section("title", "Login")
 
-@section("name")
+@section("container")
 
     {{-- Incluimos la sección de errores o mensajes: --}}
     @include('partials.missatges')

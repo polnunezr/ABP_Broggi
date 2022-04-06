@@ -47,3 +47,6 @@ Route::apiResource("tipus_incidents", TipusIncidentController::class);
 Route::apiResource("provincies", ProvinciaController::class);
 
 Route::apiResource("comarques", ComarcaController::class);
+
+// Ruta API 'resource' para el controlador 'UsuariController':
+Route::apiResource('usuaris', UsuariController::class);

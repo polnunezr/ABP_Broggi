@@ -24,15 +24,11 @@ class CartaTrucadaController extends Controller
      */
     public function index()
     {
-<<<<<<< HEAD
         $usuari = Auth::user();
 
         return view("cartaTrucada.index", compact('usuari'));
 
         // return view("cartaTrucada.index");
-=======
-        return view("cartaTrucada.index");
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
         // Route::view('/cartes_trucades',"cartaTrucada.index");
     }
 

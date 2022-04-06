@@ -1,8 +1,8 @@
-@extends('layouts.layout')
+@extends('layouts.layoutS.plantilla')
 
 @section("title", "Menu")
 
-@section("name")
+@section("container")
 
     {{-- Incluimos la decoración de fondo: --}}
     @include('partials.backgroundDecoration')

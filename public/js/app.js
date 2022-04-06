@@ -3198,181 +3198,6 @@ function withinMaxClamp(min, value, max) {
 
 /***/ }),
 
-/***/ "./node_modules/ansi-styles/index.js":
-/*!*******************************************!*\
-  !*** ./node_modules/ansi-styles/index.js ***!
-  \*******************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-/* module decorator */ module = __webpack_require__.nmd(module);
-
-
-const wrapAnsi16 = (fn, offset) => (...args) => {
-	const code = fn(...args);
-	return `\u001B[${code + offset}m`;
-};
-
-const wrapAnsi256 = (fn, offset) => (...args) => {
-	const code = fn(...args);
-	return `\u001B[${38 + offset};5;${code}m`;
-};
-
-const wrapAnsi16m = (fn, offset) => (...args) => {
-	const rgb = fn(...args);
-	return `\u001B[${38 + offset};2;${rgb[0]};${rgb[1]};${rgb[2]}m`;
-};
-
-const ansi2ansi = n => n;
-const rgb2rgb = (r, g, b) => [r, g, b];
-
-const setLazyProperty = (object, property, get) => {
-	Object.defineProperty(object, property, {
-		get: () => {
-			const value = get();
-
-			Object.defineProperty(object, property, {
-				value,
-				enumerable: true,
-				configurable: true
-			});
-
-			return value;
-		},
-		enumerable: true,
-		configurable: true
-	});
-};
-
-/** @type {typeof import('color-convert')} */
-let colorConvert;
-const makeDynamicStyles = (wrap, targetSpace, identity, isBackground) => {
-	if (colorConvert === undefined) {
-		colorConvert = __webpack_require__(/*! color-convert */ "./node_modules/color-convert/index.js");
-	}
-
-	const offset = isBackground ? 10 : 0;
-	const styles = {};
-
-	for (const [sourceSpace, suite] of Object.entries(colorConvert)) {
-		const name = sourceSpace === 'ansi16' ? 'ansi' : sourceSpace;
-		if (sourceSpace === targetSpace) {
-			styles[name] = wrap(identity, offset);
-		} else if (typeof suite === 'object') {
-			styles[name] = wrap(suite[targetSpace], offset);
-		}
-	}
-
-	return styles;
-};
-
-function assembleStyles() {
-	const codes = new Map();
-	const styles = {
-		modifier: {
-			reset: [0, 0],
-			// 21 isn't widely supported and 22 does the same thing
-			bold: [1, 22],
-			dim: [2, 22],
-			italic: [3, 23],
-			underline: [4, 24],
-			inverse: [7, 27],
-			hidden: [8, 28],
-			strikethrough: [9, 29]
-		},
-		color: {
-			black: [30, 39],
-			red: [31, 39],
-			green: [32, 39],
-			yellow: [33, 39],
-			blue: [34, 39],
-			magenta: [35, 39],
-			cyan: [36, 39],
-			white: [37, 39],
-
-			// Bright color
-			blackBright: [90, 39],
-			redBright: [91, 39],
-			greenBright: [92, 39],
-			yellowBright: [93, 39],
-			blueBright: [94, 39],
-			magentaBright: [95, 39],
-			cyanBright: [96, 39],
-			whiteBright: [97, 39]
-		},
-		bgColor: {
-			bgBlack: [40, 49],
-			bgRed: [41, 49],
-			bgGreen: [42, 49],
-			bgYellow: [43, 49],
-			bgBlue: [44, 49],
-			bgMagenta: [45, 49],
-			bgCyan: [46, 49],
-			bgWhite: [47, 49],
-
-			// Bright color
-			bgBlackBright: [100, 49],
-			bgRedBright: [101, 49],
-			bgGreenBright: [102, 49],
-			bgYellowBright: [103, 49],
-			bgBlueBright: [104, 49],
-			bgMagentaBright: [105, 49],
-			bgCyanBright: [106, 49],
-			bgWhiteBright: [107, 49]
-		}
-	};
-
-	// Alias bright black as gray (and grey)
-	styles.color.gray = styles.color.blackBright;
-	styles.bgColor.bgGray = styles.bgColor.bgBlackBright;
-	styles.color.grey = styles.color.blackBright;
-	styles.bgColor.bgGrey = styles.bgColor.bgBlackBright;
-
-	for (const [groupName, group] of Object.entries(styles)) {
-		for (const [styleName, style] of Object.entries(group)) {
-			styles[styleName] = {
-				open: `\u001B[${style[0]}m`,
-				close: `\u001B[${style[1]}m`
-			};
-
-			group[styleName] = styles[styleName];
-
-			codes.set(style[0], style[1]);
-		}
-
-		Object.defineProperty(styles, groupName, {
-			value: group,
-			enumerable: false
-		});
-	}
-
-	Object.defineProperty(styles, 'codes', {
-		value: codes,
-		enumerable: false
-	});
-
-	styles.color.close = '\u001B[39m';
-	styles.bgColor.close = '\u001B[49m';
-
-	setLazyProperty(styles.color, 'ansi', () => makeDynamicStyles(wrapAnsi16, 'ansi16', ansi2ansi, false));
-	setLazyProperty(styles.color, 'ansi256', () => makeDynamicStyles(wrapAnsi256, 'ansi256', ansi2ansi, false));
-	setLazyProperty(styles.color, 'ansi16m', () => makeDynamicStyles(wrapAnsi16m, 'rgb', rgb2rgb, false));
-	setLazyProperty(styles.bgColor, 'ansi', () => makeDynamicStyles(wrapAnsi16, 'ansi16', ansi2ansi, true));
-	setLazyProperty(styles.bgColor, 'ansi256', () => makeDynamicStyles(wrapAnsi256, 'ansi256', ansi2ansi, true));
-	setLazyProperty(styles.bgColor, 'ansi16m', () => makeDynamicStyles(wrapAnsi16m, 'rgb', rgb2rgb, true));
-
-	return styles;
-}
-
-// Make the export immutable
-Object.defineProperty(module, 'exports', {
-	enumerable: true,
-	get: assembleStyles
-});
-
-
-/***/ }),
-
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -5555,13 +5380,268 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-<<<<<<< HEAD
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   mounted: function mounted() {
     console.log('Component mounted.');
   }
 });
-=======
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5611,62 +5691,311 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
+  props: ['perfiles'],
   data: function data() {
     return {
-      selectSection: this.$dadesPersonals,
-      personalData: this.$dadesPersonals,
-      locate: this.$locate,
-      agency: this.$agency,
-      emergency: this.$emergency,
-      communeNote: this.$communeNote,
-      relationExpedient: this.$relationExpedient,
-      interactiveVideo: this.$interactiveVideo,
-      modalOpen: false,
-      expedients: [],
-      alertShow: false,
-      alertDanger: true,
-      mensajeAlert: [],
-      marginTopLocation: 30,
-      telefon: null,
-      municipiLocation: null,
-      incident: null,
-      mapOpen: false,
-      selectMarks: [],
-      agencies: [],
-      backdropRelationOpen: false,
-      //Show
-      cartaTrucadaShow: null,
-      dadaPersonalShow: null,
-      localitzacioTrucadaShow: null,
-      localitzacioShow: null,
-      tipusLocalitzacioShow: null,
-      incidentShow: null
+      usuarios: [],
+      usuariosByParams: [],
+      usuario: {
+        id: "",
+        codi: "",
+        contrassenya: "",
+        nom: "",
+        cognoms: "",
+        perfils_id: "",
+        actiu: false,
+        perfil: null
+      },
+      datosUsuario: {
+        selectPerfil: 0,
+        activoBuscar: false
+      },
+      id_perfil: "",
+      insert: true,
+      filtros: false
     };
   },
-  created: function created() {
-    if (this.show) {
-      console.log(this.$attrs['cartatrucadashow']);
-      this.cartaTrucadaShow = this.$attrs['cartatrucadashow'];
-      this.dadaPersonalShow = this.$attrs['dadapersonalshow'];
-      this.localitzacioTrucadaShow = this.$attrs['localitzaciotrucadashow'];
-      this.localitzacioShow = this.$attrs['localitzacioshow'];
-      this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow'];
-      this.incidentShow = this.$attrs['incidentshow'];
+  methods: {
+    // Método para seleccionar todos los usuarios:
+    selectUsuarios: function selectUsuarios() {
+      var _this = this;
+
+      // Cuando nosotros hacemos referencia a las variables que tenemos en el 'data' dentro de nuestro
+      // Vue haremos referencia con 'this' pero cuando estamos en el 'axios' es como si estuvieramos en otro sitio
+      // y el 'this' no funciona de la misma manera y por eso tenemos que guardarnos el 'this' en una variable:
+      var x = this; // axios nos va a ayudar a llamar a las APIs:
+
+      axios // Esta es la API que teniamos hecha para llamar a todos los usuarios:
+      .get("/usuaris").then(function (response) {
+        x.usuarios = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      })["finally"](function () {
+        return _this.loading = false;
+      });
+    },
+    // Método para mostrar el modal al pulsar el botón de abrir el modal, también recibimos el usuario que
+    // se quiere borrar y lo guardamos:
+    modalDeleteUsuario: function modalDeleteUsuario(usuario) {
+      this.usuario = usuario;
+
+      if (this.usuario.actiu) {
+        $('#modalDestroy').modal('show');
+      } else {
+        alert("Este usuario ya está desactivado!");
+      }
+    },
+    // Método para desactivar un usuario:
+    deleteUsuario: function deleteUsuario() {
+      this.usuario.actiu = false; // Cuando nosotros hacemos referencia a las variables que tenemos en el 'data' dentro de nuestro
+      // Vue haremos referencia con 'this' pero cuando estamos en el 'axios' es como si estuvieramos en otro sitio
+      // y el 'this' no funciona de la misma manera y por eso tenemos que guardarnos el 'this' en una variable:
+
+      var x = this; // axios nos va a ayudar a llamar a las APIs:
+
+      axios // Esta es la API que teniamos hecha para modificar un usuario específico según el 'id' que enviemos y
+      // el usuario:
+      .put("/usuaris/" + x.usuario.id, x.usuario).then(function (response) {
+        console.log(response);
+        alert("Usuari desactivat!");
+        x.selectUsuarios();
+        $('#modalDestroy').modal('hide');
+      })["catch"](function (error) {
+        console.log(error.response.status);
+        console.log(error.response.data);
+        alert("Error al desactivar l'usuari!");
+        $('#modalDestroy').modal('hide');
+      });
+    },
+    // Método para mostrar el modal para insertar o modificar un curso:
+    createUsuario: function createUsuario() {
+      this.insert = true;
+      $('#modalIM').modal('show');
+    },
+    // Método para insertar un usuario:
+    insertUsuario: function insertUsuario() {
+      // Controlamos que no se deje ningún input vacío:
+      if (this.usuario.codi == "" || this.usuario.contrassenya == "" || this.usuario.nom == "" || this.usuario.cognoms == "" || this.usuario.perfils_id == "") {
+        alert("Please complete all fields!");
+      } else {
+        // Cuando nosotros hacemos referencia a las variables que tenemos en el 'data' dentro de nuestro
+        // Vue haremos referencia con 'this' pero cuando estamos en el 'axios' es como si estuvieramos en otro sitio
+        // y el 'this' no funciona de la misma manera y por eso tenemos que guardarnos el 'this' en una variable:
+        var x = this; // axios nos va a ayudar a llamar a las APIs:
+
+        axios // Esta es la API que teniamos hecha para insertar un usuario, enviando el usuario que queremos insertar:
+        .post("/usuaris", x.usuario).then(function (response) {
+          console.log(response);
+          alert("Usuari insertat!");
+          x.selectUsuarios();
+          $('#modalIM').modal('hide');
+          this.usuario.id = "";
+          this.usuario.codi = "";
+          this.usuario.contrassenya = "";
+          this.usuario.nom = "";
+          this.usuario.cognoms = "";
+          this.usuario.perfils_id = "";
+          this.usuario.actiu = false;
+          this.usuario.perfil = null;
+        })["catch"](function (error) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          alert("Error al insertar l'usuari!");
+          $('#modalIM').modal('hide'); // this.usuario.id = ""
+          // this.usuario.codi = "";
+          // this.usuario.contrassenya = "";
+          // this.usuario.nom = "";
+          // this.usuario.cognoms = "";
+          // this.usuario.perfils_id = "";
+          // this.usuario.actiu = false;
+          // this.usuario.perfil = null;
+        });
+      }
+    },
+    // Método para mostrar el modal para insertar o modificar un usuario, también recibimos el usuario que
+    // se quiere modificar y lo guardamos:
+    editUsuario: function editUsuario(usuario) {
+      this.insert = false;
+      this.usuario = usuario;
+      this.id_perfil = usuario.perfils_id;
+      $('#modalIM').modal('show');
+    },
+    // Método para modificar un usuario:
+    updateUsuario: function updateUsuario() {
+      // Controlamos que no se deje ningún input vacío:
+      if (this.usuario.codi == "" || this.usuario.nom == "" || this.usuario.cognoms == "" || this.usuario.perfils_id == "") {
+        alert("Please complete all fields!");
+      } else {
+        // Cuando nosotros hacemos referencia a las variables que tenemos en el 'data' dentro de nuestro
+        // Vue haremos referencia con 'this' pero cuando estamos en el 'axios' es como si estuvieramos en otro sitio
+        // y el 'this' no funciona de la misma manera y por eso tenemos que guardarnos el 'this' en una variable:
+        var x = this; // axios nos va a ayudar a llamar a las APIs:
+
+        axios // Esta es la API que teniamos hecha para modificar un usuario específico según el 'id' que enviemos y
+        // el usuario:
+        .put("/usuaris/" + x.usuario.id, x.usuario).then(function (response) {
+          console.log(response);
+          alert("Usuari modificat!");
+          x.selectUsuarios();
+          $('#modalIM').modal('hide');
+        })["catch"](function (error) {
+          console.log(error.response.status);
+          console.log(error.response.data);
+          alert("Error al modificar l'usuari!");
+          $('#modalIM').modal('hide');
+        });
+      }
+    },
+    selectUsuariosByParams: function selectUsuariosByParams() {
+      var _this2 = this;
+
+      this.usuariosByParams = [];
+      this.usuarios.forEach(function (usuario) {
+        if (_this2.datosUsuario.selectPerfil == 0) {
+          if (_this2.datosUsuario.activoBuscar) {
+            if (usuario.actiu) {
+              _this2.usuariosByParams.push(usuario);
+
+              _this2.filtros = true;
+            }
+          } else {
+            _this2.usuariosByParams = [];
+            _this2.filtros = false;
+          }
+        } else if (_this2.datosUsuario.selectPerfil == usuario.perfils_id) {
+          if (_this2.datosUsuario.activoBuscar == usuario.actiu || !_this2.datosUsuario.activoBuscar && usuario.actiu) {
+            _this2.usuariosByParams.push(usuario);
+
+            _this2.filtros = true;
+          } else {
+            _this2.usuariosByParams = [];
+            _this2.filtros = true;
+          } // if(this.datosUsuario.activoBuscar)
+          // {
+          //     if(usuario.actiu && usuario.perfils_id == this.datosUsuario.selectPerfil)
+          //     {
+          //         this.usuariosByParams.push(usuario);
+          //         this.filtros = true;
+          //     }
+          //     else
+          //     {
+          //         this.usuariosByParams = [];
+          //         this.filtros = true;
+          //     }
+          // }
+          // else
+          // {
+          //     if(usuario.perfils_id == this.datosUsuario.selectPerfil)
+          //     {
+          //         this.usuariosByParams.push(usuario);
+          //         this.filtros = true;
+          //     }
+          // }
+
+        }
+      });
+      localStorage.setItem("users", JSON.stringify(this.usuariosByParams));
+      localStorage.setItem("filtros", JSON.stringify(this.filtros)); // for (const usuario of this.usuarios)
+      // {
+      //     if(this.datosUsuario.selectPerfil == 0)
+      //     {
+      //         if(this.datosUsuario.activoBuscar)
+      //         {
+      //             if(usuario.actiu)
+      //             {
+      //                 this.usuariosByParams.push(usuario);
+      //                 this.filtros = true;
+      //             }
+      //         }
+      //         else
+      //         {
+      //             this.usuariosByParams = [];
+      //             this.filtros = false;
+      //         }
+      //     }
+      //     else
+      //     {
+      //         if(this.datosUsuario.activoBuscar)
+      //         {
+      //             if(usuario.actiu && usuario.perfils_id == this.datosUsuario.selectPerfil)
+      //             {
+      //                 this.usuariosByParams.push(usuario);
+      //                 this.filtros = true;
+      //             }
+      //             else
+      //             {
+      //                 this.usuariosByParams = [];
+      //                 this.filtros = true;
+      //             }
+      //         }
+      //         else
+      //         {
+      //             if(usuario.perfils_id == this.datosUsuario.selectPerfil)
+      //             {
+      //                 this.usuariosByParams.push(usuario);
+      //                 this.filtros = true;
+      //             }
+      //         }
+      //     }
+      //     localStorage.setItem("users", JSON.stringify(this.usuariosByParams));
+      //     localStorage.setItem("filtros", JSON.stringify(this.filtros));
+      // }
+    },
+    openStorage: function openStorage() {
+      return JSON.parse(localStorage.getItem('datosUsuario'));
+    },
+    saveStorage: function saveStorage(datosUsuario) {
+      localStorage.setItem('datosUsuario', JSON.stringify(datosUsuario));
+    },
+    updateForm: function updateForm(input, value) {
+      this.datosUsuario[input] = value;
+      var storedForm = this.openStorage(); // extract stored form
+
+      if (!storedForm) storedForm = {}; // if none exists, default to empty object
+
+      storedForm[input] = value; // store new value
+
+      this.saveStorage(storedForm); // save changes into localStorage
     }
   },
-  mounted: function mounted() {
-    var _this = this;
+  components: {},
+  // Al crearse recogemos todos los usuarios para mostrarlos en la tabla:
+  created: function created() {
+    this.selectUsuarios();
+    var storedForm = this.openStorage();
 
-    // console.log(this.cartaTrucadaShow)
-    this.$eventTime.$on("change-section", function (section) {
-      _this.selectSection = section;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
+    if (storedForm) {
+      this.datosUsuario = _objectSpread(_objectSpread({}, this.datosUsuario), storedForm);
+    }
+
+    var users = localStorage.getItem("users");
+
+    if (users) {
+      this.usuariosByParams = JSON.parse(users);
+    }
+
+    var filtros = localStorage.getItem("filtros");
+
+    if (filtros) {
+      this.filtros = JSON.parse(filtros);
+    }
+  },
+  // Para detectar cualquier cambio:
+  watch: {
+    // Si la select se modifica cambiaremos 'perfils_id' con el valor de la opción seleccionada
+    // y tabién con ese valor buscaremos el perfil para guardarlo en 'perfil':
+    id_perfil: function id_perfil(val) {
+      this.usuario.perfil = this.perfiles.find(function (cb) {
+        return cb.id == val;
+      });
+      this.usuario.perfils_id = val;
+    },
+    idPerfilBuscar: function idPerfilBuscar(val) {
+      this.idPerfil = val;
+    }
+  },
+  mounted: function mounted() {}
+});
 
 /***/ }),
 
@@ -5694,7 +6023,9 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', (__webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]));
+Vue.component('example-component', (__webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"])); // Le ponemos al componente de usuarios el nombre que usaremos como etiqueta:
+
+Vue.component('usuaris-component', (__webpack_require__(/*! ./components/gestionUsuarios/UsuarisComponent.vue */ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue")["default"]));
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -5743,72 +6074,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
-<<<<<<< HEAD
 /***/ "./node_modules/bootstrap/dist/js/bootstrap.esm.js":
 /*!*********************************************************!*\
   !*** ./node_modules/bootstrap/dist/js/bootstrap.esm.js ***!
   \*********************************************************/
-=======
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************************************************************/
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -5827,7 +6096,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Toast": () => (/* binding */ Toast),
 /* harmony export */   "Tooltip": () => (/* binding */ Tooltip)
 /* harmony export */ });
-<<<<<<< HEAD
 /* harmony import */ var _popperjs_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/index.js");
 /* harmony import */ var _popperjs_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @popperjs/core */ "./node_modules/@popperjs/core/lib/popper.js");
 /*!
@@ -5835,73 +6103,6 @@ __webpack_require__.r(__webpack_exports__);
   * Copyright 2011-2021 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
   */
-=======
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    name: {
-      type: [String],
-      require: true
-    },
-    idCheck: {
-      type: [String],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    },
-    tipusLocalitzacioSelect: {
-      type: [Number],
-      require: true
-    },
-    disabledCheck: {
-      type: [Boolean],
-      require: true
-    },
-    checked: Boolean
-  },
-  created: function created() {
-    if (this.show) {
-      // this.disabledCheck = true;
-      this.$eventShow.$emit("change-select-disabled", true);
-
-      if (this.tipusLocalitzacioSelect == 5) {
-        this.checked = false;
-      }
-    }
-  },
-  data: function data() {
-    return {
-      checkValue: false,
-      checkValueChecked: true
-    };
-  },
-  methods: {
-    clickCheck: function clickCheck() {
-      if (this.name == this.$checkCatalonia) {
-        this.$eventCheck.$emit("change-check-box-catalonia", Boolean(this.$refs.checkBox.checked));
-      }
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
 
 /**
@@ -5936,69 +6137,8 @@ const getUID = prefix => {
   return prefix;
 };
 
-<<<<<<< HEAD
 const getSelector = element => {
   let selector = element.getAttribute('data-bs-target');
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    name: {
-      type: [String],
-      require: true
-    },
-    idInput: {
-      type: [String],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    },
-    valor: {
-      type: [String],
-      require: true
-    },
-    small: Boolean,
-    number: Boolean
-  },
-  data: function data() {
-    return {
-      text: null,
-      disabledInput: false
-    };
-  },
-  created: function created() {
-    if (this.show) {
-      this.disabledInput = true;
-      this.text = this.valor;
-    }
-  },
-  computed: {
-    colSmall: function colSmall() {
-      var response = "";
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
   if (!selector || selector === '#') {
     let hrefAttr = element.getAttribute('href'); // The only valid content that could double as a selector are IDs or classes,
@@ -6011,55 +6151,8 @@ __webpack_require__.r(__webpack_exports__);
     } // Just in case some CMS puts out a full URL with the anchor appended
 
 
-<<<<<<< HEAD
     if (hrefAttr.includes('#') && !hrefAttr.startsWith('#')) {
       hrefAttr = `#${hrefAttr.split('#')[1]}`;
-=======
-      return response;
-    }
-  },
-  methods: {
-    startTime: function startTime() {
-      this.$eventTime.$emit("start-time", "message");
-    },
-    changeInput: function changeInput() {
-      switch (this.idInput) {
-        case this.$inputTelefon:
-          this.$eventPersonal.$emit("change-input-telefono", this.text);
-          break;
-
-        case this.$inputTipusDeVia:
-        case this.$inputNom:
-        case this.$inputNumero:
-        case this.$inputEscala:
-        case this.$inputPis:
-        case this.$inputPorta:
-        case this.$inputNomCarretera:
-        case this.$inputPuntKilometric:
-        case this.$inputSentit:
-        case this.$inputNomPuntSingular:
-        case this.$inputProvinciaMunicipi:
-          if (!this.number) {
-            var finish = false;
-
-            do {
-              if (this.text.includes(",")) {
-                this.text = this.text.replace(",", "");
-              } else {
-                finish = true;
-              }
-            } while (!finish);
-          } else {
-            if (parseInt(this.text)) {
-              var number = parseInt(this.text);
-              number = Math.round(number);
-              this.text = number.toString();
-            }
-          }
-
-          break;
-      }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
     }
 
     selector = hrefAttr && hrefAttr !== '#' ? hrefAttr.trim() : null;
@@ -6071,108 +6164,9 @@ __webpack_require__.r(__webpack_exports__);
 const getSelectorFromElement = element => {
   const selector = getSelector(element);
 
-<<<<<<< HEAD
   if (selector) {
     return document.querySelector(selector) ? selector : null;
   }
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    name: {
-      type: [String],
-      require: true
-    },
-    idSelect: {
-      type: [String],
-      require: true
-    },
-    arrayElements: {
-      type: [Array],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    },
-    small: Boolean
-  },
-  data: function data() {
-    return {
-      selectSelected: 0,
-      selectSelectedTipusLocation: 1,
-      selectSelectedTipusIncident: 1,
-      selectSelectedIncident: 1,
-      disabledSelect: false
-    };
-  },
-  created: function created() {
-    if (this.show) {
-      this.selectSelected = 1;
-      this.selectSelectedTipusLocation = 1;
-      this.selectSelectedTipusIncident = 1;
-      this.selectSelectedIncident = 1;
-      this.disabledSelect = true;
-    }
-  },
-  computed: {
-    colSmall: function colSmall() {
-      var response = "";
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
   return null;
 };
@@ -6214,7 +6208,6 @@ const isElement = obj => {
     return false;
   }
 
-<<<<<<< HEAD
   if (typeof obj.jquery !== 'undefined') {
     obj = obj[0];
   }
@@ -6243,16 +6236,6 @@ const typeCheckConfig = (componentName, config, configTypes) => {
 
     if (!new RegExp(expectedTypes).test(valueType)) {
       throw new TypeError(`${componentName.toUpperCase()}: Option "${property}" provided type "${valueType}" but expected type "${expectedTypes}".`);
-=======
-        case this.$tipusEmergenciaId:
-          this.$eventSelect.$emit("change-select-emergencia", this.selectSelectedTipusIncident);
-          break;
-
-        case this.$incidentsId:
-          this.$eventSelect.$emit("change-select-incident", this.selectSelectedIncident);
-          break;
-      }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
     }
   });
 };
@@ -6281,7 +6264,6 @@ const isDisabled = element => {
   return element.hasAttribute('disabled') && element.getAttribute('disabled') !== 'false';
 };
 
-<<<<<<< HEAD
 const findShadowRoot = element => {
   if (!document.documentElement.attachShadow) {
     return null;
@@ -6422,213 +6404,6 @@ const getNextActiveElement = (list, activeElement, shouldGetNext, isCycleAllowed
 
   if (index === -1) {
     return list[!shouldGetNext && isCycleAllowed ? list.length - 1 : 0];
-=======
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    name: {
-      type: [String],
-      require: true
-    },
-    emoticon: {
-      type: [String],
-      require: true
-    },
-    marginTopApart: {
-      type: [Number],
-      require: true
-    },
-    video: Boolean
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      personalData: this.$dadesPersonals,
-      locate: this.$locate,
-      agency: this.$agency,
-      emergency: this.$emergency,
-      communeNote: this.$communeNote,
-      relationExpedient: this.$relationExpedient,
-      interactiveVideo: this.$interactiveVideo
-    };
-  },
-  methods: {
-    changeSection: function changeSection(section) {
-      this.$eventAlert.$emit("change-section", section);
-      this.$eventTime.$emit("change-section", section);
-      this.$eventHelpBox.$emit("change-section", section);
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    show: {
-      type: [Boolean],
-      require: true
-    },
-    selectMarks: {
-      type: [Array],
-      require: true
-    },
-    agencies: {
-      type: [Array],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      title: "Agències",
-      styleDivAgencia: {
-        background: "#ffffff"
-      },
-      disabledButtonMap: false
-    };
-  },
-  created: function created() {
-    if (this.show) {
-      //#e8edef
-      this.styleDivAgencia.background = "#e8edef";
-      this.disabledButtonMap = true;
-    }
-  },
-  methods: {
-    startTime: function startTime() {
-      this.$eventTime.$emit("start-time", "message");
-    },
-    buttonClickMap: function buttonClickMap() {
-      this.$eventMap.$emit("open-map", true);
-    }
-  },
-  computed: {
-    colReturn: function colReturn() {
-      return this.$agencyCol;
-    }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
   }
 
   const listLength = list.length;
@@ -6739,75 +6514,9 @@ function normalizeParams(originalTypeEvent, handler, delegationFn) {
   let typeEvent = getTypeEvent(originalTypeEvent);
   const isNative = nativeEvents.has(typeEvent);
 
-<<<<<<< HEAD
   if (!isNative) {
     typeEvent = originalTypeEvent;
   }
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    cartaTrucadaShow: {
-      type: [Object],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  created: function created() {
-    if (this.show) {
-      this.notaComuna = this.cartaTrucadaShow.nota_comuna;
-      this.disabledNotaComuna = true;
-    }
-  },
-  data: function data() {
-    return {
-      title: "Nota comuna",
-      notaComuna: null,
-      disabledNotaComuna: false
-    };
-  },
-  methods: {
-    startTime: function startTime() {
-      this.$eventTime.$emit("start-time", "message");
-    }
-  },
-  computed: {
-    colReturn: function colReturn() {
-      return this.$communeNoteCol;
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
   return [delegation, originalHandler, typeEvent];
 }
@@ -6824,7 +6533,6 @@ function addHandler(element, originalTypeEvent, handler, delegationFn, oneOff) {
   // this prevents the handler from being dispatched the same way as mouseover or mouseout does
 
 
-<<<<<<< HEAD
   if (customEventsRegex.test(originalTypeEvent)) {
     const wrapFn = fn => {
       return function (event) {
@@ -6833,94 +6541,6 @@ function addHandler(element, originalTypeEvent, handler, delegationFn, oneOff) {
         }
       };
     };
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    incidentShow: {
-      type: [Object],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      title: "Tipus d'emergencia",
-      tipusEmergencia: [],
-      incidents: [],
-      incidentSelect: 0,
-      incident: {}
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    if (!this.show) {
-      var meThis = this;
-      axios.get("/tipus_incidents").then(function (response) {
-        meThis.tipusEmergencia = response.data;
-        meThis.incidents = response.data[_this.incidentSelect].incidents;
-        meThis.incident = response.data[_this.incidentSelect].incidents[0];
-      })["catch"](function (error) {
-        console.log(error);
-      })["finally"](function () {
-        return _this.loading = false;
-      });
-    } else {
-      var emergencia = {
-        id: 1,
-        descripcio: this.incidentShow.tipusIncidentDescripcio
-      };
-      this.tipusEmergencia.push(emergencia);
-      var incidentElement = {
-        id: 1,
-        descripcio: this.incidentShow.incident.descripcio
-      };
-      this.incidents.push(incidentElement);
-      this.incident = this.incidentShow.incident;
-    }
-  },
-  mounted: function mounted() {
-    var _this2 = this;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
     if (delegationFn) {
       delegationFn = wrapFn(delegationFn);
@@ -6929,7 +6549,6 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 
-<<<<<<< HEAD
   const [delegation, originalHandler, typeEvent] = normalizeParams(originalTypeEvent, handler, delegationFn);
   const events = getEvent(element);
   const handlers = events[typeEvent] || (events[typeEvent] = {});
@@ -6949,34 +6568,6 @@ __webpack_require__.r(__webpack_exports__);
   handlers[uid] = fn;
   element.addEventListener(typeEvent, fn, delegation);
 }
-=======
-      for (var _i = 0; _i < _this2.incidents.length; _i++) {
-        if (_this2.incidents[_i].id == idIncidentSelect) {
-          _this2.incident = _this2.incidents[_i];
-        }
-      }
-
-      _this2.$eventSelect.$emit("change-select-id-emergencia", idEmergenciaSelect);
-
-      _this2.$eventSelect.$emit("change-select-id-incident", idIncidentSelect);
-    });
-    this.$eventSelect.$on("change-select-incident", function (idSelect) {
-      var idIncidentSelect = 1;
-
-      for (var i = 0; i < _this2.incidents.length; i++) {
-        if (_this2.incidents[i].id == idSelect) {
-          _this2.incident = _this2.incidents[i];
-          idIncidentSelect = _this2.incidents[i].id;
-        }
-      }
-    });
-    this.$eventClear.$on("clear-select-emergencia", function (message) {
-      for (var i = 0; i < _this2.tipusEmergencia.length; i++) {
-        if (_this2.tipusEmergencia[i].id == 1) {
-          _this2.incidents = _this2.tipusEmergencia[i].incidents;
-        }
-      }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
 function removeHandler(element, events, typeEvent, handler, delegationSelector) {
   const fn = findHandler(events[typeEvent], handler, delegationSelector);
@@ -7259,7 +6850,6 @@ const enableDismissTrigger = (component, method = 'hide') => {
   });
 };
 
-<<<<<<< HEAD
 /**
  * --------------------------------------------------------------------------
  * Bootstrap (v5.1.3): alert.js
@@ -7284,263 +6874,6 @@ const CLASS_NAME_SHOW$8 = 'show';
  * Class Definition
  * ------------------------------------------------------------------------
  */
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    marginTopLocation: {
-      type: [Number],
-      require: true
-    },
-    cartaTrucadaShow: {
-      type: [Object],
-      require: true
-    },
-    localitzacioShow: {
-      type: [Object],
-      require: true
-    },
-    tipusLocalitzacioShow: {
-      type: [Object],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      title: "Localització",
-      provincies: [],
-      comarques: [],
-      municipis: [],
-      otrasProvincias: [],
-      provinciesSelect: 0,
-      comarcaSelect: 0,
-      checkedCataluna: true,
-      tipusLocalitzacioSelect: 1,
-      tipusLocalitzacio: [],
-      detalls: null,
-      disabledCheck: true,
-      //Show
-      tipusDeViaShow: null,
-      nomShow: null,
-      numeroShow: null,
-      escalaShow: null,
-      pisShow: null,
-      portaShow: null,
-      nomPuntSingular: null,
-      nomCarreteraShow: null,
-      puntKilometricShow: null,
-      sentitShow: null,
-      municipiNomShow: null,
-      disabledDetalls: false
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    if (!this.show) {
-      var meThis = this;
-      axios.get("/provincies").then(function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          if (response.data[i].id >= 1 && response.data[i].id <= 4) {
-            meThis.provincies.push(response.data[i]);
-          } else {
-            meThis.otrasProvincias.push(response.data[i]);
-          }
-        }
-
-        meThis.comarques = meThis.provincies[_this.provinciesSelect].comarques;
-        meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis;
-      })["catch"](function (error) {
-        console.log(error);
-      })["finally"](function () {
-        return _this.loading = false;
-      });
-      axios.get("/tipus_localitzacions").then(function (response) {
-        meThis.disabledCheck = false;
-        meThis.tipusLocalitzacio = response.data;
-      })["catch"](function (error) {
-        console.log(error);
-      })["finally"](function () {
-        return _this.loading = false;
-      });
-    } else {
-      if (this.localitzacioShow.provincia != null) {
-        var provincia = {
-          id: 1,
-          nom: this.localitzacioShow.provincia
-        };
-        this.provincies.push(provincia);
-
-        if (this.localitzacioShow.municipi != null) {
-          var municipi = {
-            id: 1,
-            nom: this.localitzacioShow.municipi
-          };
-          this.municipis.push(municipi);
-          var comarca = {
-            id: 1,
-            nom: this.localitzacioShow.comarca
-          };
-          this.comarques.push(comarca);
-        }
-      }
-
-      var tipus = {
-        id: 1,
-        tipus: this.tipusLocalitzacioShow.nomTipus
-      };
-      this.tipusLocalitzacio.push(tipus);
-      this.tipusLocalitzacioSelect = this.tipusLocalitzacioShow.id;
-
-      switch (this.tipusLocalitzacioShow.id) {
-        case 1:
-          //Carrers
-          this.tipusDeViaShow = this.tipusLocalitzacioShow.tipusDeVia;
-          this.nomShow = this.tipusLocalitzacioShow.nom;
-          this.numeroShow = this.tipusLocalitzacioShow.numero;
-          this.escalaShow = this.tipusLocalitzacioShow.escala;
-          this.pisShow = this.tipusLocalitzacioShow.pis;
-          this.portaShow = this.tipusLocalitzacioShow.porta;
-          break;
-
-        case 2:
-          //Punt Singular
-          this.nomPuntSingular = this.tipusLocalitzacioShow.nomPuntSingular;
-          break;
-
-        case 4:
-          //Carretera
-          this.nomCarreteraShow = this.tipusLocalitzacioShow.nomCarretera;
-          this.puntKilometricShow = this.tipusLocalitzacioShow.puntKilometric;
-          this.sentitShow = this.tipusLocalitzacioShow.sentit;
-          break;
-
-        case 5:
-          //Provincia
-          this.checkedCataluna = false;
-          var otrasProvincia = {
-            id: 1,
-            nom: this.tipusLocalitzacioShow.provinciaNom
-          };
-          this.otrasProvincias.push(otrasProvincia);
-          this.municipiNomShow = this.tipusLocalitzacioShow.municipiNom;
-          break;
-      }
-
-      this.disabledDetalls = true;
-      this.detalls = this.cartaTrucadaShow.altres_ref_localitzacio;
-    }
-  },
-  methods: {
-    startTime: function startTime() {
-      this.$eventTime.$emit("start-time", "message");
-    },
-    changeSelectProvincia: function changeSelectProvincia() {
-      console.log(2);
-      this.provinciesSelect = 2;
-    },
-    resetLoction: function resetLoction() {
-      this.provinciesSelect = 0;
-      this.comarcaSelect = 0;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
 class Alert extends BaseComponent {
   // Getters
@@ -7618,7 +6951,6 @@ defineJQueryPlugin(Alert);
  * ------------------------------------------------------------------------
  */
 
-<<<<<<< HEAD
 const NAME$c = 'button';
 const DATA_KEY$b = 'bs.button';
 const EVENT_KEY$b = `.${DATA_KEY$b}`;
@@ -7631,25 +6963,6 @@ const EVENT_CLICK_DATA_API$6 = `click${EVENT_KEY$b}${DATA_API_KEY$7}`;
  * Class Definition
  * ------------------------------------------------------------------------
  */
-=======
-        _this2.tipusLocalitzacioSelect = 1;
-      }
-    });
-    this.$eventFinal.$on("obtener-detalls-location", function (message) {
-      _this2.$eventFinal.$emit("recojer-detalls-location", _this2.detalls);
-    });
-    this.$eventClear.$on("clear-select-location", function (message) {
-      _this2.resetLoction();
-    });
-    this.$eventClear.$on("clear-detalls", function (message) {
-      _this2.detalls = null;
-    });
-    this.$eventShow.$on("change-select-disabled", function (valor) {
-      _this2.disabledCheck = valor;
-    });
-  }
-});
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
 class Button extends BaseComponent {
   // Getters
@@ -7657,176 +6970,6 @@ class Button extends BaseComponent {
     return NAME$c;
   } // Public
 
-<<<<<<< HEAD
-=======
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&":
-/*!**************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    selectMarks: {
-      type: [Array],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      markers: [],
-      mark: {
-        id: null,
-        features: null,
-        popup: null
-      },
-      marker: null,
-      agencies: [],
-      buttons: [],
-      selectMarksActual: [],
-      showButton: false,
-      loaded: false
-    };
-  },
-  created: function created() {
-    var _this = this;
-
-    var vueThis = this;
-    axios.get("/agencies").then(function (response) {
-      vueThis.agencies = response.data;
-      vueThis.controlMap();
-      vueThis.showButton = true;
-    })["catch"](function (error) {
-      console.log(error);
-    })["finally"](function () {
-      return _this.loading = false;
-    });
-  },
-  methods: {
-    controlMap: function controlMap() {
-      // debugger;
-      mapboxgl.accessToken = 'pk.eyJ1IjoicGdyYW5lbGxtMjZ0IiwiYSI6ImNsMWIzZWdhNTBvZzMzZm1saGRobnVwb2MifQ.UW5EnRri0CGnQSbPLt6GmA';
-      var mapboxClient = mapboxSdk({
-        accessToken: mapboxgl.accessToken
-      });
-      var mapThis = this;
-
-      var _loop = function _loop(i) {
-        var query = void 0;
-        query = mapThis.agencies[i].carrer + " " + mapThis.agencies[i].municipi.nom + " " + "Spain"; //131
-
-        if (mapThis.agencies[i].id == 131) {
-          query = "Cassa de la Selva, Girona, Spain";
-        } //236
-
-
-        if (mapThis.agencies[i].id == 236) {
-          query = mapThis.agencies[i].nom + mapThis.agencies[i].municipi.nom + " 25287 Lleida Spain";
-        } //311
-
-
-        if (mapThis.agencies[i].id == 311) {
-          query = "Carrer de la Pau, 60, 17244 Cassà de la Selva, Girona";
-        }
-
-        mapboxClient.geocoding.forwardGeocode({
-          query: query,
-          autocomplete: false,
-          limit: 1
-        }).send().then(function (response) {
-          if (!response || !response.body || !response.body.features || !response.body.features.length) {
-            console.error('Invalid response:');
-            console.error(response);
-            return;
-          }
-
-          mapThis.mark.id = mapThis.agencies[i].id;
-          mapThis.mark.features = response.body.features[0]; // console.log(mapThis.agencies[i].carrer + " " + mapThis.agencies[i].municipi.nom);
-          // if(mapThis.mark.id == 352) {
-          //     console.log(mapThis.agencies[i].carrer + ", "     +
-          // mapThis.agencies[i].codi_postal + " " + mapThis.agencies[i].municipi.nom + ", Spain")
-          //     console.log(mapThis.mark.features.center)
-          // }
-          // console.log(mapThis.agencies[i].carrer + ", " +
-          // mapThis.agencies[i].municipi.nom + ", " +  mapThis.agencies[i].codi_postal)
-          // const divContainer = window.document.createElement('div');
-          // divContainer.innerHTML = "<div class='container container-map'></div>";
-          // const divRow = window.document.createElement('div');
-          // divRow.innerHTML = "<div class='row'></div>";
-          // const divCol = window.document.createElement('div');
-          // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
-
-          var button = window.document.createElement('button');
-          button.type = "button";
-          button.className = "button buttonsMaps";
-          button.id = "buttonMap" + mapThis.agencies[i].id;
-          button.innerHTML = "Relacionar"; // button.innerHTML = "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>";
-
-          var divCol = window.document.createElement('div');
-          divCol.className = "col colButtonMap d-flex justify-content-center align-items-center"; // divCol.innerHTML = "<div class='col colButtonMap d-flex justify-content-center align-items-center'></div>";
-
-          var divRow = window.document.createElement('div');
-          divRow.className = "row"; // divRow.innerHTML = "<div class='row'></div>";
-
-          var divContainer = window.document.createElement('div');
-          divContainer.className = "container container-map";
-          divContainer.innerHTML = "<div class='row'>" + "<div class='col d-flex justify-content-start align-items-center'>" + "<p>" + mapThis.agencies[i].nom + "</p>" + "</div>" + "</div>" + "<div class='row'>" + "<div class='col d-flex justify-content-start align-items-center'>" + "<p>" + mapThis.agencies[i].carrer + "</p>" + "</div>" + "</div>";
-          divCol.appendChild(button);
-          divRow.appendChild(divCol);
-          divContainer.appendChild(divRow); // const divElement = window.document.createElement('div');
-          // divElement.innerHTML =
-          // "<div class='container container-map'>" +
-          // "<div class='row'>" +
-          // "<div class='col d-flex justify-content-center align-items-center'>" +
-          // "<p>" + mapThis.agencies[i].carrer +"</p>" +
-          // "</div>" +
-          // "</div>" +
-          // "<div class='row'>" +
-          // "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" +
-          // "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>" +
-          // "</div>" +
-          // "</div>" +
-          // "</div>";
-
-          mapThis.mark.popup = new mapboxgl.Popup({
-            offset: 25
-          }).setDOMContent(divContainer);
-          mapThis.buttons.push(button); // mapThis.mark.popup = new mapboxgl.Popup({ offset: 25 })
-          // .setHTML(
-          //     "<div class='container container-map'>" +
-          //     "<div class='row'>" +
-          //     "<div class='col d-flex justify-content-center align-items-center'>" +
-          //     "<p>" + mapThis.agencies[i].carrer +"</p>" +
-          //     "</div>" +
-          //     "</div>" +
-          //     "<div class='row'>" +
-          //     "<div class='col colButtonMap d-flex justify-content-center align-items-center'>" +
-          //     "<button type='button' class='button buttonsMaps' id='buttonMap"+i+"'>Relacionar</button>" +
-          //     "</div>" +
-          //     "</div>" +
-          //     "</div>"
-          // );
-
-          mapThis.markers.push(Object.assign({}, mapThis.mark)); // mapThis.features.push(response.body.features[0]);
-        });
-      };
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
   toggle() {
     // Toggle class and sync the `aria-pressed` attribute with the return value of the `.toggle()` method
@@ -7924,119 +7067,14 @@ const Manipulator = {
     return normalizeData(element.getAttribute(`data-bs-${normalizeDataKey(key)}`));
   },
 
-<<<<<<< HEAD
   offset(element) {
     const rect = element.getBoundingClientRect();
     return {
       top: rect.top + window.pageYOffset,
       left: rect.left + window.pageXOffset
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    cartaTrucadaShow: {
-      type: [Object],
-      require: true
-    },
-    dadaPersonalShow: {
-      type: [Object],
-      require: true
-    },
-    localitzacioTrucadaShow: {
-      type: [Object],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      title: "Dades personals",
-      provincies: [],
-      comarques: [],
-      municipis: [],
-      provinciesSelect: 0,
-      comarcaSelect: 0,
-      antecedentes: null,
-      dadesPersonals: [],
-      telefono: null,
-      disabledAntecedents: false,
-      dadesPersonalsId: null,
-      showCheckSaveInformation: true,
-      //Show
-      telefonShow: null,
-      procedenciaShow: null,
-      adrecaShow: null,
-      origenShow: null,
-      municipiShow: null
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
     };
   },
 
-<<<<<<< HEAD
   position(element) {
     return {
       top: element.offsetTop,
@@ -8056,54 +7094,6 @@ const NODE_TEXT = 3;
 const SelectorEngine = {
   find(selector, element = document.documentElement) {
     return [].concat(...Element.prototype.querySelectorAll.call(element, selector));
-=======
-    if (this.show == false) {
-      var meThis = this;
-      axios.get("/provincies").then(function (response) {
-        for (var i = 0; i < response.data.length; i++) {
-          if (response.data[i].id >= 1 && response.data[i].id <= 4) {
-            meThis.provincies.push(response.data[i]);
-          }
-        }
-
-        meThis.comarques = meThis.provincies[_this.provinciesSelect].comarques;
-        meThis.municipis = meThis.provincies[_this.provinciesSelect].comarques[_this.comarcaSelect].municipis;
-        meThis.updateDatosPersonals();
-      })["catch"](function (error) {
-        console.log(error);
-      })["finally"](function () {
-        return _this.loading = false;
-      });
-    } else {
-      this.telefonShow = this.cartaTrucadaShow.telefon;
-      this.procedenciaShow = this.cartaTrucadaShow.procedencia_trucada;
-      this.adrecaShow = this.cartaTrucadaShow.adreca_trucada;
-      this.origenShow = this.cartaTrucadaShow.origen_trucada;
-      this.disabledAntecedents = true;
-
-      if (this.dadaPersonalShow != null) {
-        this.antecedentes = this.dadaPersonalShow.antecedents;
-      }
-
-      if (this.localitzacioTrucadaShow != null) {
-        var municipi = {
-          id: 1,
-          nom: this.localitzacioTrucadaShow.municipi
-        };
-        this.municipis.push(municipi);
-        var comarca = {
-          id: 1,
-          nom: this.localitzacioTrucadaShow.comarca
-        };
-        this.comarques.push(comarca);
-        var provincia = {
-          id: 1,
-          nom: this.localitzacioTrucadaShow.provincia
-        };
-        this.provincies.push(provincia);
-      }
-    }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
   },
 
   findOne(selector, element = document.documentElement) {
@@ -8276,7 +7266,6 @@ class Carousel extends BaseComponent {
   } // Public
 
 
-<<<<<<< HEAD
   next() {
     this._slide(ORDER_NEXT);
   }
@@ -8319,226 +7308,6 @@ class Carousel extends BaseComponent {
 
     if (this._config && this._config.interval && !this._isPaused) {
       this._updateInterval();
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    expedients: {
-      type: [Array],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      idClick: null,
-      showTable: true
-    };
-  },
-  methods: {
-    clickCloseModal: function clickCloseModal() {
-      this.$eventRelation.$emit("send-id-button", this.idClick);
-      this.$eventRelation.$emit("close-modal", "closeModal");
-    },
-    btnRelacionarClick: function btnRelacionarClick(idButton) {
-      var buttons = this.$refs.btns;
-
-      if (this.idClick != null) {
-        if (this.idClick != idButton) {
-          for (var i = 0; i < buttons.length; i++) {
-            if (parseInt(buttons[i].id) == this.idClick) {
-              buttons[i].className = "button buttonNormal";
-              buttons[i].innerHTML = "Relacionar";
-            }
-          }
-
-          for (var _i = 0; _i < buttons.length; _i++) {
-            if (parseInt(buttons[_i].id) == idButton) {
-              buttons[_i].className = "button buttonClick";
-              buttons[_i].innerHTML = "Relacionat";
-              this.idClick = idButton;
-            }
-          }
-        } else {
-          for (var _i2 = 0; _i2 < buttons.length; _i2++) {
-            if (parseInt(buttons[_i2].id) == this.idClick) {
-              buttons[_i2].className = "button buttonNormal";
-              buttons[_i2].innerHTML = "Relacionar";
-              this.idClick = null;
-            }
-          }
-        }
-      } else {
-        for (var _i3 = 0; _i3 < buttons.length; _i3++) {
-          if (parseInt(buttons[_i3].id) == idButton) {
-            buttons[_i3].className = "button buttonClick";
-            buttons[_i3].innerHTML = "Relacionat";
-            this.idClick = idButton;
-          }
-        }
-      }
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    this.$eventRelation.$on("unrelate-valor", function (message) {
-      var buttons = _this.$refs.btns;
-
-      if (buttons != null) {
-        for (var i = 0; i < buttons.length; i++) {
-          if (parseInt(buttons[i].id) == _this.idClick) {
-            buttons[i].className = "button buttonNormal";
-            buttons[i].innerHTML = "Relacionar";
-          }
-        }
-      }
-
-      _this.idClick = null;
-    });
-    this.$eventRelation.$on("edit-view-modal", function (message) {
-      _this.$nextTick(function () {
-        _this.showTable = true;
-        var buttons = [];
-
-        if (_this.expedients.length > 0) {
-          if (_this.idClick != null) {
-            buttons = _this.$refs.btns;
-
-            for (var i = 0; i < buttons.length; i++) {
-              if (parseInt(buttons[i].id) == _this.idClick) {
-                buttons[i].className = "button buttonClick";
-                buttons[i].innerHTML = "Relacionat";
-              }
-            }
-          }
-        } else {
-          _this.showTable = false;
-        }
-      });
-    });
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  data: function data() {
-    return {
-      expedients: [],
-      idClick: null,
-      relation: false,
-      relationText: null
-    };
-  },
-  methods: {
-    clickRelation: function clickRelation() {
-      this.$eventRelation.$emit("open-valor-modal", "modal");
-    },
-    cickUnrelate: function cickUnrelate() {
-      this.$eventRelation.$emit("unrelate-valor", "modal");
-      this.relation = false;
-      this.relationText = null;
-      this.$refs.textrelation.innerHTML = "";
-      this.idClick = null;
-    }
-  },
-  computed: {
-    colReturn: function colReturn() {
-      return this.$relationExpedientCol;
-    }
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    // this.$eventRelation.$on("get-expedients-in-section", expedients => {
-    //     this.expedients = expedients
-    // })
-    this.$eventRelation.$on("send-id-button", function (idClick) {
-      _this.idClick = idClick;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
       this._interval = setInterval((document.visibilityState ? this.nextWhenVisible : this.next).bind(this), this._config.interval);
     }
@@ -8547,7 +7316,6 @@ __webpack_require__.r(__webpack_exports__);
   to(index) {
     this._activeElement = SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element);
 
-<<<<<<< HEAD
     const activeIndex = this._getItemIndex(this._activeElement);
 
     if (index > this._items.length - 1 || index < 0) {
@@ -8566,95 +7334,6 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     const order = index > activeIndex ? ORDER_NEXT : ORDER_PREV;
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    cartaTrucadaShow: {
-      type: [Object],
-      require: true
-    },
-    show: {
-      type: [Boolean],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      time: "00:00",
-      start: false,
-      data: "08/03/2022",
-      hora: "16:28:00",
-      operador: "001",
-      timeSeconds: 0,
-      intervalTime: null,
-      helpBoxOpen: false,
-      selectTab: 1
-    };
-  },
-  created: function created() {
-    if (!this.show) {
-      var today = new Date();
-      var dia = today.getDate();
-
-      if (dia <= 9) {
-        dia = "0" + dia;
-      }
-
-      var mes = today.getMonth() + 1;
-
-      if (mes <= 9) {
-        mes = "0" + mes;
-      }
-
-      var year = today.getFullYear();
-      this.data = dia + "/" + mes + "/" + year;
-      this.updateHour();
-      setInterval(this.updateHour, 1000);
-    } else {
-      var dataHoraSplit = this.cartaTrucadaShow.data_hora.split(" ");
-      this.data = dataHoraSplit[0].replace("-", "/");
-      this.data = this.data.replace("-", "/");
-      this.hora = dataHoraSplit[1];
-      this.time = this.cartaTrucadaShow.temps_trucada + "s";
-    }
-  },
-  methods: {
-    updateHour: function updateHour() {
-      var today = new Date();
-      var hour = today.getHours().toString();
-      var minut = today.getMinutes().toString();
-      var second = today.getSeconds().toString();
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
     this._slide(order, this._items[index]);
   } // Private
@@ -8767,68 +7446,18 @@ __webpack_require__.r(__webpack_exports__);
 
     const direction = KEY_TO_DIRECTION[event.key];
 
-<<<<<<< HEAD
     if (direction) {
       event.preventDefault();
 
       this._slide(direction);
     }
   }
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    selectTab: {
-      type: [Number],
-      require: true
-    }
-  },
-  data: function data() {
-    return {
-      audios: null,
-      loaded: false,
-      selectTabActual: null,
-      cartes_trucades_partes: null,
-      anyAudio: false
-    };
-  },
-  created: function created() {
-    var _this = this;
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
   _getItemIndex(element) {
     this._items = element && element.parentNode ? SelectorEngine.find(SELECTOR_ITEM, element.parentNode) : [];
     return this._items.indexOf(element);
   }
 
-<<<<<<< HEAD
   _getItemByOrder(order, activeElement) {
     const isNext = order === ORDER_NEXT;
     return getNextActiveElement(this._items, activeElement, isNext, this._config.wrap);
@@ -8844,40 +7473,6 @@ __webpack_require__.r(__webpack_exports__);
       direction: eventDirectionName,
       from: fromIndex,
       to: targetIndex
-=======
-      for (var i = 0; i < response.data.length; i++) {
-        if (response.data[i].id == vueThis.selectTab) {
-          vueThis.audios = response.data[i].audios;
-          vueThis.loaded = true;
-        }
-      }
-
-      if (vueThis.audios.length == 0) {
-        vueThis.anyAudio = true;
-      }
-    })["catch"](function (error) {
-      console.log(error);
-    })["finally"](function () {
-      return _this.loading = false;
-    });
-  },
-  mounted: function mounted() {
-    var _this2 = this;
-
-    this.$eventHelpBox.$on("change-section-in-help-box", function (selectTabActual) {
-      _this2.anyAudio = false;
-      _this2.selectTabActual = selectTabActual;
-
-      for (var i = 0; i < _this2.cartes_trucades_partes.length; i++) {
-        if (_this2.cartes_trucades_partes[i].id == selectTabActual) {
-          _this2.audios = _this2.cartes_trucades_partes[i].audios;
-        }
-      }
-
-      if (_this2.audios.length == 0) {
-        _this2.anyAudio = true;
-      }
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
     });
   }
 
@@ -9252,830 +7847,7 @@ class Collapse extends BaseComponent {
 
     this._element.style[dimension] = 0;
 
-<<<<<<< HEAD
     this._addAriaAndCollapsedClass(this._triggerArray, true);
-=======
-/*
-personalData: "Dades Personals",
-                locate: "Localitzacio",
-                agency: "Agencies",
-                emergency: "Emergencia",
-                communeNote: "Nota comuna",
-                relationExpedient: "Relacionar Expedient",
-                interactiveVideo: "video"
-*/
-// Vue.prototype.$selectSection="Dades Personals"
-//Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
-
-Vue.prototype.$logoSrc = "http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg";
-Vue.prototype.$dadesPersonals = "Dades Personals";
-Vue.prototype.$locate = "Localitzacio";
-Vue.prototype.$agency = "Agencies";
-Vue.prototype.$emergency = "Emergencia";
-Vue.prototype.$communeNote = "Nota comuna";
-Vue.prototype.$relationExpedient = "Relacionar Expedient";
-Vue.prototype.$interactiveVideo = "video";
-Vue.prototype.$dadesPersonalsCol = "col-11";
-Vue.prototype.$locateCol = "col-11";
-Vue.prototype.$agencyCol = "col-8";
-Vue.prototype.$emergencyCol = "col-8";
-Vue.prototype.$communeNoteCol = "col-9";
-Vue.prototype.$relationExpedientCol = "col-8";
-Vue.prototype.$checkCatalonia = "Catalunya";
-Vue.prototype.$provincia = "Provincia";
-Vue.prototype.$comarca = "Comarca";
-Vue.prototype.$municipi = "Municipi";
-Vue.prototype.$provinciaPersonal = "provinciaSelectPersonal";
-Vue.prototype.$comarcaPersonal = "comarcaSelectPersonal";
-Vue.prototype.$municipiPersonal = "municipiSelectPersonal";
-Vue.prototype.$provinciaLocation = "ProvinciaSelectLocation";
-Vue.prototype.$comarcaLocation = "ComarcaSelectLocation";
-Vue.prototype.$municipiLocation = "MunicipiSelectLocation";
-Vue.prototype.$nullLoclaitzacio = "";
-Vue.prototype.$tipusLocalitzacio = "Tipus localització";
-Vue.prototype.$tipusLocalitzacioId = "tipusLocalitzacioSelect";
-Vue.prototype.$tipusEmergencia = "Tipus d'emergencia general";
-Vue.prototype.$tipusEmergenciaId = "selectEmergencyGeneral";
-Vue.prototype.$incidents = "Tipus d'emergencia específica";
-Vue.prototype.$incidentsId = "selectEmergencySpecific";
-Vue.prototype.$noVideo = "NO";
-Vue.prototype.$yesVideo = "YES";
-Vue.prototype.$refreshVideo = "refresh";
-Vue.prototype.$refreshGeneral = "refreshGeneral"; // Vue.prototype.$videoURL = "https://paucepnet.github.io/videosProjecte/media/videoInteractivo.mp4"
-
-Vue.prototype.$videoURL = "http://daw.abp-politecnics.com/daw03/videoInteractivo.mp4";
-Vue.prototype.$v1 = "#t=0,24";
-Vue.prototype.$qv1 = "¿Llamada procedente?";
-Vue.prototype.$v10 = "#t=25,32";
-Vue.prototype.$v11 = "#t=33,53";
-Vue.prototype.$qv11 = "¿Sistema de aviso especial?";
-Vue.prototype.$v111 = "#t=59,73";
-Vue.prototype.$v110 = "#t=80,128";
-Vue.prototype.$qv110 = "¿Procedimiento específico?";
-Vue.prototype.$v1101 = "#t=131,144";
-Vue.prototype.$v1100 = "#t=147,161";
-Vue.prototype.$qv1100 = "¿Llamada asociada?";
-Vue.prototype.$v11001 = "#t=164,177";
-Vue.prototype.$qv11001 = "¿Ampliar nota común?";
-Vue.prototype.$v110010 = "#t=181,190";
-Vue.prototype.$v110011 = "#t=192,211";
-Vue.prototype.$qv110011 = "¿IRE?";
-Vue.prototype.$v11000 = "#t=214,258";
-Vue.prototype.$qv11000 = "¿IRE?";
-Vue.prototype.$v1100110 = "#t=261,273";
-Vue.prototype.$v1100111 = "#t=276,299";
-Vue.prototype.$inputTelefon = "inputTelefon";
-Vue.prototype.$inputProcedencia = "inputProcedencia";
-Vue.prototype.$inputAdreca = "inputAdreca";
-Vue.prototype.$inputOrigen = "inputOrigen";
-Vue.prototype.$checkSaveInformation = "checkSaveInformation";
-Vue.prototype.$checkCatalunya = "checkCatalunya";
-Vue.prototype.$inputTipusDeVia = "inputTipusDeVia";
-Vue.prototype.$inputNom = "inputNom";
-Vue.prototype.$inputNumero = "inputNumero";
-Vue.prototype.$inputEscala = "inputEscala";
-Vue.prototype.$inputPis = "inputPis";
-Vue.prototype.$inputPorta = "inputPorta";
-Vue.prototype.$inputNomPuntSingular = "inputNomPuntSingular";
-Vue.prototype.$inputNomCarretera = "inputNomCarretera";
-Vue.prototype.$inputPuntKilometric = "inputPuntKilometric";
-Vue.prototype.$inputSentit = "inputSentit";
-Vue.prototype.$provinciaSelectProvincia = "provinciaSelectProvincia";
-Vue.prototype.$inputProvinciaMunicipi = "inputProvinciaMunicipi";
-Vue.prototype.$textAreaDetalls = "textAreaDetalls";
-Vue.prototype.$eventAlert = new Vue();
-Vue.prototype.$eventTime = new Vue();
-Vue.prototype.$eventVideo = new Vue();
-Vue.prototype.$eventSelect = new Vue();
-Vue.prototype.$eventCheck = new Vue();
-Vue.prototype.$eventRelation = new Vue();
-Vue.prototype.$eventFinal = new Vue();
-Vue.prototype.$eventClear = new Vue();
-Vue.prototype.$eventExpedient = new Vue();
-Vue.prototype.$eventPersonal = new Vue();
-Vue.prototype.$eventMap = new Vue();
-Vue.prototype.$eventHelpBox = new Vue();
-Vue.prototype.$eventShow = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
-Vue.component('background-decoration-izquierda', (__webpack_require__(/*! ./components/background-decoration/BackgroundDecorationIzquierda.vue */ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue")["default"]));
-Vue.component('background-decoration-derecha', (__webpack_require__(/*! ./components/background-decoration/BackgroundDecorationDerecha.vue */ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue")["default"]));
-Vue.component('help-box-icon', (__webpack_require__(/*! ./components/sections/helpBox/helpBoxIcon.vue */ "./resources/js/components/sections/helpBox/helpBoxIcon.vue")["default"]));
-Vue.component('help-box', (__webpack_require__(/*! ./components/sections/helpBox/helpBox.vue */ "./resources/js/components/sections/helpBox/helpBox.vue")["default"]));
-Vue.component('help-box-question', (__webpack_require__(/*! ./components/sections/helpBox/helpBoxQuestion.vue */ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue")["default"]));
-Vue.component('tab-apart', (__webpack_require__(/*! ./components/nav/TabApart.vue */ "./resources/js/components/nav/TabApart.vue")["default"]));
-Vue.component('apart-navbar', (__webpack_require__(/*! ./components/nav/ApartNavbar.vue */ "./resources/js/components/nav/ApartNavbar.vue")["default"]));
-Vue.component("map-section", (__webpack_require__(/*! ./components/sections/MapSection.vue */ "./resources/js/components/sections/MapSection.vue")["default"]));
-Vue.component("time-section", (__webpack_require__(/*! ./components/sections/TimeSection.vue */ "./resources/js/components/sections/TimeSection.vue")["default"]));
-Vue.component("alert-section", (__webpack_require__(/*! ./components/sections/AlertSection.vue */ "./resources/js/components/sections/AlertSection.vue")["default"]));
-Vue.component("personal-section", (__webpack_require__(/*! ./components/sections/PersonalSection.vue */ "./resources/js/components/sections/PersonalSection.vue")["default"]));
-Vue.component("location-section", (__webpack_require__(/*! ./components/sections/LocationSection.vue */ "./resources/js/components/sections/LocationSection.vue")["default"]));
-Vue.component("agency-section", (__webpack_require__(/*! ./components/sections/AgencySection.vue */ "./resources/js/components/sections/AgencySection.vue")["default"]));
-Vue.component("list-agency-section", (__webpack_require__(/*! ./components/sections/ListAgencySection.vue */ "./resources/js/components/sections/ListAgencySection.vue")["default"]));
-Vue.component("emergency-section", (__webpack_require__(/*! ./components/sections/EmergencySection.vue */ "./resources/js/components/sections/EmergencySection.vue")["default"]));
-Vue.component("commune-note-section", (__webpack_require__(/*! ./components/sections/CommuneNoteSection.vue */ "./resources/js/components/sections/CommuneNoteSection.vue")["default"]));
-Vue.component("relation-section", (__webpack_require__(/*! ./components/sections/RelationSection.vue */ "./resources/js/components/sections/RelationSection.vue")["default"]));
-Vue.component("relation-modal", (__webpack_require__(/*! ./components/sections/RelationModalSection.vue */ "./resources/js/components/sections/RelationModalSection.vue")["default"]));
-Vue.component("video-section", (__webpack_require__(/*! ./components/sections/videoSection/VideoSection.vue */ "./resources/js/components/sections/videoSection/VideoSection.vue")["default"]));
-Vue.component("backdrop-video", (__webpack_require__(/*! ./components/sections/videoSection/BackdropVideo.vue */ "./resources/js/components/sections/videoSection/BackdropVideo.vue")["default"]));
-Vue.component("backdrop-video-button", (__webpack_require__(/*! ./components/sections/videoSection/BackdropVideoButton.vue */ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue")["default"]));
-Vue.component("backdrop-video-refresh-button", (__webpack_require__(/*! ./components/sections/videoSection/BackdropVideoRefreshButton.vue */ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue")["default"]));
-Vue.component("backdrop-refresh", (__webpack_require__(/*! ./components/sections/videoSection/BackdropRefresh.vue */ "./resources/js/components/sections/videoSection/BackdropRefresh.vue")["default"]));
-Vue.component("finish-section", (__webpack_require__(/*! ./components/sections/FinishSection.vue */ "./resources/js/components/sections/FinishSection.vue")["default"]));
-Vue.component("data-input", (__webpack_require__(/*! ./components/forms/DataInput.vue */ "./resources/js/components/forms/DataInput.vue")["default"]));
-Vue.component("data-time", (__webpack_require__(/*! ./components/forms/DataTime.vue */ "./resources/js/components/forms/DataTime.vue")["default"]));
-Vue.component("data-emergency", (__webpack_require__(/*! ./components/forms/DataEmergency.vue */ "./resources/js/components/forms/DataEmergency.vue")["default"]));
-Vue.component("data-check", (__webpack_require__(/*! ./components/forms/DataCheck.vue */ "./resources/js/components/forms/DataCheck.vue")["default"]));
-Vue.component("data-select", (__webpack_require__(/*! ./components/forms/DataSelect.vue */ "./resources/js/components/forms/DataSelect.vue")["default"]));
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-// Vue.component("tab-apart", {
-//     template:
-//     `
-//     <div>
-//         <apart-navbar name="Dades personals" emoticon="fa fa-solid fa-user" v-on:click.native="changeSection(personalData)"></apart-navbar>
-//         <apart-navbar name="Localització" emoticon="fa fa-map-marker" v-on:click.native="changeSection(locate)"></apart-navbar>
-//         <apart-navbar name="Agències" emoticon="fa fa-solid fa-car-side" v-on:click.native="changeSection(agency)"></apart-navbar>
-//         <apart-navbar name="Emergencia" emoticon="fas fa-ambulance" v-on:click.native="changeSection(emergency)"></apart-navbar>
-//         <apart-navbar name="Nota comuna" emoticon="fa fa-sticky-note-o" v-on:click.native="changeSection(communeNote)"></apart-navbar>
-//         <apart-navbar name="Relacionar Expedient" emoticon="fa fa-solid fa-book" v-on:click.native="changeSection(relationExpedient)"></apart-navbar>
-//         <apart-navbar name="Vídeo interactiu" emoticon="fas fa-video" v-on:click.native="changeSection(interactiveVideo)" video></apart-navbar>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             personalData: "Dades Personals",
-//             locate: "Localitzacio",
-//             agency: "Agencies",
-//             emergency: "Emergencia",
-//             communeNote: "Nota comuna",
-//             relationExpedient: "Relacionar Expedient",
-//             interactiveVideo: "video"
-//         }
-//     },
-//     methods: {
-//         changeSection(section) {
-//             eventTime.$emit("change-section",section);
-//         }
-//     }
-// })
-// Vue.component("apart-navbar", {
-//     props: {
-//         name: {
-//             type: [String],
-//             require: true
-//         },
-//         emoticon: {
-//             type: [String],
-//             require: true
-//         },
-//         video:Boolean
-//     },
-//     template:
-//     `
-//     <div class="row" v-bind:style="video ? 'margin-top: 210px;' : 'margin-top: 60px;'">
-//         <div class="col colApart">
-//             <div class="row form-row">
-//                 <div class="col col-2 d-flex justify-content-end align-items-center">
-//                     <i :class="emoticon"></i>
-//                 </div>
-//                 <div class="col col-10 d-flex justify-content-start align-items-center">
-//                     <p class="pApart">{{ name }}</p>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `
-// })
-// Vue.component("personal-section", {
-//     template:
-//     `
-//     <div class="row d-flex justify-content-center">
-//         <div class="col col-8 colSection colPersonalDates">
-//             <div class="row">
-//                 <div class="col">
-//                     <h4 v-text="title"></h4>
-//                 </div>
-//             </div>
-//             <data-input name="Telefon" id_input="inputTelefon" ></data-input>
-//             <data-input name="Direcció" id_input="inputDireccion" ></data-input>
-//             <div class="row" style="margin-top: 20px">
-//                 <div class="col">
-//                     <div class="form-floating">
-//                         <textarea class="form-control" id="textAreaAntecedents"
-//                         style="height: 130px; resize: none" v-on:click="startTime"></textarea>
-//                         <label for="textAreaAntecedents">Antecedents</label>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             title: "Dades personals"
-//         }
-//     }
-// })
-// Vue.component("location-section", {
-//     template:
-//     `
-//     <div class="row d-flex justify-content-center">
-//         <div class="col col-10 colSection colLocation">
-//             <div class="row">
-//                 <div class="col">
-//                     <h4 v-text="title"></h4>
-//                 </div>
-//             </div>
-//             <data-check name="Catalunya" id_check="checkCatalunya"></data-check>
-//             <div class="row">
-//                 <div class="col">
-//                     <data-select name="Provincia" id_select="provinciaSelect" small></data-select>
-//                 </div>
-//                 <div class="col">
-//                     <data-select name="Comarca" id_select="comarcaSelect" small></data-select>
-//                 </div>
-//                 <div class="col">
-//                     <data-select name="Municipi" id_select="municipiSelect" small></data-select>
-//                 </div>
-//             </div>
-//             <data-input name="Direccio" id_input="inputDireccio"></data-input>
-//             <div class="row" style="margin-top: 20px">
-//                 <div class="col">
-//                     <div class="form-floating">
-//                         <textarea class="form-control" id="textAreaDetalls"
-//                         style="height: 130px; resize: none" v-on:click="startTime"></textarea>
-//                         <label for="textAreaDetalls">Detalls</label>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             title: "Localització"
-//         }
-//     },
-//     methods: {
-//         startTime() {
-//             eventTime.$emit("start-time","message");
-//         }
-//     }
-// })
-// Vue.component("agency-section", {
-//     template:
-//     `
-//     <div class="row d-flex justify-content-center">
-//         <div class="col col-8 colSection colAgency">
-//             <div class="row">
-//                 <div class="col">
-//                     <h4 v-text="title"></h4>
-//                 </div>
-//             </div>
-//             <div class="row" style="margin-top: 20px">
-//                 <div class="col col-10">
-//                     <input type="text" class="form-control">
-//                 </div>
-//                 <div class="col col-2 d-flex justify-content-center align-items-center">
-//                     <button type="button" class="button">Afegir</button>
-//                 </div>
-//             </div>
-//             <div class="row" style="margin-top: 20px">
-//                 <div class="col col-10">
-//                     <textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>
-//                 </div>
-//                 <div class="col col-2 d-flex justify-content-center align-items-end">
-//                     <button type="button" class="button">Mapa</button>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             title: "Agències"
-//         }
-//     },
-//     methods: {
-//         startTime() {
-//             eventTime.$emit("start-time","message");
-//         }
-//     }
-// })
-// Vue.component("emergency-section", {
-//     template:
-//     `
-//         <div class="row d-flex justify-content-center">
-//             <div class="col col-8 colSection colEmergency">
-//                 <div class="row">
-//                     <div class="col">
-//                         <h4 v-text="title"></h4>
-//                     </div>
-//                 </div>
-//                 <div class="row">
-//                     <div class="col">
-//                         <data-select name="Tipus d'emergencia general" id_select="selectEmergencyGeneral"></data-select>
-//                     </div>
-//                 </div>
-//                 <div class="row">
-//                     <div class="col">
-//                         <data-select name="Tipus d'emergencia específica" id_select="selectEmergencySpecific"></data-select>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     `,
-//     data() {
-//         return {
-//             title: "Tipus d'emergencia"
-//         }
-//     }
-// })
-// Vue.component("time-section", {
-//     template:
-//     `
-//     <div class="col col-3 colTimeExit">
-//         <div class="row">
-//             <div class="col col-4">
-//                 <button type="button" class="button">Sortir</button>
-//             </div>
-//             <div class="col-6 colSection colTime">
-//                 <data-time titleData="Data" data="08/03/2022" first></data-time>
-//                 <data-time titleData="Hora" data="16:28"></data-time>
-//                 <data-time titleData="Temps" :data="time"></data-time>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             time:"00:00",
-//             start: false,
-//         }
-//     },
-//     mounted() {
-//         eventTime.$on("start-time", message => {
-//             let vueThis = this
-//             let lastCharacter,lastCharacterInt,penultimateCharacterInt,secondCharacterInt,firstCharacterInt
-//             if(!this.start) {
-//                 this.start = true
-//                 setInterval(function() {
-//                     lastCharacter = vueThis.time.substring(vueThis.time.length - 1, vueThis.time.length)
-//                     lastCharacterInt = parseInt(lastCharacter)
-//                     if(lastCharacterInt == 9) {
-//                         penultimateCharacterInt = parseInt(vueThis.time.substring(vueThis.time.length - 2, vueThis.time.length - 1))
-//                         if(penultimateCharacterInt == 5) {
-//                             secondCharacterInt = parseInt(vueThis.time.substring(vueThis.time.length - 4, vueThis.time.length-3))
-//                             if(secondCharacterInt == 9) {
-//                                 firstCharacterInt = parseInt(vueThis.time.substring(vueThis.time.length - 5, vueThis.time.length-4))
-//                                 if(firstCharacterInt != 5) {
-//                                     firstCharacterInt++
-//                                     vueThis.time = firstCharacterInt.toString() + "0:00"
-//                                 }
-//                             }
-//                             else {
-//                                 secondCharacterInt++
-//                                 vueThis.time = vueThis.time.substring(0,vueThis.time.length - 4)
-//                                 vueThis.time = vueThis.time.concat(secondCharacterInt + ":00")
-//                             }
-//                         }
-//                         else {
-//                             penultimateCharacterInt++
-//                             vueThis.time = vueThis.time.substring(0,vueThis.time.length - 2)
-//                             vueThis.time = vueThis.time.concat(penultimateCharacterInt)
-//                             vueThis.time = vueThis.time.concat("0")
-//                         }
-//                     }
-//                     else {
-//                         lastCharacterInt++
-//                         vueThis.time = vueThis.time.substring(0,vueThis.time.length - 1)
-//                         vueThis.time = vueThis.time.concat(lastCharacterInt)
-//                     }
-//                 },1000)
-//             }
-//         })
-//     },
-//     methods: {
-//         changeTime() {
-//         }
-//     }
-// })
-// Vue.component("data-time", {
-//     props: {
-//         titleData: {
-//             type: [String],
-//             require: true
-//         },
-//         data: {
-//             type: [String],
-//             require: true
-//         },
-//         first:Boolean
-//     },
-//     template:
-//     `
-//     <div class="row" v-bind:style="first ? 'margin-top: 0px;' : 'margin-top: 20px;'">
-//         <div class="col col-6 d-flex justify-content-start align-items-center"
-//             style="fontWeight: bold">
-//             {{ titleData }}
-//         </div>
-//         <div class="col col-6 d-flex justify-content-end align-items-center">
-//             {{ data }}
-//         </div>
-//     </div>
-//     `
-// })
-// Vue.component("commune-note-section" , {
-//     template:
-//     `
-//     <div class="row d-flex justify-content-center">
-//         <div class="col col-9 colSection colCommuneNote">
-//             <div class="row">
-//                 <div class="col">
-//                     <h4 v-text="title"></h4>
-//                 </div>
-//             </div>
-//             <div class="row" style="margin-top: 20px">
-//                 <div class="col">
-//                     <div class="form-floating">
-//                         <textarea v-on:click="startTime" class="form-control" id="textAreaCommuneNote" style="height: 200px; resize:none"></textarea>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `    ,
-//     data() {
-//         return {
-//             title: "Nota comuna"
-//         }
-//     },
-//     methods: {
-//         startTime() {
-//             eventTime.$emit("start-time","message");
-//         }
-//     }
-// })
-// Vue.component("relation-section", {
-//     template:
-//     `
-//         <div class="row d-flex justify-content-center">
-//             <div class="col col-8 colSection colRelationSection d-flex justify-content-start align-items-center">
-//                 <button type="button" class="button">Relacionar expedient</button>
-//             </div>
-//         </div>
-//     `
-// })
-// Vue.component("video-section", {
-//     template:
-//     `
-//     <div class="row d-flex">
-//         <div class="col col-11 colCard colVideo d-flex justify-content-center align-items-center">
-//             <div id="containerVideo">
-//                 <backdrop-video></backdrop-video>
-//                 <backdrop-refresh></backdrop-refresh>
-//                 <video @timeupdate="timeUpdateVideo" ref="videoo" id="video" width="1066.2" height="600" controls>
-//                     <source id="sourceVideo" :src="getSrc" type="video/mp4">
-//                 </video>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             src: videoURL,
-//             timeVideo: v1,
-//             currentTime: 0,
-//             tipoVideo: "1"
-//         }
-//     },
-//     computed: {
-//         getSrc() {
-//             return this.src + this.timeVideo;
-//         }
-//     },
-//     methods: {
-//         timeUpdateVideo() {
-//             this.currentTime = this.$refs.videoo.currentTime
-//             switch(this.tipoVideo) {
-//                 case "1":
-//                     if(this.$refs.videoo.currentTime < 0) {
-//                         this.$refs.videoo.currentTime = 0;
-//                     }
-//                     else if(this.$refs.videoo.currentTime > 24) {
-//                         this.showBackdrop()
-//                     }
-//                     else if(this.$refs.videoo.onpause == true && this.$refs.videoo.currentTime >= 24) {
-//                         this.showBackdrop()
-//                     }
-//                     break;
-//                 case "10":
-//                     if(this.$refs.videoo.currentTime < 25) {
-//                         this.$refs.videoo.currentTime = 25;
-//                     }
-//                     else if(this.$refs.videoo.currentTime > 32) {
-//                         this.showBackdropRefresh()
-//                     }
-//                     else if(this.$refs.videoo.onpause == true && this.$refs.videoo.currentTime >= 32) {
-//                         this.showBackdropRefresh()
-//                     }
-//                     break;
-//             }
-//         },
-//         showBackdrop() {
-//             this.$refs.videoo.style.display = "none"
-//             eventVideo.$emit("change-backdrop-video","¿Llamada procedente?")
-//         },
-//         showBackdropRefresh() {
-//             this.$refs.videoo.style.display = "none"
-//             eventVideo.$emit("change-backdrop-refresh","true")
-//         },
-//         refresh() {
-//             this.$refs.videoo.style.display = "block"
-//             this.$refs.videoo.load()
-//             this.$refs.videoo.play()
-//         }
-//     },
-//     mounted() {
-//         eventVideo.$on("new-video", optionVideo => {
-//             if(optionVideo == yesVideo || optionVideo == noVideo) {
-//                 switch(this.tipoVideo) {
-//                     case "1":
-//                         if(optionVideo == yesVideo) {
-//                         }
-//                         else {
-//                             this.timeVideo = v10
-//                             this.tipoVideo = "10"
-//                             this.refresh()
-//                         }
-//                         break;
-//                 }
-//             }
-//             else if(optionVideo == refreshVideo){
-//                 this.refresh()
-//             }
-//             else {
-//                 this.timeVideo = v1
-//                 this.tipoVideo = "1"
-//                 this.refresh()
-//             }
-//         })
-//     }
-// })
-// Vue.component("backdrop-video", {
-//     template:
-//     `
-//         <div class="backdrop" v-bind:style="showBackdrop ? 'display: block;' : 'display: none;'">
-//             <div class="container-fluid">
-//                 <div class="row">
-//                     <div class="col d-flex justify-content-center align-items-center" style="height: 150px;">
-//                         <p id="titleVideo">{{ title }}</p>
-//                     </div>
-//                 </div>
-//                 <div class="row">
-//                     <backdrop-video-button answerText="SI" v-on:click.native="yesButton" ></backdrop-video-button>
-//                     <backdrop-video-button answerText="NO" v-on:click.native="noButton"></backdrop-video-button>
-//                 </div>
-//                 <div class="row">
-//                     <backdrop-video-refresh-button v-on:click.native="refreshButton"></backdrop-video-refresh-button>
-//                 </div>
-//             </div>
-//         </div>
-//     `,
-//     data() {
-//         return {
-//             showBackdrop: false,
-//             title: "Broggi"
-//         }
-//     },
-//     methods: {
-//         yesButton() {
-//             this.showBackdrop = false
-//             eventVideo.$emit("new-video",yesVideo)
-//         },
-//         noButton() {
-//             this.showBackdrop = false
-//             eventVideo.$emit("new-video",noVideo)
-//         },
-//         refreshButton() {
-//             this.showBackdrop = false
-//             eventVideo.$emit("new-video",refreshVideo)
-//         }
-//     },
-//     mounted() {
-//         eventVideo.$on("change-backdrop-video", title => {
-//             this.title = title
-//             this.showBackdrop = true
-//         })
-//     }
-// })
-// Vue.component("backdrop-video-button" , {
-//     props: {
-//         answerText: {
-//             type: [String],
-//             require: true
-//         }
-//     },
-//     template:
-//     `
-//     <div class="col col-6 d-flex align-items-center justify-content-center" style="height: 375px;">
-//         <div class="questions d-flex align-items-center justify-content-center">
-//             <p class="answers">{{answerText}}</p>
-//         </div>
-//     </div>
-//     `
-// })
-// Vue.component("backdrop-video-refresh-button", {
-//     template:
-//     `
-//     <div class="col col-1 d-flex align-items-center justify-content-center" style="height: 75px;">
-//         <div id="refreshButton">
-//             <i class="fa fa-refresh"></i>
-//         </div>
-//     </div>
-//     `
-// })
-// Vue.component("backdrop-refresh", {
-//     template:
-//     `
-//     <div class="backdrop" v-bind:style="showBackdropRefresh ? 'display: block;' : 'display: none;'">
-//         <div class="container-fluid">
-//             <div class="row">
-//                 <div class="col d-flex align-items-center justify-content-center" style="height: 600px;">
-//                     <div v-on:click="refreshButtonGeneral">
-//                         <i class="fa fa-refresh fa-7x"></i>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//             showBackdropRefresh: false
-//         }
-//     },
-//     methods: {
-//         refreshButtonGeneral() {
-//             this.showBackdropRefresh = false
-//             eventVideo.$emit("new-video",refreshGeneral)
-//         }
-//     },
-//     mounted() {
-//         eventVideo.$on("change-backdrop-refresh", valor => {
-//             this.showBackdropRefresh = valor
-//         })
-//     }
-// })
-// Vue.component("finish-section", {
-//     template:
-//     `
-//     <div id="finishSection">
-//         <button type="button" class="button">Cancelar</button>
-//         <button type="button" class="button" style="margin-left: 10px">Finalitzar</button>
-//     </div>
-//     `
-// })
-// Vue.component("data-select", {
-//     props: {
-//         name: {
-//             type: [String],
-//             require: true
-//         },
-//         id_select: {
-//             type:[String],
-//             require: true
-//         },
-//         small: Boolean
-//     },
-//     template:
-//     `
-//     <div class="row form-row" style="margin-top: 20px">
-//         <div class="col d-flex"
-//             v-bind:class="colSmall">
-//             <label :for="id_select">{{ name }}</label>
-//         </div>
-//         <div class="col d-flex justify-content-center align-items-center"
-//             v-bind:class="colBig">
-//             <select v-on:click="startTime" class="form-select" id="id_select">
-//                 <option value="1">One</option>
-//                 <option value="2">Two</option>
-//                 <option value="3">Three</option>
-//             </select>
-//         </div>
-//     </div>
-//     `,
-//     computed: {
-//         colSmall() {
-//             let response = "";
-//             if(this.small == true) {
-//                 response = "col-3 justify-content-center align-items-center"
-//             }
-//             else {
-//                 response = "col-5 align-items-center"
-//             }
-//             return response;
-//         },
-//         colBig() {
-//             let response = "";
-//             if(this.small == true) {
-//                 response = "col-9"
-//             }
-//             else {
-//                 response = "col-7"
-//             }
-//             return response;
-//         }
-//     },
-//     methods: {
-//         startTime() {
-//             eventTime.$emit("start-time","message");
-//         }
-//     }
-// })
-// Vue.component("data-check", {
-//     props: {
-//         name: {
-//             type: [String],
-//             require: true
-//         },
-//         id_check: {
-//             type:[String],
-//             require: true
-//         }
-//     },
-//     template:
-//     `
-//     <div class="row" style="margin-top: 20px">
-//         <div class="col">
-//             <div class="form-check">
-//             <label class="form-check-label" :for="id_check">
-//                 {{ name }}
-//             </label>
-//             <input class="form-check-input" type="checkbox" value="" :id="id_check">
-//             </div>
-//         </div>
-//     </div>
-//     `
-// })
-// Vue.component("data-input", {
-//     props: {
-//         name: {
-//             type:[String],
-//             require: true
-//         },
-//         id_input: {
-//             type:[String],
-//             require: true
-//         },
-//         small: Boolean
-//     },
-//     template:
-//     `
-//     <div class="row form-row" style="margin-top: 20px">
-//         <div class="col d-flex justify-content-center align-items-center"
-//             v-bind:class="colSmall">
-//             <label :for="id_input">{{ name }}</label>
-//         </div>
-//         <div class="col"
-//             v-bind:class="colBig">
-//             <input type="text" class="form-control" :id="id_input" v-on:click="startTime">
-//         </div>
-//     </div>
-//     `,
-//     computed: {
-//         colSmall() {
-//             let response = "";
-//             if(this.small == false) {
-//                 response = "col-1"
-//             }
-//             else {
-//                 response = "col-2"
-//             }
-//             return response;
-//         },
-//         colBig() {
-//             let response = "";
-//             if(this.small == false) {
-//                 response = "col-11"
-//             }
-//             else {
-//                 response = "col-10"
-//             }
-//             return response;
-//         }
-//     },
-//     methods: {
-//         startTime() {
-//             eventTime.$emit("start-time","message");
-//         }
-//     }
-// })
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
     this._isTransitioning = true;
 
@@ -10086,7 +7858,6 @@ Vue.component("data-select", (__webpack_require__(/*! ./components/forms/DataSel
 
       this._element.classList.add(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
 
-<<<<<<< HEAD
       this._element.style[dimension] = '';
       EventHandler.trigger(this._element, EVENT_SHOWN$5);
     };
@@ -10103,35 +7874,6 @@ Vue.component("data-select", (__webpack_require__(/*! ./components/forms/DataSel
     if (this._isTransitioning || !this._isShown()) {
       return;
     }
-=======
-try {
-  __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
-} catch (e) {}
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
-
-
-window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.baseURL = "/api/"; // window.axios.defaults.baseURL = "/projects/M12/projecte2/broggi/public/api/";
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-// import Echo from 'laravel-echo';
-// window.Pusher = require('pusher-js');
-// window.Echo = new Echo({
-//     broadcaster: 'pusher',
-//     key: process.env.MIX_PUSHER_APP_KEY,
-//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-//     forceTLS: true
-// });
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
     const startEvent = EventHandler.trigger(this._element, EVENT_HIDE$5);
 
@@ -14782,7 +12524,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     return string.match(reUnicodeWord) || [];
   }
 
-<<<<<<< HEAD
   /*--------------------------------------------------------------------------*/
 
   /**
@@ -14882,559 +12623,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
         spreadableSymbol = Symbol ? Symbol.isConcatSpreadable : undefined,
         symIterator = Symbol ? Symbol.iterator : undefined,
         symToStringTag = Symbol ? Symbol.toStringTag : undefined;
-=======
-}
-
-enableDismissTrigger(Toast);
-/**
- * ------------------------------------------------------------------------
- * jQuery
- * ------------------------------------------------------------------------
- * add .Toast to jQuery only if jQuery is present
- */
-
-defineJQueryPlugin(Toast);
-
-
-//# sourceMappingURL=bootstrap.esm.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/chalk/source/index.js":
-/*!********************************************!*\
-  !*** ./node_modules/chalk/source/index.js ***!
-  \********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-const ansiStyles = __webpack_require__(/*! ansi-styles */ "./node_modules/ansi-styles/index.js");
-const {stdout: stdoutColor, stderr: stderrColor} = __webpack_require__(/*! supports-color */ "./node_modules/supports-color/browser.js");
-const {
-	stringReplaceAll,
-	stringEncaseCRLFWithFirstIndex
-} = __webpack_require__(/*! ./util */ "./node_modules/chalk/source/util.js");
-
-const {isArray} = Array;
-
-// `supportsColor.level` → `ansiStyles.color[name]` mapping
-const levelMapping = [
-	'ansi',
-	'ansi',
-	'ansi256',
-	'ansi16m'
-];
-
-const styles = Object.create(null);
-
-const applyOptions = (object, options = {}) => {
-	if (options.level && !(Number.isInteger(options.level) && options.level >= 0 && options.level <= 3)) {
-		throw new Error('The `level` option should be an integer from 0 to 3');
-	}
-
-	// Detect level if not set manually
-	const colorLevel = stdoutColor ? stdoutColor.level : 0;
-	object.level = options.level === undefined ? colorLevel : options.level;
-};
-
-class ChalkClass {
-	constructor(options) {
-		// eslint-disable-next-line no-constructor-return
-		return chalkFactory(options);
-	}
-}
-
-const chalkFactory = options => {
-	const chalk = {};
-	applyOptions(chalk, options);
-
-	chalk.template = (...arguments_) => chalkTag(chalk.template, ...arguments_);
-
-	Object.setPrototypeOf(chalk, Chalk.prototype);
-	Object.setPrototypeOf(chalk.template, chalk);
-
-	chalk.template.constructor = () => {
-		throw new Error('`chalk.constructor()` is deprecated. Use `new chalk.Instance()` instead.');
-	};
-
-	chalk.template.Instance = ChalkClass;
-
-	return chalk.template;
-};
-
-function Chalk(options) {
-	return chalkFactory(options);
-}
-
-for (const [styleName, style] of Object.entries(ansiStyles)) {
-	styles[styleName] = {
-		get() {
-			const builder = createBuilder(this, createStyler(style.open, style.close, this._styler), this._isEmpty);
-			Object.defineProperty(this, styleName, {value: builder});
-			return builder;
-		}
-	};
-}
-
-styles.visible = {
-	get() {
-		const builder = createBuilder(this, this._styler, true);
-		Object.defineProperty(this, 'visible', {value: builder});
-		return builder;
-	}
-};
-
-const usedModels = ['rgb', 'hex', 'keyword', 'hsl', 'hsv', 'hwb', 'ansi', 'ansi256'];
-
-for (const model of usedModels) {
-	styles[model] = {
-		get() {
-			const {level} = this;
-			return function (...arguments_) {
-				const styler = createStyler(ansiStyles.color[levelMapping[level]][model](...arguments_), ansiStyles.color.close, this._styler);
-				return createBuilder(this, styler, this._isEmpty);
-			};
-		}
-	};
-}
-
-for (const model of usedModels) {
-	const bgModel = 'bg' + model[0].toUpperCase() + model.slice(1);
-	styles[bgModel] = {
-		get() {
-			const {level} = this;
-			return function (...arguments_) {
-				const styler = createStyler(ansiStyles.bgColor[levelMapping[level]][model](...arguments_), ansiStyles.bgColor.close, this._styler);
-				return createBuilder(this, styler, this._isEmpty);
-			};
-		}
-	};
-}
-
-const proto = Object.defineProperties(() => {}, {
-	...styles,
-	level: {
-		enumerable: true,
-		get() {
-			return this._generator.level;
-		},
-		set(level) {
-			this._generator.level = level;
-		}
-	}
-});
-
-const createStyler = (open, close, parent) => {
-	let openAll;
-	let closeAll;
-	if (parent === undefined) {
-		openAll = open;
-		closeAll = close;
-	} else {
-		openAll = parent.openAll + open;
-		closeAll = close + parent.closeAll;
-	}
-
-	return {
-		open,
-		close,
-		openAll,
-		closeAll,
-		parent
-	};
-};
-
-const createBuilder = (self, _styler, _isEmpty) => {
-	const builder = (...arguments_) => {
-		if (isArray(arguments_[0]) && isArray(arguments_[0].raw)) {
-			// Called as a template literal, for example: chalk.red`2 + 3 = {bold ${2+3}}`
-			return applyStyle(builder, chalkTag(builder, ...arguments_));
-		}
-
-		// Single argument is hot path, implicit coercion is faster than anything
-		// eslint-disable-next-line no-implicit-coercion
-		return applyStyle(builder, (arguments_.length === 1) ? ('' + arguments_[0]) : arguments_.join(' '));
-	};
-
-	// We alter the prototype because we must return a function, but there is
-	// no way to create a function with a different prototype
-	Object.setPrototypeOf(builder, proto);
-
-	builder._generator = self;
-	builder._styler = _styler;
-	builder._isEmpty = _isEmpty;
-
-	return builder;
-};
-
-const applyStyle = (self, string) => {
-	if (self.level <= 0 || !string) {
-		return self._isEmpty ? '' : string;
-	}
-
-	let styler = self._styler;
-
-	if (styler === undefined) {
-		return string;
-	}
-
-	const {openAll, closeAll} = styler;
-	if (string.indexOf('\u001B') !== -1) {
-		while (styler !== undefined) {
-			// Replace any instances already present with a re-opening code
-			// otherwise only the part of the string until said closing code
-			// will be colored, and the rest will simply be 'plain'.
-			string = stringReplaceAll(string, styler.close, styler.open);
-
-			styler = styler.parent;
-		}
-	}
-
-	// We can move both next actions out of loop, because remaining actions in loop won't have
-	// any/visible effect on parts we add here. Close the styling before a linebreak and reopen
-	// after next line to fix a bleed issue on macOS: https://github.com/chalk/chalk/pull/92
-	const lfIndex = string.indexOf('\n');
-	if (lfIndex !== -1) {
-		string = stringEncaseCRLFWithFirstIndex(string, closeAll, openAll, lfIndex);
-	}
-
-	return openAll + string + closeAll;
-};
-
-let template;
-const chalkTag = (chalk, ...strings) => {
-	const [firstString] = strings;
-
-	if (!isArray(firstString) || !isArray(firstString.raw)) {
-		// If chalk() was called by itself or with a string,
-		// return the string itself as a string.
-		return strings.join(' ');
-	}
-
-	const arguments_ = strings.slice(1);
-	const parts = [firstString.raw[0]];
-
-	for (let i = 1; i < firstString.length; i++) {
-		parts.push(
-			String(arguments_[i - 1]).replace(/[{}\\]/g, '\\$&'),
-			String(firstString.raw[i])
-		);
-	}
-
-	if (template === undefined) {
-		template = __webpack_require__(/*! ./templates */ "./node_modules/chalk/source/templates.js");
-	}
-
-	return template(chalk, parts.join(''));
-};
-
-Object.defineProperties(Chalk.prototype, styles);
-
-const chalk = Chalk(); // eslint-disable-line new-cap
-chalk.supportsColor = stdoutColor;
-chalk.stderr = Chalk({level: stderrColor ? stderrColor.level : 0}); // eslint-disable-line new-cap
-chalk.stderr.supportsColor = stderrColor;
-
-module.exports = chalk;
-
-
-/***/ }),
-
-/***/ "./node_modules/chalk/source/templates.js":
-/*!************************************************!*\
-  !*** ./node_modules/chalk/source/templates.js ***!
-  \************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-const TEMPLATE_REGEX = /(?:\\(u(?:[a-f\d]{4}|\{[a-f\d]{1,6}\})|x[a-f\d]{2}|.))|(?:\{(~)?(\w+(?:\([^)]*\))?(?:\.\w+(?:\([^)]*\))?)*)(?:[ \t]|(?=\r?\n)))|(\})|((?:.|[\r\n\f])+?)/gi;
-const STYLE_REGEX = /(?:^|\.)(\w+)(?:\(([^)]*)\))?/g;
-const STRING_REGEX = /^(['"])((?:\\.|(?!\1)[^\\])*)\1$/;
-const ESCAPE_REGEX = /\\(u(?:[a-f\d]{4}|{[a-f\d]{1,6}})|x[a-f\d]{2}|.)|([^\\])/gi;
-
-const ESCAPES = new Map([
-	['n', '\n'],
-	['r', '\r'],
-	['t', '\t'],
-	['b', '\b'],
-	['f', '\f'],
-	['v', '\v'],
-	['0', '\0'],
-	['\\', '\\'],
-	['e', '\u001B'],
-	['a', '\u0007']
-]);
-
-function unescape(c) {
-	const u = c[0] === 'u';
-	const bracket = c[1] === '{';
-
-	if ((u && !bracket && c.length === 5) || (c[0] === 'x' && c.length === 3)) {
-		return String.fromCharCode(parseInt(c.slice(1), 16));
-	}
-
-	if (u && bracket) {
-		return String.fromCodePoint(parseInt(c.slice(2, -1), 16));
-	}
-
-	return ESCAPES.get(c) || c;
-}
-
-function parseArguments(name, arguments_) {
-	const results = [];
-	const chunks = arguments_.trim().split(/\s*,\s*/g);
-	let matches;
-
-	for (const chunk of chunks) {
-		const number = Number(chunk);
-		if (!Number.isNaN(number)) {
-			results.push(number);
-		} else if ((matches = chunk.match(STRING_REGEX))) {
-			results.push(matches[2].replace(ESCAPE_REGEX, (m, escape, character) => escape ? unescape(escape) : character));
-		} else {
-			throw new Error(`Invalid Chalk template style argument: ${chunk} (in style '${name}')`);
-		}
-	}
-
-	return results;
-}
-
-function parseStyle(style) {
-	STYLE_REGEX.lastIndex = 0;
-
-	const results = [];
-	let matches;
-
-	while ((matches = STYLE_REGEX.exec(style)) !== null) {
-		const name = matches[1];
-
-		if (matches[2]) {
-			const args = parseArguments(name, matches[2]);
-			results.push([name].concat(args));
-		} else {
-			results.push([name]);
-		}
-	}
-
-	return results;
-}
-
-function buildStyle(chalk, styles) {
-	const enabled = {};
-
-	for (const layer of styles) {
-		for (const style of layer.styles) {
-			enabled[style[0]] = layer.inverse ? null : style.slice(1);
-		}
-	}
-
-	let current = chalk;
-	for (const [styleName, styles] of Object.entries(enabled)) {
-		if (!Array.isArray(styles)) {
-			continue;
-		}
-
-		if (!(styleName in current)) {
-			throw new Error(`Unknown Chalk style: ${styleName}`);
-		}
-
-		current = styles.length > 0 ? current[styleName](...styles) : current[styleName];
-	}
-
-	return current;
-}
-
-module.exports = (chalk, temporary) => {
-	const styles = [];
-	const chunks = [];
-	let chunk = [];
-
-	// eslint-disable-next-line max-params
-	temporary.replace(TEMPLATE_REGEX, (m, escapeCharacter, inverse, style, close, character) => {
-		if (escapeCharacter) {
-			chunk.push(unescape(escapeCharacter));
-		} else if (style) {
-			const string = chunk.join('');
-			chunk = [];
-			chunks.push(styles.length === 0 ? string : buildStyle(chalk, styles)(string));
-			styles.push({inverse, styles: parseStyle(style)});
-		} else if (close) {
-			if (styles.length === 0) {
-				throw new Error('Found extraneous } in Chalk template literal');
-			}
-
-			chunks.push(buildStyle(chalk, styles)(chunk.join('')));
-			chunk = [];
-			styles.pop();
-		} else {
-			chunk.push(character);
-		}
-	});
-
-	chunks.push(chunk.join(''));
-
-	if (styles.length > 0) {
-		const errMessage = `Chalk template literal is missing ${styles.length} closing bracket${styles.length === 1 ? '' : 's'} (\`}\`)`;
-		throw new Error(errMessage);
-	}
-
-	return chunks.join('');
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/chalk/source/util.js":
-/*!*******************************************!*\
-  !*** ./node_modules/chalk/source/util.js ***!
-  \*******************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-const stringReplaceAll = (string, substring, replacer) => {
-	let index = string.indexOf(substring);
-	if (index === -1) {
-		return string;
-	}
-
-	const substringLength = substring.length;
-	let endIndex = 0;
-	let returnValue = '';
-	do {
-		returnValue += string.substr(endIndex, index - endIndex) + substring + replacer;
-		endIndex = index + substringLength;
-		index = string.indexOf(substring, endIndex);
-	} while (index !== -1);
-
-	returnValue += string.substr(endIndex);
-	return returnValue;
-};
-
-const stringEncaseCRLFWithFirstIndex = (string, prefix, postfix, index) => {
-	let endIndex = 0;
-	let returnValue = '';
-	do {
-		const gotCR = string[index - 1] === '\r';
-		returnValue += string.substr(endIndex, (gotCR ? index - 1 : index) - endIndex) + prefix + (gotCR ? '\r\n' : '\n') + postfix;
-		endIndex = index + 1;
-		index = string.indexOf('\n', endIndex);
-	} while (index !== -1);
-
-	returnValue += string.substr(endIndex);
-	return returnValue;
-};
-
-module.exports = {
-	stringReplaceAll,
-	stringEncaseCRLFWithFirstIndex
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/color-convert/conversions.js":
-/*!***************************************************!*\
-  !*** ./node_modules/color-convert/conversions.js ***!
-  \***************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-/* MIT license */
-/* eslint-disable no-mixed-operators */
-const cssKeywords = __webpack_require__(/*! color-name */ "./node_modules/color-name/index.js");
-
-// NOTE: conversions should only return primitive values (i.e. arrays, or
-//       values that give correct `typeof` results).
-//       do not use box values types (i.e. Number(), String(), etc.)
-
-const reverseKeywords = {};
-for (const key of Object.keys(cssKeywords)) {
-	reverseKeywords[cssKeywords[key]] = key;
-}
-
-const convert = {
-	rgb: {channels: 3, labels: 'rgb'},
-	hsl: {channels: 3, labels: 'hsl'},
-	hsv: {channels: 3, labels: 'hsv'},
-	hwb: {channels: 3, labels: 'hwb'},
-	cmyk: {channels: 4, labels: 'cmyk'},
-	xyz: {channels: 3, labels: 'xyz'},
-	lab: {channels: 3, labels: 'lab'},
-	lch: {channels: 3, labels: 'lch'},
-	hex: {channels: 1, labels: ['hex']},
-	keyword: {channels: 1, labels: ['keyword']},
-	ansi16: {channels: 1, labels: ['ansi16']},
-	ansi256: {channels: 1, labels: ['ansi256']},
-	hcg: {channels: 3, labels: ['h', 'c', 'g']},
-	apple: {channels: 3, labels: ['r16', 'g16', 'b16']},
-	gray: {channels: 1, labels: ['gray']}
-};
-
-module.exports = convert;
-
-// Hide .channels and .labels properties
-for (const model of Object.keys(convert)) {
-	if (!('channels' in convert[model])) {
-		throw new Error('missing channels property: ' + model);
-	}
-
-	if (!('labels' in convert[model])) {
-		throw new Error('missing channel labels property: ' + model);
-	}
-
-	if (convert[model].labels.length !== convert[model].channels) {
-		throw new Error('channel and label counts mismatch: ' + model);
-	}
-
-	const {channels, labels} = convert[model];
-	delete convert[model].channels;
-	delete convert[model].labels;
-	Object.defineProperty(convert[model], 'channels', {value: channels});
-	Object.defineProperty(convert[model], 'labels', {value: labels});
-}
-
-convert.rgb.hsl = function (rgb) {
-	const r = rgb[0] / 255;
-	const g = rgb[1] / 255;
-	const b = rgb[2] / 255;
-	const min = Math.min(r, g, b);
-	const max = Math.max(r, g, b);
-	const delta = max - min;
-	let h;
-	let s;
-
-	if (max === min) {
-		h = 0;
-	} else if (r === max) {
-		h = (g - b) / delta;
-	} else if (g === max) {
-		h = 2 + (b - r) / delta;
-	} else if (b === max) {
-		h = 4 + (r - g) / delta;
-	}
-
-	h = Math.min(h * 60, 360);
-
-	if (h < 0) {
-		h += 360;
-	}
-
-	const l = (min + max) / 2;
-
-	if (max === min) {
-		s = 0;
-	} else if (l <= 0.5) {
-		s = delta / (max + min);
-	} else {
-		s = delta / (2 - max - min);
-	}
-
-	return [h, s * 100, l * 100];
-};
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
     var defineProperty = (function() {
       try {
@@ -16301,7 +13489,6 @@ convert.rgb.hsl = function (rgb) {
       return this.__data__.has(key);
     }
 
-<<<<<<< HEAD
     /**
      * Sets the stack `key` to `value`.
      *
@@ -19697,583 +16884,6 @@ convert.rgb.hsl = function (rgb) {
           // Coerce booleans to `1` or `0` and dates to milliseconds.
           // Invalid dates are coerced to `NaN`.
           return eq(+object, +other);
-=======
-convert.rgb.hcg = function (rgb) {
-	const r = rgb[0] / 255;
-	const g = rgb[1] / 255;
-	const b = rgb[2] / 255;
-	const max = Math.max(Math.max(r, g), b);
-	const min = Math.min(Math.min(r, g), b);
-	const chroma = (max - min);
-	let grayscale;
-	let hue;
-
-	if (chroma < 1) {
-		grayscale = min / (1 - chroma);
-	} else {
-		grayscale = 0;
-	}
-
-	if (chroma <= 0) {
-		hue = 0;
-	} else
-	if (max === r) {
-		hue = ((g - b) / chroma) % 6;
-	} else
-	if (max === g) {
-		hue = 2 + (b - r) / chroma;
-	} else {
-		hue = 4 + (r - g) / chroma;
-	}
-
-	hue /= 6;
-	hue %= 1;
-
-	return [hue * 360, chroma * 100, grayscale * 100];
-};
-
-convert.hsl.hcg = function (hsl) {
-	const s = hsl[1] / 100;
-	const l = hsl[2] / 100;
-
-	const c = l < 0.5 ? (2.0 * s * l) : (2.0 * s * (1.0 - l));
-
-	let f = 0;
-	if (c < 1.0) {
-		f = (l - 0.5 * c) / (1.0 - c);
-	}
-
-	return [hsl[0], c * 100, f * 100];
-};
-
-convert.hsv.hcg = function (hsv) {
-	const s = hsv[1] / 100;
-	const v = hsv[2] / 100;
-
-	const c = s * v;
-	let f = 0;
-
-	if (c < 1.0) {
-		f = (v - c) / (1 - c);
-	}
-
-	return [hsv[0], c * 100, f * 100];
-};
-
-convert.hcg.rgb = function (hcg) {
-	const h = hcg[0] / 360;
-	const c = hcg[1] / 100;
-	const g = hcg[2] / 100;
-
-	if (c === 0.0) {
-		return [g * 255, g * 255, g * 255];
-	}
-
-	const pure = [0, 0, 0];
-	const hi = (h % 1) * 6;
-	const v = hi % 1;
-	const w = 1 - v;
-	let mg = 0;
-
-	/* eslint-disable max-statements-per-line */
-	switch (Math.floor(hi)) {
-		case 0:
-			pure[0] = 1; pure[1] = v; pure[2] = 0; break;
-		case 1:
-			pure[0] = w; pure[1] = 1; pure[2] = 0; break;
-		case 2:
-			pure[0] = 0; pure[1] = 1; pure[2] = v; break;
-		case 3:
-			pure[0] = 0; pure[1] = w; pure[2] = 1; break;
-		case 4:
-			pure[0] = v; pure[1] = 0; pure[2] = 1; break;
-		default:
-			pure[0] = 1; pure[1] = 0; pure[2] = w;
-	}
-	/* eslint-enable max-statements-per-line */
-
-	mg = (1.0 - c) * g;
-
-	return [
-		(c * pure[0] + mg) * 255,
-		(c * pure[1] + mg) * 255,
-		(c * pure[2] + mg) * 255
-	];
-};
-
-convert.hcg.hsv = function (hcg) {
-	const c = hcg[1] / 100;
-	const g = hcg[2] / 100;
-
-	const v = c + g * (1.0 - c);
-	let f = 0;
-
-	if (v > 0.0) {
-		f = c / v;
-	}
-
-	return [hcg[0], f * 100, v * 100];
-};
-
-convert.hcg.hsl = function (hcg) {
-	const c = hcg[1] / 100;
-	const g = hcg[2] / 100;
-
-	const l = g * (1.0 - c) + 0.5 * c;
-	let s = 0;
-
-	if (l > 0.0 && l < 0.5) {
-		s = c / (2 * l);
-	} else
-	if (l >= 0.5 && l < 1.0) {
-		s = c / (2 * (1 - l));
-	}
-
-	return [hcg[0], s * 100, l * 100];
-};
-
-convert.hcg.hwb = function (hcg) {
-	const c = hcg[1] / 100;
-	const g = hcg[2] / 100;
-	const v = c + g * (1.0 - c);
-	return [hcg[0], (v - c) * 100, (1 - v) * 100];
-};
-
-convert.hwb.hcg = function (hwb) {
-	const w = hwb[1] / 100;
-	const b = hwb[2] / 100;
-	const v = 1 - b;
-	const c = v - w;
-	let g = 0;
-
-	if (c < 1) {
-		g = (v - c) / (1 - c);
-	}
-
-	return [hwb[0], c * 100, g * 100];
-};
-
-convert.apple.rgb = function (apple) {
-	return [(apple[0] / 65535) * 255, (apple[1] / 65535) * 255, (apple[2] / 65535) * 255];
-};
-
-convert.rgb.apple = function (rgb) {
-	return [(rgb[0] / 255) * 65535, (rgb[1] / 255) * 65535, (rgb[2] / 255) * 65535];
-};
-
-convert.gray.rgb = function (args) {
-	return [args[0] / 100 * 255, args[0] / 100 * 255, args[0] / 100 * 255];
-};
-
-convert.gray.hsl = function (args) {
-	return [0, 0, args[0]];
-};
-
-convert.gray.hsv = convert.gray.hsl;
-
-convert.gray.hwb = function (gray) {
-	return [0, 100, gray[0]];
-};
-
-convert.gray.cmyk = function (gray) {
-	return [0, 0, 0, gray[0]];
-};
-
-convert.gray.lab = function (gray) {
-	return [gray[0], 0, 0];
-};
-
-convert.gray.hex = function (gray) {
-	const val = Math.round(gray[0] / 100 * 255) & 0xFF;
-	const integer = (val << 16) + (val << 8) + val;
-
-	const string = integer.toString(16).toUpperCase();
-	return '000000'.substring(string.length) + string;
-};
-
-convert.rgb.gray = function (rgb) {
-	const val = (rgb[0] + rgb[1] + rgb[2]) / 3;
-	return [val / 255 * 100];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/color-convert/index.js":
-/*!*********************************************!*\
-  !*** ./node_modules/color-convert/index.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const conversions = __webpack_require__(/*! ./conversions */ "./node_modules/color-convert/conversions.js");
-const route = __webpack_require__(/*! ./route */ "./node_modules/color-convert/route.js");
-
-const convert = {};
-
-const models = Object.keys(conversions);
-
-function wrapRaw(fn) {
-	const wrappedFn = function (...args) {
-		const arg0 = args[0];
-		if (arg0 === undefined || arg0 === null) {
-			return arg0;
-		}
-
-		if (arg0.length > 1) {
-			args = arg0;
-		}
-
-		return fn(args);
-	};
-
-	// Preserve .conversion property if there is one
-	if ('conversion' in fn) {
-		wrappedFn.conversion = fn.conversion;
-	}
-
-	return wrappedFn;
-}
-
-function wrapRounded(fn) {
-	const wrappedFn = function (...args) {
-		const arg0 = args[0];
-
-		if (arg0 === undefined || arg0 === null) {
-			return arg0;
-		}
-
-		if (arg0.length > 1) {
-			args = arg0;
-		}
-
-		const result = fn(args);
-
-		// We're assuming the result is an array here.
-		// see notice in conversions.js; don't use box types
-		// in conversion functions.
-		if (typeof result === 'object') {
-			for (let len = result.length, i = 0; i < len; i++) {
-				result[i] = Math.round(result[i]);
-			}
-		}
-
-		return result;
-	};
-
-	// Preserve .conversion property if there is one
-	if ('conversion' in fn) {
-		wrappedFn.conversion = fn.conversion;
-	}
-
-	return wrappedFn;
-}
-
-models.forEach(fromModel => {
-	convert[fromModel] = {};
-
-	Object.defineProperty(convert[fromModel], 'channels', {value: conversions[fromModel].channels});
-	Object.defineProperty(convert[fromModel], 'labels', {value: conversions[fromModel].labels});
-
-	const routes = route(fromModel);
-	const routeModels = Object.keys(routes);
-
-	routeModels.forEach(toModel => {
-		const fn = routes[toModel];
-
-		convert[fromModel][toModel] = wrapRounded(fn);
-		convert[fromModel][toModel].raw = wrapRaw(fn);
-	});
-});
-
-module.exports = convert;
-
-
-/***/ }),
-
-/***/ "./node_modules/color-convert/route.js":
-/*!*********************************************!*\
-  !*** ./node_modules/color-convert/route.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const conversions = __webpack_require__(/*! ./conversions */ "./node_modules/color-convert/conversions.js");
-
-/*
-	This function routes a model to all other models.
-
-	all functions that are routed have a property `.conversion` attached
-	to the returned synthetic function. This property is an array
-	of strings, each with the steps in between the 'from' and 'to'
-	color models (inclusive).
-
-	conversions that are not possible simply are not included.
-*/
-
-function buildGraph() {
-	const graph = {};
-	// https://jsperf.com/object-keys-vs-for-in-with-closure/3
-	const models = Object.keys(conversions);
-
-	for (let len = models.length, i = 0; i < len; i++) {
-		graph[models[i]] = {
-			// http://jsperf.com/1-vs-infinity
-			// micro-opt, but this is simple.
-			distance: -1,
-			parent: null
-		};
-	}
-
-	return graph;
-}
-
-// https://en.wikipedia.org/wiki/Breadth-first_search
-function deriveBFS(fromModel) {
-	const graph = buildGraph();
-	const queue = [fromModel]; // Unshift -> queue -> pop
-
-	graph[fromModel].distance = 0;
-
-	while (queue.length) {
-		const current = queue.pop();
-		const adjacents = Object.keys(conversions[current]);
-
-		for (let len = adjacents.length, i = 0; i < len; i++) {
-			const adjacent = adjacents[i];
-			const node = graph[adjacent];
-
-			if (node.distance === -1) {
-				node.distance = graph[current].distance + 1;
-				node.parent = current;
-				queue.unshift(adjacent);
-			}
-		}
-	}
-
-	return graph;
-}
-
-function link(from, to) {
-	return function (args) {
-		return to(from(args));
-	};
-}
-
-function wrapConversion(toModel, graph) {
-	const path = [graph[toModel].parent, toModel];
-	let fn = conversions[graph[toModel].parent][toModel];
-
-	let cur = graph[toModel].parent;
-	while (graph[cur].parent) {
-		path.unshift(graph[cur].parent);
-		fn = link(conversions[graph[cur].parent][cur], fn);
-		cur = graph[cur].parent;
-	}
-
-	fn.conversion = path;
-	return fn;
-}
-
-module.exports = function (fromModel) {
-	const graph = deriveBFS(fromModel);
-	const conversion = {};
-
-	const models = Object.keys(graph);
-	for (let len = models.length, i = 0; i < len; i++) {
-		const toModel = models[i];
-		const node = graph[toModel];
-
-		if (node.parent === null) {
-			// No possible conversion, or this node is the source model.
-			continue;
-		}
-
-		conversion[toModel] = wrapConversion(toModel, graph);
-	}
-
-	return conversion;
-};
-
-
-
-/***/ }),
-
-/***/ "./node_modules/color-name/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/color-name/index.js ***!
-  \******************************************/
-/***/ ((module) => {
-
-"use strict";
-
-
-module.exports = {
-	"aliceblue": [240, 248, 255],
-	"antiquewhite": [250, 235, 215],
-	"aqua": [0, 255, 255],
-	"aquamarine": [127, 255, 212],
-	"azure": [240, 255, 255],
-	"beige": [245, 245, 220],
-	"bisque": [255, 228, 196],
-	"black": [0, 0, 0],
-	"blanchedalmond": [255, 235, 205],
-	"blue": [0, 0, 255],
-	"blueviolet": [138, 43, 226],
-	"brown": [165, 42, 42],
-	"burlywood": [222, 184, 135],
-	"cadetblue": [95, 158, 160],
-	"chartreuse": [127, 255, 0],
-	"chocolate": [210, 105, 30],
-	"coral": [255, 127, 80],
-	"cornflowerblue": [100, 149, 237],
-	"cornsilk": [255, 248, 220],
-	"crimson": [220, 20, 60],
-	"cyan": [0, 255, 255],
-	"darkblue": [0, 0, 139],
-	"darkcyan": [0, 139, 139],
-	"darkgoldenrod": [184, 134, 11],
-	"darkgray": [169, 169, 169],
-	"darkgreen": [0, 100, 0],
-	"darkgrey": [169, 169, 169],
-	"darkkhaki": [189, 183, 107],
-	"darkmagenta": [139, 0, 139],
-	"darkolivegreen": [85, 107, 47],
-	"darkorange": [255, 140, 0],
-	"darkorchid": [153, 50, 204],
-	"darkred": [139, 0, 0],
-	"darksalmon": [233, 150, 122],
-	"darkseagreen": [143, 188, 143],
-	"darkslateblue": [72, 61, 139],
-	"darkslategray": [47, 79, 79],
-	"darkslategrey": [47, 79, 79],
-	"darkturquoise": [0, 206, 209],
-	"darkviolet": [148, 0, 211],
-	"deeppink": [255, 20, 147],
-	"deepskyblue": [0, 191, 255],
-	"dimgray": [105, 105, 105],
-	"dimgrey": [105, 105, 105],
-	"dodgerblue": [30, 144, 255],
-	"firebrick": [178, 34, 34],
-	"floralwhite": [255, 250, 240],
-	"forestgreen": [34, 139, 34],
-	"fuchsia": [255, 0, 255],
-	"gainsboro": [220, 220, 220],
-	"ghostwhite": [248, 248, 255],
-	"gold": [255, 215, 0],
-	"goldenrod": [218, 165, 32],
-	"gray": [128, 128, 128],
-	"green": [0, 128, 0],
-	"greenyellow": [173, 255, 47],
-	"grey": [128, 128, 128],
-	"honeydew": [240, 255, 240],
-	"hotpink": [255, 105, 180],
-	"indianred": [205, 92, 92],
-	"indigo": [75, 0, 130],
-	"ivory": [255, 255, 240],
-	"khaki": [240, 230, 140],
-	"lavender": [230, 230, 250],
-	"lavenderblush": [255, 240, 245],
-	"lawngreen": [124, 252, 0],
-	"lemonchiffon": [255, 250, 205],
-	"lightblue": [173, 216, 230],
-	"lightcoral": [240, 128, 128],
-	"lightcyan": [224, 255, 255],
-	"lightgoldenrodyellow": [250, 250, 210],
-	"lightgray": [211, 211, 211],
-	"lightgreen": [144, 238, 144],
-	"lightgrey": [211, 211, 211],
-	"lightpink": [255, 182, 193],
-	"lightsalmon": [255, 160, 122],
-	"lightseagreen": [32, 178, 170],
-	"lightskyblue": [135, 206, 250],
-	"lightslategray": [119, 136, 153],
-	"lightslategrey": [119, 136, 153],
-	"lightsteelblue": [176, 196, 222],
-	"lightyellow": [255, 255, 224],
-	"lime": [0, 255, 0],
-	"limegreen": [50, 205, 50],
-	"linen": [250, 240, 230],
-	"magenta": [255, 0, 255],
-	"maroon": [128, 0, 0],
-	"mediumaquamarine": [102, 205, 170],
-	"mediumblue": [0, 0, 205],
-	"mediumorchid": [186, 85, 211],
-	"mediumpurple": [147, 112, 219],
-	"mediumseagreen": [60, 179, 113],
-	"mediumslateblue": [123, 104, 238],
-	"mediumspringgreen": [0, 250, 154],
-	"mediumturquoise": [72, 209, 204],
-	"mediumvioletred": [199, 21, 133],
-	"midnightblue": [25, 25, 112],
-	"mintcream": [245, 255, 250],
-	"mistyrose": [255, 228, 225],
-	"moccasin": [255, 228, 181],
-	"navajowhite": [255, 222, 173],
-	"navy": [0, 0, 128],
-	"oldlace": [253, 245, 230],
-	"olive": [128, 128, 0],
-	"olivedrab": [107, 142, 35],
-	"orange": [255, 165, 0],
-	"orangered": [255, 69, 0],
-	"orchid": [218, 112, 214],
-	"palegoldenrod": [238, 232, 170],
-	"palegreen": [152, 251, 152],
-	"paleturquoise": [175, 238, 238],
-	"palevioletred": [219, 112, 147],
-	"papayawhip": [255, 239, 213],
-	"peachpuff": [255, 218, 185],
-	"peru": [205, 133, 63],
-	"pink": [255, 192, 203],
-	"plum": [221, 160, 221],
-	"powderblue": [176, 224, 230],
-	"purple": [128, 0, 128],
-	"rebeccapurple": [102, 51, 153],
-	"red": [255, 0, 0],
-	"rosybrown": [188, 143, 143],
-	"royalblue": [65, 105, 225],
-	"saddlebrown": [139, 69, 19],
-	"salmon": [250, 128, 114],
-	"sandybrown": [244, 164, 96],
-	"seagreen": [46, 139, 87],
-	"seashell": [255, 245, 238],
-	"sienna": [160, 82, 45],
-	"silver": [192, 192, 192],
-	"skyblue": [135, 206, 235],
-	"slateblue": [106, 90, 205],
-	"slategray": [112, 128, 144],
-	"slategrey": [112, 128, 144],
-	"snow": [255, 250, 250],
-	"springgreen": [0, 255, 127],
-	"steelblue": [70, 130, 180],
-	"tan": [210, 180, 140],
-	"teal": [0, 128, 128],
-	"thistle": [216, 191, 216],
-	"tomato": [255, 99, 71],
-	"turquoise": [64, 224, 208],
-	"violet": [238, 130, 238],
-	"wheat": [245, 222, 179],
-	"white": [255, 255, 255],
-	"whitesmoke": [245, 245, 245],
-	"yellow": [255, 255, 0],
-	"yellowgreen": [154, 205, 50]
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/laravel-mix/src/Log.js":
-/*!*********************************************!*\
-  !*** ./node_modules/laravel-mix/src/Log.js ***!
-  \*********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const chalk = __webpack_require__(/*! chalk */ "./node_modules/chalk/source/index.js");
-
-/**
- * @typedef {object} LogMessage
- * @property {string} text
- * @property {'info' | 'warn' | 'error'} type
- **/
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
         case errorTag:
           return object.name == other.name && object.message == other.message;
@@ -31118,7511 +27728,6 @@ const chalk = __webpack_require__(/*! chalk */ "./node_modules/chalk/source/inde
 
     /*------------------------------------------------------------------------*/
 
-<<<<<<< HEAD
-=======
-    /**
-     * Creates an object composed of keys generated from the results of running
-     * each element of `collection` thru `iteratee`. The corresponding value of
-     * each key is the number of times the key was returned by `iteratee`. The
-     * iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.5.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee to transform keys.
-     * @returns {Object} Returns the composed aggregate object.
-     * @example
-     *
-     * _.countBy([6.1, 4.2, 6.3], Math.floor);
-     * // => { '4': 1, '6': 2 }
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.countBy(['one', 'two', 'three'], 'length');
-     * // => { '3': 2, '5': 1 }
-     */
-    var countBy = createAggregator(function(result, value, key) {
-      if (hasOwnProperty.call(result, key)) {
-        ++result[key];
-      } else {
-        baseAssignValue(result, key, 1);
-      }
-    });
-
-    /**
-     * Checks if `predicate` returns truthy for **all** elements of `collection`.
-     * Iteration is stopped once `predicate` returns falsey. The predicate is
-     * invoked with three arguments: (value, index|key, collection).
-     *
-     * **Note:** This method returns `true` for
-     * [empty collections](https://en.wikipedia.org/wiki/Empty_set) because
-     * [everything is true](https://en.wikipedia.org/wiki/Vacuous_truth) of
-     * elements of empty collections.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {boolean} Returns `true` if all elements pass the predicate check,
-     *  else `false`.
-     * @example
-     *
-     * _.every([true, 1, null, 'yes'], Boolean);
-     * // => false
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': false },
-     *   { 'user': 'fred',   'age': 40, 'active': false }
-     * ];
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.every(users, { 'user': 'barney', 'active': false });
-     * // => false
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.every(users, ['active', false]);
-     * // => true
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.every(users, 'active');
-     * // => false
-     */
-    function every(collection, predicate, guard) {
-      var func = isArray(collection) ? arrayEvery : baseEvery;
-      if (guard && isIterateeCall(collection, predicate, guard)) {
-        predicate = undefined;
-      }
-      return func(collection, getIteratee(predicate, 3));
-    }
-
-    /**
-     * Iterates over elements of `collection`, returning an array of all elements
-     * `predicate` returns truthy for. The predicate is invoked with three
-     * arguments: (value, index|key, collection).
-     *
-     * **Note:** Unlike `_.remove`, this method returns a new array.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new filtered array.
-     * @see _.reject
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': true },
-     *   { 'user': 'fred',   'age': 40, 'active': false }
-     * ];
-     *
-     * _.filter(users, function(o) { return !o.active; });
-     * // => objects for ['fred']
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.filter(users, { 'age': 36, 'active': true });
-     * // => objects for ['barney']
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.filter(users, ['active', false]);
-     * // => objects for ['fred']
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.filter(users, 'active');
-     * // => objects for ['barney']
-     *
-     * // Combining several predicates using `_.overEvery` or `_.overSome`.
-     * _.filter(users, _.overSome([{ 'age': 36 }, ['age', 40]]));
-     * // => objects for ['fred', 'barney']
-     */
-    function filter(collection, predicate) {
-      var func = isArray(collection) ? arrayFilter : baseFilter;
-      return func(collection, getIteratee(predicate, 3));
-    }
-
-    /**
-     * Iterates over elements of `collection`, returning the first element
-     * `predicate` returns truthy for. The predicate is invoked with three
-     * arguments: (value, index|key, collection).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to inspect.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @param {number} [fromIndex=0] The index to search from.
-     * @returns {*} Returns the matched element, else `undefined`.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney',  'age': 36, 'active': true },
-     *   { 'user': 'fred',    'age': 40, 'active': false },
-     *   { 'user': 'pebbles', 'age': 1,  'active': true }
-     * ];
-     *
-     * _.find(users, function(o) { return o.age < 40; });
-     * // => object for 'barney'
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.find(users, { 'age': 1, 'active': true });
-     * // => object for 'pebbles'
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.find(users, ['active', false]);
-     * // => object for 'fred'
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.find(users, 'active');
-     * // => object for 'barney'
-     */
-    var find = createFind(findIndex);
-
-    /**
-     * This method is like `_.find` except that it iterates over elements of
-     * `collection` from right to left.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to inspect.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @param {number} [fromIndex=collection.length-1] The index to search from.
-     * @returns {*} Returns the matched element, else `undefined`.
-     * @example
-     *
-     * _.findLast([1, 2, 3, 4], function(n) {
-     *   return n % 2 == 1;
-     * });
-     * // => 3
-     */
-    var findLast = createFind(findLastIndex);
-
-    /**
-     * Creates a flattened array of values by running each element in `collection`
-     * thru `iteratee` and flattening the mapped results. The iteratee is invoked
-     * with three arguments: (value, index|key, collection).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new flattened array.
-     * @example
-     *
-     * function duplicate(n) {
-     *   return [n, n];
-     * }
-     *
-     * _.flatMap([1, 2], duplicate);
-     * // => [1, 1, 2, 2]
-     */
-    function flatMap(collection, iteratee) {
-      return baseFlatten(map(collection, iteratee), 1);
-    }
-
-    /**
-     * This method is like `_.flatMap` except that it recursively flattens the
-     * mapped results.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.7.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new flattened array.
-     * @example
-     *
-     * function duplicate(n) {
-     *   return [[[n, n]]];
-     * }
-     *
-     * _.flatMapDeep([1, 2], duplicate);
-     * // => [1, 1, 2, 2]
-     */
-    function flatMapDeep(collection, iteratee) {
-      return baseFlatten(map(collection, iteratee), INFINITY);
-    }
-
-    /**
-     * This method is like `_.flatMap` except that it recursively flattens the
-     * mapped results up to `depth` times.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.7.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {number} [depth=1] The maximum recursion depth.
-     * @returns {Array} Returns the new flattened array.
-     * @example
-     *
-     * function duplicate(n) {
-     *   return [[[n, n]]];
-     * }
-     *
-     * _.flatMapDepth([1, 2], duplicate, 2);
-     * // => [[1, 1], [2, 2]]
-     */
-    function flatMapDepth(collection, iteratee, depth) {
-      depth = depth === undefined ? 1 : toInteger(depth);
-      return baseFlatten(map(collection, iteratee), depth);
-    }
-
-    /**
-     * Iterates over elements of `collection` and invokes `iteratee` for each element.
-     * The iteratee is invoked with three arguments: (value, index|key, collection).
-     * Iteratee functions may exit iteration early by explicitly returning `false`.
-     *
-     * **Note:** As with other "Collections" methods, objects with a "length"
-     * property are iterated like arrays. To avoid this behavior use `_.forIn`
-     * or `_.forOwn` for object iteration.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @alias each
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array|Object} Returns `collection`.
-     * @see _.forEachRight
-     * @example
-     *
-     * _.forEach([1, 2], function(value) {
-     *   console.log(value);
-     * });
-     * // => Logs `1` then `2`.
-     *
-     * _.forEach({ 'a': 1, 'b': 2 }, function(value, key) {
-     *   console.log(key);
-     * });
-     * // => Logs 'a' then 'b' (iteration order is not guaranteed).
-     */
-    function forEach(collection, iteratee) {
-      var func = isArray(collection) ? arrayEach : baseEach;
-      return func(collection, getIteratee(iteratee, 3));
-    }
-
-    /**
-     * This method is like `_.forEach` except that it iterates over elements of
-     * `collection` from right to left.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @alias eachRight
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array|Object} Returns `collection`.
-     * @see _.forEach
-     * @example
-     *
-     * _.forEachRight([1, 2], function(value) {
-     *   console.log(value);
-     * });
-     * // => Logs `2` then `1`.
-     */
-    function forEachRight(collection, iteratee) {
-      var func = isArray(collection) ? arrayEachRight : baseEachRight;
-      return func(collection, getIteratee(iteratee, 3));
-    }
-
-    /**
-     * Creates an object composed of keys generated from the results of running
-     * each element of `collection` thru `iteratee`. The order of grouped values
-     * is determined by the order they occur in `collection`. The corresponding
-     * value of each key is an array of elements responsible for generating the
-     * key. The iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee to transform keys.
-     * @returns {Object} Returns the composed aggregate object.
-     * @example
-     *
-     * _.groupBy([6.1, 4.2, 6.3], Math.floor);
-     * // => { '4': [4.2], '6': [6.1, 6.3] }
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.groupBy(['one', 'two', 'three'], 'length');
-     * // => { '3': ['one', 'two'], '5': ['three'] }
-     */
-    var groupBy = createAggregator(function(result, value, key) {
-      if (hasOwnProperty.call(result, key)) {
-        result[key].push(value);
-      } else {
-        baseAssignValue(result, key, [value]);
-      }
-    });
-
-    /**
-     * Checks if `value` is in `collection`. If `collection` is a string, it's
-     * checked for a substring of `value`, otherwise
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-     * is used for equality comparisons. If `fromIndex` is negative, it's used as
-     * the offset from the end of `collection`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to inspect.
-     * @param {*} value The value to search for.
-     * @param {number} [fromIndex=0] The index to search from.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.reduce`.
-     * @returns {boolean} Returns `true` if `value` is found, else `false`.
-     * @example
-     *
-     * _.includes([1, 2, 3], 1);
-     * // => true
-     *
-     * _.includes([1, 2, 3], 1, 2);
-     * // => false
-     *
-     * _.includes({ 'a': 1, 'b': 2 }, 1);
-     * // => true
-     *
-     * _.includes('abcd', 'bc');
-     * // => true
-     */
-    function includes(collection, value, fromIndex, guard) {
-      collection = isArrayLike(collection) ? collection : values(collection);
-      fromIndex = (fromIndex && !guard) ? toInteger(fromIndex) : 0;
-
-      var length = collection.length;
-      if (fromIndex < 0) {
-        fromIndex = nativeMax(length + fromIndex, 0);
-      }
-      return isString(collection)
-        ? (fromIndex <= length && collection.indexOf(value, fromIndex) > -1)
-        : (!!length && baseIndexOf(collection, value, fromIndex) > -1);
-    }
-
-    /**
-     * Invokes the method at `path` of each element in `collection`, returning
-     * an array of the results of each invoked method. Any additional arguments
-     * are provided to each invoked method. If `path` is a function, it's invoked
-     * for, and `this` bound to, each element in `collection`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Array|Function|string} path The path of the method to invoke or
-     *  the function invoked per iteration.
-     * @param {...*} [args] The arguments to invoke each method with.
-     * @returns {Array} Returns the array of results.
-     * @example
-     *
-     * _.invokeMap([[5, 1, 7], [3, 2, 1]], 'sort');
-     * // => [[1, 5, 7], [1, 2, 3]]
-     *
-     * _.invokeMap([123, 456], String.prototype.split, '');
-     * // => [['1', '2', '3'], ['4', '5', '6']]
-     */
-    var invokeMap = baseRest(function(collection, path, args) {
-      var index = -1,
-          isFunc = typeof path == 'function',
-          result = isArrayLike(collection) ? Array(collection.length) : [];
-
-      baseEach(collection, function(value) {
-        result[++index] = isFunc ? apply(path, value, args) : baseInvoke(value, path, args);
-      });
-      return result;
-    });
-
-    /**
-     * Creates an object composed of keys generated from the results of running
-     * each element of `collection` thru `iteratee`. The corresponding value of
-     * each key is the last element responsible for generating the key. The
-     * iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee to transform keys.
-     * @returns {Object} Returns the composed aggregate object.
-     * @example
-     *
-     * var array = [
-     *   { 'dir': 'left', 'code': 97 },
-     *   { 'dir': 'right', 'code': 100 }
-     * ];
-     *
-     * _.keyBy(array, function(o) {
-     *   return String.fromCharCode(o.code);
-     * });
-     * // => { 'a': { 'dir': 'left', 'code': 97 }, 'd': { 'dir': 'right', 'code': 100 } }
-     *
-     * _.keyBy(array, 'dir');
-     * // => { 'left': { 'dir': 'left', 'code': 97 }, 'right': { 'dir': 'right', 'code': 100 } }
-     */
-    var keyBy = createAggregator(function(result, value, key) {
-      baseAssignValue(result, key, value);
-    });
-
-    /**
-     * Creates an array of values by running each element in `collection` thru
-     * `iteratee`. The iteratee is invoked with three arguments:
-     * (value, index|key, collection).
-     *
-     * Many lodash methods are guarded to work as iteratees for methods like
-     * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
-     *
-     * The guarded methods are:
-     * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
-     * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
-     * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
-     * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new mapped array.
-     * @example
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * _.map([4, 8], square);
-     * // => [16, 64]
-     *
-     * _.map({ 'a': 4, 'b': 8 }, square);
-     * // => [16, 64] (iteration order is not guaranteed)
-     *
-     * var users = [
-     *   { 'user': 'barney' },
-     *   { 'user': 'fred' }
-     * ];
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.map(users, 'user');
-     * // => ['barney', 'fred']
-     */
-    function map(collection, iteratee) {
-      var func = isArray(collection) ? arrayMap : baseMap;
-      return func(collection, getIteratee(iteratee, 3));
-    }
-
-    /**
-     * This method is like `_.sortBy` except that it allows specifying the sort
-     * orders of the iteratees to sort by. If `orders` is unspecified, all values
-     * are sorted in ascending order. Otherwise, specify an order of "desc" for
-     * descending or "asc" for ascending sort order of corresponding values.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Array[]|Function[]|Object[]|string[]} [iteratees=[_.identity]]
-     *  The iteratees to sort by.
-     * @param {string[]} [orders] The sort orders of `iteratees`.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.reduce`.
-     * @returns {Array} Returns the new sorted array.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'fred',   'age': 48 },
-     *   { 'user': 'barney', 'age': 34 },
-     *   { 'user': 'fred',   'age': 40 },
-     *   { 'user': 'barney', 'age': 36 }
-     * ];
-     *
-     * // Sort by `user` in ascending order and by `age` in descending order.
-     * _.orderBy(users, ['user', 'age'], ['asc', 'desc']);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 40]]
-     */
-    function orderBy(collection, iteratees, orders, guard) {
-      if (collection == null) {
-        return [];
-      }
-      if (!isArray(iteratees)) {
-        iteratees = iteratees == null ? [] : [iteratees];
-      }
-      orders = guard ? undefined : orders;
-      if (!isArray(orders)) {
-        orders = orders == null ? [] : [orders];
-      }
-      return baseOrderBy(collection, iteratees, orders);
-    }
-
-    /**
-     * Creates an array of elements split into two groups, the first of which
-     * contains elements `predicate` returns truthy for, the second of which
-     * contains elements `predicate` returns falsey for. The predicate is
-     * invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the array of grouped elements.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney',  'age': 36, 'active': false },
-     *   { 'user': 'fred',    'age': 40, 'active': true },
-     *   { 'user': 'pebbles', 'age': 1,  'active': false }
-     * ];
-     *
-     * _.partition(users, function(o) { return o.active; });
-     * // => objects for [['fred'], ['barney', 'pebbles']]
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.partition(users, { 'age': 1, 'active': false });
-     * // => objects for [['pebbles'], ['barney', 'fred']]
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.partition(users, ['active', false]);
-     * // => objects for [['barney', 'pebbles'], ['fred']]
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.partition(users, 'active');
-     * // => objects for [['fred'], ['barney', 'pebbles']]
-     */
-    var partition = createAggregator(function(result, value, key) {
-      result[key ? 0 : 1].push(value);
-    }, function() { return [[], []]; });
-
-    /**
-     * Reduces `collection` to a value which is the accumulated result of running
-     * each element in `collection` thru `iteratee`, where each successive
-     * invocation is supplied the return value of the previous. If `accumulator`
-     * is not given, the first element of `collection` is used as the initial
-     * value. The iteratee is invoked with four arguments:
-     * (accumulator, value, index|key, collection).
-     *
-     * Many lodash methods are guarded to work as iteratees for methods like
-     * `_.reduce`, `_.reduceRight`, and `_.transform`.
-     *
-     * The guarded methods are:
-     * `assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `orderBy`,
-     * and `sortBy`
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @returns {*} Returns the accumulated value.
-     * @see _.reduceRight
-     * @example
-     *
-     * _.reduce([1, 2], function(sum, n) {
-     *   return sum + n;
-     * }, 0);
-     * // => 3
-     *
-     * _.reduce({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
-     *   (result[value] || (result[value] = [])).push(key);
-     *   return result;
-     * }, {});
-     * // => { '1': ['a', 'c'], '2': ['b'] } (iteration order is not guaranteed)
-     */
-    function reduce(collection, iteratee, accumulator) {
-      var func = isArray(collection) ? arrayReduce : baseReduce,
-          initAccum = arguments.length < 3;
-
-      return func(collection, getIteratee(iteratee, 4), accumulator, initAccum, baseEach);
-    }
-
-    /**
-     * This method is like `_.reduce` except that it iterates over elements of
-     * `collection` from right to left.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {*} [accumulator] The initial value.
-     * @returns {*} Returns the accumulated value.
-     * @see _.reduce
-     * @example
-     *
-     * var array = [[0, 1], [2, 3], [4, 5]];
-     *
-     * _.reduceRight(array, function(flattened, other) {
-     *   return flattened.concat(other);
-     * }, []);
-     * // => [4, 5, 2, 3, 0, 1]
-     */
-    function reduceRight(collection, iteratee, accumulator) {
-      var func = isArray(collection) ? arrayReduceRight : baseReduce,
-          initAccum = arguments.length < 3;
-
-      return func(collection, getIteratee(iteratee, 4), accumulator, initAccum, baseEachRight);
-    }
-
-    /**
-     * The opposite of `_.filter`; this method returns the elements of `collection`
-     * that `predicate` does **not** return truthy for.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the new filtered array.
-     * @see _.filter
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': false },
-     *   { 'user': 'fred',   'age': 40, 'active': true }
-     * ];
-     *
-     * _.reject(users, function(o) { return !o.active; });
-     * // => objects for ['fred']
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.reject(users, { 'age': 40, 'active': true });
-     * // => objects for ['barney']
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.reject(users, ['active', false]);
-     * // => objects for ['fred']
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.reject(users, 'active');
-     * // => objects for ['barney']
-     */
-    function reject(collection, predicate) {
-      var func = isArray(collection) ? arrayFilter : baseFilter;
-      return func(collection, negate(getIteratee(predicate, 3)));
-    }
-
-    /**
-     * Gets a random element from `collection`.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to sample.
-     * @returns {*} Returns the random element.
-     * @example
-     *
-     * _.sample([1, 2, 3, 4]);
-     * // => 2
-     */
-    function sample(collection) {
-      var func = isArray(collection) ? arraySample : baseSample;
-      return func(collection);
-    }
-
-    /**
-     * Gets `n` random elements at unique keys from `collection` up to the
-     * size of `collection`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to sample.
-     * @param {number} [n=1] The number of elements to sample.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Array} Returns the random elements.
-     * @example
-     *
-     * _.sampleSize([1, 2, 3], 2);
-     * // => [3, 1]
-     *
-     * _.sampleSize([1, 2, 3], 4);
-     * // => [2, 3, 1]
-     */
-    function sampleSize(collection, n, guard) {
-      if ((guard ? isIterateeCall(collection, n, guard) : n === undefined)) {
-        n = 1;
-      } else {
-        n = toInteger(n);
-      }
-      var func = isArray(collection) ? arraySampleSize : baseSampleSize;
-      return func(collection, n);
-    }
-
-    /**
-     * Creates an array of shuffled values, using a version of the
-     * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to shuffle.
-     * @returns {Array} Returns the new shuffled array.
-     * @example
-     *
-     * _.shuffle([1, 2, 3, 4]);
-     * // => [4, 1, 3, 2]
-     */
-    function shuffle(collection) {
-      var func = isArray(collection) ? arrayShuffle : baseShuffle;
-      return func(collection);
-    }
-
-    /**
-     * Gets the size of `collection` by returning its length for array-like
-     * values or the number of own enumerable string keyed properties for objects.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to inspect.
-     * @returns {number} Returns the collection size.
-     * @example
-     *
-     * _.size([1, 2, 3]);
-     * // => 3
-     *
-     * _.size({ 'a': 1, 'b': 2 });
-     * // => 2
-     *
-     * _.size('pebbles');
-     * // => 7
-     */
-    function size(collection) {
-      if (collection == null) {
-        return 0;
-      }
-      if (isArrayLike(collection)) {
-        return isString(collection) ? stringSize(collection) : collection.length;
-      }
-      var tag = getTag(collection);
-      if (tag == mapTag || tag == setTag) {
-        return collection.size;
-      }
-      return baseKeys(collection).length;
-    }
-
-    /**
-     * Checks if `predicate` returns truthy for **any** element of `collection`.
-     * Iteration is stopped once `predicate` returns truthy. The predicate is
-     * invoked with three arguments: (value, index|key, collection).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {boolean} Returns `true` if any element passes the predicate check,
-     *  else `false`.
-     * @example
-     *
-     * _.some([null, 0, 'yes', false], Boolean);
-     * // => true
-     *
-     * var users = [
-     *   { 'user': 'barney', 'active': true },
-     *   { 'user': 'fred',   'active': false }
-     * ];
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.some(users, { 'user': 'barney', 'active': false });
-     * // => false
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.some(users, ['active', false]);
-     * // => true
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.some(users, 'active');
-     * // => true
-     */
-    function some(collection, predicate, guard) {
-      var func = isArray(collection) ? arraySome : baseSome;
-      if (guard && isIterateeCall(collection, predicate, guard)) {
-        predicate = undefined;
-      }
-      return func(collection, getIteratee(predicate, 3));
-    }
-
-    /**
-     * Creates an array of elements, sorted in ascending order by the results of
-     * running each element in a collection thru each iteratee. This method
-     * performs a stable sort, that is, it preserves the original sort order of
-     * equal elements. The iteratees are invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Collection
-     * @param {Array|Object} collection The collection to iterate over.
-     * @param {...(Function|Function[])} [iteratees=[_.identity]]
-     *  The iteratees to sort by.
-     * @returns {Array} Returns the new sorted array.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'fred',   'age': 48 },
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 30 },
-     *   { 'user': 'barney', 'age': 34 }
-     * ];
-     *
-     * _.sortBy(users, [function(o) { return o.user; }]);
-     * // => objects for [['barney', 36], ['barney', 34], ['fred', 48], ['fred', 30]]
-     *
-     * _.sortBy(users, ['user', 'age']);
-     * // => objects for [['barney', 34], ['barney', 36], ['fred', 30], ['fred', 48]]
-     */
-    var sortBy = baseRest(function(collection, iteratees) {
-      if (collection == null) {
-        return [];
-      }
-      var length = iteratees.length;
-      if (length > 1 && isIterateeCall(collection, iteratees[0], iteratees[1])) {
-        iteratees = [];
-      } else if (length > 2 && isIterateeCall(iteratees[0], iteratees[1], iteratees[2])) {
-        iteratees = [iteratees[0]];
-      }
-      return baseOrderBy(collection, baseFlatten(iteratees, 1), []);
-    });
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Gets the timestamp of the number of milliseconds that have elapsed since
-     * the Unix epoch (1 January 1970 00:00:00 UTC).
-     *
-     * @static
-     * @memberOf _
-     * @since 2.4.0
-     * @category Date
-     * @returns {number} Returns the timestamp.
-     * @example
-     *
-     * _.defer(function(stamp) {
-     *   console.log(_.now() - stamp);
-     * }, _.now());
-     * // => Logs the number of milliseconds it took for the deferred invocation.
-     */
-    var now = ctxNow || function() {
-      return root.Date.now();
-    };
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * The opposite of `_.before`; this method creates a function that invokes
-     * `func` once it's called `n` or more times.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {number} n The number of calls before `func` is invoked.
-     * @param {Function} func The function to restrict.
-     * @returns {Function} Returns the new restricted function.
-     * @example
-     *
-     * var saves = ['profile', 'settings'];
-     *
-     * var done = _.after(saves.length, function() {
-     *   console.log('done saving!');
-     * });
-     *
-     * _.forEach(saves, function(type) {
-     *   asyncSave({ 'type': type, 'complete': done });
-     * });
-     * // => Logs 'done saving!' after the two async saves have completed.
-     */
-    function after(n, func) {
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      n = toInteger(n);
-      return function() {
-        if (--n < 1) {
-          return func.apply(this, arguments);
-        }
-      };
-    }
-
-    /**
-     * Creates a function that invokes `func`, with up to `n` arguments,
-     * ignoring any additional arguments.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Function
-     * @param {Function} func The function to cap arguments for.
-     * @param {number} [n=func.length] The arity cap.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Function} Returns the new capped function.
-     * @example
-     *
-     * _.map(['6', '8', '10'], _.ary(parseInt, 1));
-     * // => [6, 8, 10]
-     */
-    function ary(func, n, guard) {
-      n = guard ? undefined : n;
-      n = (func && n == null) ? func.length : n;
-      return createWrap(func, WRAP_ARY_FLAG, undefined, undefined, undefined, undefined, n);
-    }
-
-    /**
-     * Creates a function that invokes `func`, with the `this` binding and arguments
-     * of the created function, while it's called less than `n` times. Subsequent
-     * calls to the created function return the result of the last `func` invocation.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Function
-     * @param {number} n The number of calls at which `func` is no longer invoked.
-     * @param {Function} func The function to restrict.
-     * @returns {Function} Returns the new restricted function.
-     * @example
-     *
-     * jQuery(element).on('click', _.before(5, addContactToList));
-     * // => Allows adding up to 4 contacts to the list.
-     */
-    function before(n, func) {
-      var result;
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      n = toInteger(n);
-      return function() {
-        if (--n > 0) {
-          result = func.apply(this, arguments);
-        }
-        if (n <= 1) {
-          func = undefined;
-        }
-        return result;
-      };
-    }
-
-    /**
-     * Creates a function that invokes `func` with the `this` binding of `thisArg`
-     * and `partials` prepended to the arguments it receives.
-     *
-     * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
-     * may be used as a placeholder for partially applied arguments.
-     *
-     * **Note:** Unlike native `Function#bind`, this method doesn't set the "length"
-     * property of bound functions.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to bind.
-     * @param {*} thisArg The `this` binding of `func`.
-     * @param {...*} [partials] The arguments to be partially applied.
-     * @returns {Function} Returns the new bound function.
-     * @example
-     *
-     * function greet(greeting, punctuation) {
-     *   return greeting + ' ' + this.user + punctuation;
-     * }
-     *
-     * var object = { 'user': 'fred' };
-     *
-     * var bound = _.bind(greet, object, 'hi');
-     * bound('!');
-     * // => 'hi fred!'
-     *
-     * // Bound with placeholders.
-     * var bound = _.bind(greet, object, _, '!');
-     * bound('hi');
-     * // => 'hi fred!'
-     */
-    var bind = baseRest(function(func, thisArg, partials) {
-      var bitmask = WRAP_BIND_FLAG;
-      if (partials.length) {
-        var holders = replaceHolders(partials, getHolder(bind));
-        bitmask |= WRAP_PARTIAL_FLAG;
-      }
-      return createWrap(func, bitmask, thisArg, partials, holders);
-    });
-
-    /**
-     * Creates a function that invokes the method at `object[key]` with `partials`
-     * prepended to the arguments it receives.
-     *
-     * This method differs from `_.bind` by allowing bound functions to reference
-     * methods that may be redefined or don't yet exist. See
-     * [Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)
-     * for more details.
-     *
-     * The `_.bindKey.placeholder` value, which defaults to `_` in monolithic
-     * builds, may be used as a placeholder for partially applied arguments.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.10.0
-     * @category Function
-     * @param {Object} object The object to invoke the method on.
-     * @param {string} key The key of the method.
-     * @param {...*} [partials] The arguments to be partially applied.
-     * @returns {Function} Returns the new bound function.
-     * @example
-     *
-     * var object = {
-     *   'user': 'fred',
-     *   'greet': function(greeting, punctuation) {
-     *     return greeting + ' ' + this.user + punctuation;
-     *   }
-     * };
-     *
-     * var bound = _.bindKey(object, 'greet', 'hi');
-     * bound('!');
-     * // => 'hi fred!'
-     *
-     * object.greet = function(greeting, punctuation) {
-     *   return greeting + 'ya ' + this.user + punctuation;
-     * };
-     *
-     * bound('!');
-     * // => 'hiya fred!'
-     *
-     * // Bound with placeholders.
-     * var bound = _.bindKey(object, 'greet', _, '!');
-     * bound('hi');
-     * // => 'hiya fred!'
-     */
-    var bindKey = baseRest(function(object, key, partials) {
-      var bitmask = WRAP_BIND_FLAG | WRAP_BIND_KEY_FLAG;
-      if (partials.length) {
-        var holders = replaceHolders(partials, getHolder(bindKey));
-        bitmask |= WRAP_PARTIAL_FLAG;
-      }
-      return createWrap(key, bitmask, object, partials, holders);
-    });
-
-    /**
-     * Creates a function that accepts arguments of `func` and either invokes
-     * `func` returning its result, if at least `arity` number of arguments have
-     * been provided, or returns a function that accepts the remaining `func`
-     * arguments, and so on. The arity of `func` may be specified if `func.length`
-     * is not sufficient.
-     *
-     * The `_.curry.placeholder` value, which defaults to `_` in monolithic builds,
-     * may be used as a placeholder for provided arguments.
-     *
-     * **Note:** This method doesn't set the "length" property of curried functions.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Function
-     * @param {Function} func The function to curry.
-     * @param {number} [arity=func.length] The arity of `func`.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Function} Returns the new curried function.
-     * @example
-     *
-     * var abc = function(a, b, c) {
-     *   return [a, b, c];
-     * };
-     *
-     * var curried = _.curry(abc);
-     *
-     * curried(1)(2)(3);
-     * // => [1, 2, 3]
-     *
-     * curried(1, 2)(3);
-     * // => [1, 2, 3]
-     *
-     * curried(1, 2, 3);
-     * // => [1, 2, 3]
-     *
-     * // Curried with placeholders.
-     * curried(1)(_, 3)(2);
-     * // => [1, 2, 3]
-     */
-    function curry(func, arity, guard) {
-      arity = guard ? undefined : arity;
-      var result = createWrap(func, WRAP_CURRY_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = curry.placeholder;
-      return result;
-    }
-
-    /**
-     * This method is like `_.curry` except that arguments are applied to `func`
-     * in the manner of `_.partialRight` instead of `_.partial`.
-     *
-     * The `_.curryRight.placeholder` value, which defaults to `_` in monolithic
-     * builds, may be used as a placeholder for provided arguments.
-     *
-     * **Note:** This method doesn't set the "length" property of curried functions.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Function
-     * @param {Function} func The function to curry.
-     * @param {number} [arity=func.length] The arity of `func`.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Function} Returns the new curried function.
-     * @example
-     *
-     * var abc = function(a, b, c) {
-     *   return [a, b, c];
-     * };
-     *
-     * var curried = _.curryRight(abc);
-     *
-     * curried(3)(2)(1);
-     * // => [1, 2, 3]
-     *
-     * curried(2, 3)(1);
-     * // => [1, 2, 3]
-     *
-     * curried(1, 2, 3);
-     * // => [1, 2, 3]
-     *
-     * // Curried with placeholders.
-     * curried(3)(1, _)(2);
-     * // => [1, 2, 3]
-     */
-    function curryRight(func, arity, guard) {
-      arity = guard ? undefined : arity;
-      var result = createWrap(func, WRAP_CURRY_RIGHT_FLAG, undefined, undefined, undefined, undefined, undefined, arity);
-      result.placeholder = curryRight.placeholder;
-      return result;
-    }
-
-    /**
-     * Creates a debounced function that delays invoking `func` until after `wait`
-     * milliseconds have elapsed since the last time the debounced function was
-     * invoked. The debounced function comes with a `cancel` method to cancel
-     * delayed `func` invocations and a `flush` method to immediately invoke them.
-     * Provide `options` to indicate whether `func` should be invoked on the
-     * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
-     * with the last arguments provided to the debounced function. Subsequent
-     * calls to the debounced function return the result of the last `func`
-     * invocation.
-     *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is
-     * invoked on the trailing edge of the timeout only if the debounced function
-     * is invoked more than once during the `wait` timeout.
-     *
-     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
-     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
-     *
-     * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
-     * for details over the differences between `_.debounce` and `_.throttle`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to debounce.
-     * @param {number} [wait=0] The number of milliseconds to delay.
-     * @param {Object} [options={}] The options object.
-     * @param {boolean} [options.leading=false]
-     *  Specify invoking on the leading edge of the timeout.
-     * @param {number} [options.maxWait]
-     *  The maximum time `func` is allowed to be delayed before it's invoked.
-     * @param {boolean} [options.trailing=true]
-     *  Specify invoking on the trailing edge of the timeout.
-     * @returns {Function} Returns the new debounced function.
-     * @example
-     *
-     * // Avoid costly calculations while the window size is in flux.
-     * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
-     *
-     * // Invoke `sendMail` when clicked, debouncing subsequent calls.
-     * jQuery(element).on('click', _.debounce(sendMail, 300, {
-     *   'leading': true,
-     *   'trailing': false
-     * }));
-     *
-     * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
-     * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
-     * var source = new EventSource('/stream');
-     * jQuery(source).on('message', debounced);
-     *
-     * // Cancel the trailing debounced invocation.
-     * jQuery(window).on('popstate', debounced.cancel);
-     */
-    function debounce(func, wait, options) {
-      var lastArgs,
-          lastThis,
-          maxWait,
-          result,
-          timerId,
-          lastCallTime,
-          lastInvokeTime = 0,
-          leading = false,
-          maxing = false,
-          trailing = true;
-
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      wait = toNumber(wait) || 0;
-      if (isObject(options)) {
-        leading = !!options.leading;
-        maxing = 'maxWait' in options;
-        maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
-      }
-
-      function invokeFunc(time) {
-        var args = lastArgs,
-            thisArg = lastThis;
-
-        lastArgs = lastThis = undefined;
-        lastInvokeTime = time;
-        result = func.apply(thisArg, args);
-        return result;
-      }
-
-      function leadingEdge(time) {
-        // Reset any `maxWait` timer.
-        lastInvokeTime = time;
-        // Start the timer for the trailing edge.
-        timerId = setTimeout(timerExpired, wait);
-        // Invoke the leading edge.
-        return leading ? invokeFunc(time) : result;
-      }
-
-      function remainingWait(time) {
-        var timeSinceLastCall = time - lastCallTime,
-            timeSinceLastInvoke = time - lastInvokeTime,
-            timeWaiting = wait - timeSinceLastCall;
-
-        return maxing
-          ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
-          : timeWaiting;
-      }
-
-      function shouldInvoke(time) {
-        var timeSinceLastCall = time - lastCallTime,
-            timeSinceLastInvoke = time - lastInvokeTime;
-
-        // Either this is the first call, activity has stopped and we're at the
-        // trailing edge, the system time has gone backwards and we're treating
-        // it as the trailing edge, or we've hit the `maxWait` limit.
-        return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
-          (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
-      }
-
-      function timerExpired() {
-        var time = now();
-        if (shouldInvoke(time)) {
-          return trailingEdge(time);
-        }
-        // Restart the timer.
-        timerId = setTimeout(timerExpired, remainingWait(time));
-      }
-
-      function trailingEdge(time) {
-        timerId = undefined;
-
-        // Only invoke if we have `lastArgs` which means `func` has been
-        // debounced at least once.
-        if (trailing && lastArgs) {
-          return invokeFunc(time);
-        }
-        lastArgs = lastThis = undefined;
-        return result;
-      }
-
-      function cancel() {
-        if (timerId !== undefined) {
-          clearTimeout(timerId);
-        }
-        lastInvokeTime = 0;
-        lastArgs = lastCallTime = lastThis = timerId = undefined;
-      }
-
-      function flush() {
-        return timerId === undefined ? result : trailingEdge(now());
-      }
-
-      function debounced() {
-        var time = now(),
-            isInvoking = shouldInvoke(time);
-
-        lastArgs = arguments;
-        lastThis = this;
-        lastCallTime = time;
-
-        if (isInvoking) {
-          if (timerId === undefined) {
-            return leadingEdge(lastCallTime);
-          }
-          if (maxing) {
-            // Handle invocations in a tight loop.
-            clearTimeout(timerId);
-            timerId = setTimeout(timerExpired, wait);
-            return invokeFunc(lastCallTime);
-          }
-        }
-        if (timerId === undefined) {
-          timerId = setTimeout(timerExpired, wait);
-        }
-        return result;
-      }
-      debounced.cancel = cancel;
-      debounced.flush = flush;
-      return debounced;
-    }
-
-    /**
-     * Defers invoking the `func` until the current call stack has cleared. Any
-     * additional arguments are provided to `func` when it's invoked.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to defer.
-     * @param {...*} [args] The arguments to invoke `func` with.
-     * @returns {number} Returns the timer id.
-     * @example
-     *
-     * _.defer(function(text) {
-     *   console.log(text);
-     * }, 'deferred');
-     * // => Logs 'deferred' after one millisecond.
-     */
-    var defer = baseRest(function(func, args) {
-      return baseDelay(func, 1, args);
-    });
-
-    /**
-     * Invokes `func` after `wait` milliseconds. Any additional arguments are
-     * provided to `func` when it's invoked.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to delay.
-     * @param {number} wait The number of milliseconds to delay invocation.
-     * @param {...*} [args] The arguments to invoke `func` with.
-     * @returns {number} Returns the timer id.
-     * @example
-     *
-     * _.delay(function(text) {
-     *   console.log(text);
-     * }, 1000, 'later');
-     * // => Logs 'later' after one second.
-     */
-    var delay = baseRest(function(func, wait, args) {
-      return baseDelay(func, toNumber(wait) || 0, args);
-    });
-
-    /**
-     * Creates a function that invokes `func` with arguments reversed.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Function
-     * @param {Function} func The function to flip arguments for.
-     * @returns {Function} Returns the new flipped function.
-     * @example
-     *
-     * var flipped = _.flip(function() {
-     *   return _.toArray(arguments);
-     * });
-     *
-     * flipped('a', 'b', 'c', 'd');
-     * // => ['d', 'c', 'b', 'a']
-     */
-    function flip(func) {
-      return createWrap(func, WRAP_FLIP_FLAG);
-    }
-
-    /**
-     * Creates a function that memoizes the result of `func`. If `resolver` is
-     * provided, it determines the cache key for storing the result based on the
-     * arguments provided to the memoized function. By default, the first argument
-     * provided to the memoized function is used as the map cache key. The `func`
-     * is invoked with the `this` binding of the memoized function.
-     *
-     * **Note:** The cache is exposed as the `cache` property on the memoized
-     * function. Its creation may be customized by replacing the `_.memoize.Cache`
-     * constructor with one whose instances implement the
-     * [`Map`](http://ecma-international.org/ecma-262/7.0/#sec-properties-of-the-map-prototype-object)
-     * method interface of `clear`, `delete`, `get`, `has`, and `set`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to have its output memoized.
-     * @param {Function} [resolver] The function to resolve the cache key.
-     * @returns {Function} Returns the new memoized function.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': 2 };
-     * var other = { 'c': 3, 'd': 4 };
-     *
-     * var values = _.memoize(_.values);
-     * values(object);
-     * // => [1, 2]
-     *
-     * values(other);
-     * // => [3, 4]
-     *
-     * object.a = 2;
-     * values(object);
-     * // => [1, 2]
-     *
-     * // Modify the result cache.
-     * values.cache.set(object, ['a', 'b']);
-     * values(object);
-     * // => ['a', 'b']
-     *
-     * // Replace `_.memoize.Cache`.
-     * _.memoize.Cache = WeakMap;
-     */
-    function memoize(func, resolver) {
-      if (typeof func != 'function' || (resolver != null && typeof resolver != 'function')) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      var memoized = function() {
-        var args = arguments,
-            key = resolver ? resolver.apply(this, args) : args[0],
-            cache = memoized.cache;
-
-        if (cache.has(key)) {
-          return cache.get(key);
-        }
-        var result = func.apply(this, args);
-        memoized.cache = cache.set(key, result) || cache;
-        return result;
-      };
-      memoized.cache = new (memoize.Cache || MapCache);
-      return memoized;
-    }
-
-    // Expose `MapCache`.
-    memoize.Cache = MapCache;
-
-    /**
-     * Creates a function that negates the result of the predicate `func`. The
-     * `func` predicate is invoked with the `this` binding and arguments of the
-     * created function.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Function
-     * @param {Function} predicate The predicate to negate.
-     * @returns {Function} Returns the new negated function.
-     * @example
-     *
-     * function isEven(n) {
-     *   return n % 2 == 0;
-     * }
-     *
-     * _.filter([1, 2, 3, 4, 5, 6], _.negate(isEven));
-     * // => [1, 3, 5]
-     */
-    function negate(predicate) {
-      if (typeof predicate != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      return function() {
-        var args = arguments;
-        switch (args.length) {
-          case 0: return !predicate.call(this);
-          case 1: return !predicate.call(this, args[0]);
-          case 2: return !predicate.call(this, args[0], args[1]);
-          case 3: return !predicate.call(this, args[0], args[1], args[2]);
-        }
-        return !predicate.apply(this, args);
-      };
-    }
-
-    /**
-     * Creates a function that is restricted to invoking `func` once. Repeat calls
-     * to the function return the value of the first invocation. The `func` is
-     * invoked with the `this` binding and arguments of the created function.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to restrict.
-     * @returns {Function} Returns the new restricted function.
-     * @example
-     *
-     * var initialize = _.once(createApplication);
-     * initialize();
-     * initialize();
-     * // => `createApplication` is invoked once
-     */
-    function once(func) {
-      return before(2, func);
-    }
-
-    /**
-     * Creates a function that invokes `func` with its arguments transformed.
-     *
-     * @static
-     * @since 4.0.0
-     * @memberOf _
-     * @category Function
-     * @param {Function} func The function to wrap.
-     * @param {...(Function|Function[])} [transforms=[_.identity]]
-     *  The argument transforms.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * function doubled(n) {
-     *   return n * 2;
-     * }
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var func = _.overArgs(function(x, y) {
-     *   return [x, y];
-     * }, [square, doubled]);
-     *
-     * func(9, 3);
-     * // => [81, 6]
-     *
-     * func(10, 5);
-     * // => [100, 10]
-     */
-    var overArgs = castRest(function(func, transforms) {
-      transforms = (transforms.length == 1 && isArray(transforms[0]))
-        ? arrayMap(transforms[0], baseUnary(getIteratee()))
-        : arrayMap(baseFlatten(transforms, 1), baseUnary(getIteratee()));
-
-      var funcsLength = transforms.length;
-      return baseRest(function(args) {
-        var index = -1,
-            length = nativeMin(args.length, funcsLength);
-
-        while (++index < length) {
-          args[index] = transforms[index].call(this, args[index]);
-        }
-        return apply(func, this, args);
-      });
-    });
-
-    /**
-     * Creates a function that invokes `func` with `partials` prepended to the
-     * arguments it receives. This method is like `_.bind` except it does **not**
-     * alter the `this` binding.
-     *
-     * The `_.partial.placeholder` value, which defaults to `_` in monolithic
-     * builds, may be used as a placeholder for partially applied arguments.
-     *
-     * **Note:** This method doesn't set the "length" property of partially
-     * applied functions.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.2.0
-     * @category Function
-     * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [partials] The arguments to be partially applied.
-     * @returns {Function} Returns the new partially applied function.
-     * @example
-     *
-     * function greet(greeting, name) {
-     *   return greeting + ' ' + name;
-     * }
-     *
-     * var sayHelloTo = _.partial(greet, 'hello');
-     * sayHelloTo('fred');
-     * // => 'hello fred'
-     *
-     * // Partially applied with placeholders.
-     * var greetFred = _.partial(greet, _, 'fred');
-     * greetFred('hi');
-     * // => 'hi fred'
-     */
-    var partial = baseRest(function(func, partials) {
-      var holders = replaceHolders(partials, getHolder(partial));
-      return createWrap(func, WRAP_PARTIAL_FLAG, undefined, partials, holders);
-    });
-
-    /**
-     * This method is like `_.partial` except that partially applied arguments
-     * are appended to the arguments it receives.
-     *
-     * The `_.partialRight.placeholder` value, which defaults to `_` in monolithic
-     * builds, may be used as a placeholder for partially applied arguments.
-     *
-     * **Note:** This method doesn't set the "length" property of partially
-     * applied functions.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.0.0
-     * @category Function
-     * @param {Function} func The function to partially apply arguments to.
-     * @param {...*} [partials] The arguments to be partially applied.
-     * @returns {Function} Returns the new partially applied function.
-     * @example
-     *
-     * function greet(greeting, name) {
-     *   return greeting + ' ' + name;
-     * }
-     *
-     * var greetFred = _.partialRight(greet, 'fred');
-     * greetFred('hi');
-     * // => 'hi fred'
-     *
-     * // Partially applied with placeholders.
-     * var sayHelloTo = _.partialRight(greet, 'hello', _);
-     * sayHelloTo('fred');
-     * // => 'hello fred'
-     */
-    var partialRight = baseRest(function(func, partials) {
-      var holders = replaceHolders(partials, getHolder(partialRight));
-      return createWrap(func, WRAP_PARTIAL_RIGHT_FLAG, undefined, partials, holders);
-    });
-
-    /**
-     * Creates a function that invokes `func` with arguments arranged according
-     * to the specified `indexes` where the argument value at the first index is
-     * provided as the first argument, the argument value at the second index is
-     * provided as the second argument, and so on.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Function
-     * @param {Function} func The function to rearrange arguments for.
-     * @param {...(number|number[])} indexes The arranged argument indexes.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var rearged = _.rearg(function(a, b, c) {
-     *   return [a, b, c];
-     * }, [2, 0, 1]);
-     *
-     * rearged('b', 'c', 'a')
-     * // => ['a', 'b', 'c']
-     */
-    var rearg = flatRest(function(func, indexes) {
-      return createWrap(func, WRAP_REARG_FLAG, undefined, undefined, undefined, indexes);
-    });
-
-    /**
-     * Creates a function that invokes `func` with the `this` binding of the
-     * created function and arguments from `start` and beyond provided as
-     * an array.
-     *
-     * **Note:** This method is based on the
-     * [rest parameter](https://mdn.io/rest_parameters).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Function
-     * @param {Function} func The function to apply a rest parameter to.
-     * @param {number} [start=func.length-1] The start position of the rest parameter.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var say = _.rest(function(what, names) {
-     *   return what + ' ' + _.initial(names).join(', ') +
-     *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
-     * });
-     *
-     * say('hello', 'fred', 'barney', 'pebbles');
-     * // => 'hello fred, barney, & pebbles'
-     */
-    function rest(func, start) {
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      start = start === undefined ? start : toInteger(start);
-      return baseRest(func, start);
-    }
-
-    /**
-     * Creates a function that invokes `func` with the `this` binding of the
-     * create function and an array of arguments much like
-     * [`Function#apply`](http://www.ecma-international.org/ecma-262/7.0/#sec-function.prototype.apply).
-     *
-     * **Note:** This method is based on the
-     * [spread operator](https://mdn.io/spread_operator).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.2.0
-     * @category Function
-     * @param {Function} func The function to spread arguments over.
-     * @param {number} [start=0] The start position of the spread.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var say = _.spread(function(who, what) {
-     *   return who + ' says ' + what;
-     * });
-     *
-     * say(['fred', 'hello']);
-     * // => 'fred says hello'
-     *
-     * var numbers = Promise.all([
-     *   Promise.resolve(40),
-     *   Promise.resolve(36)
-     * ]);
-     *
-     * numbers.then(_.spread(function(x, y) {
-     *   return x + y;
-     * }));
-     * // => a Promise of 76
-     */
-    function spread(func, start) {
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      start = start == null ? 0 : nativeMax(toInteger(start), 0);
-      return baseRest(function(args) {
-        var array = args[start],
-            otherArgs = castSlice(args, 0, start);
-
-        if (array) {
-          arrayPush(otherArgs, array);
-        }
-        return apply(func, this, otherArgs);
-      });
-    }
-
-    /**
-     * Creates a throttled function that only invokes `func` at most once per
-     * every `wait` milliseconds. The throttled function comes with a `cancel`
-     * method to cancel delayed `func` invocations and a `flush` method to
-     * immediately invoke them. Provide `options` to indicate whether `func`
-     * should be invoked on the leading and/or trailing edge of the `wait`
-     * timeout. The `func` is invoked with the last arguments provided to the
-     * throttled function. Subsequent calls to the throttled function return the
-     * result of the last `func` invocation.
-     *
-     * **Note:** If `leading` and `trailing` options are `true`, `func` is
-     * invoked on the trailing edge of the timeout only if the throttled function
-     * is invoked more than once during the `wait` timeout.
-     *
-     * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
-     * until to the next tick, similar to `setTimeout` with a timeout of `0`.
-     *
-     * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
-     * for details over the differences between `_.throttle` and `_.debounce`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {Function} func The function to throttle.
-     * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
-     * @param {Object} [options={}] The options object.
-     * @param {boolean} [options.leading=true]
-     *  Specify invoking on the leading edge of the timeout.
-     * @param {boolean} [options.trailing=true]
-     *  Specify invoking on the trailing edge of the timeout.
-     * @returns {Function} Returns the new throttled function.
-     * @example
-     *
-     * // Avoid excessively updating the position while scrolling.
-     * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
-     *
-     * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
-     * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
-     * jQuery(element).on('click', throttled);
-     *
-     * // Cancel the trailing throttled invocation.
-     * jQuery(window).on('popstate', throttled.cancel);
-     */
-    function throttle(func, wait, options) {
-      var leading = true,
-          trailing = true;
-
-      if (typeof func != 'function') {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      if (isObject(options)) {
-        leading = 'leading' in options ? !!options.leading : leading;
-        trailing = 'trailing' in options ? !!options.trailing : trailing;
-      }
-      return debounce(func, wait, {
-        'leading': leading,
-        'maxWait': wait,
-        'trailing': trailing
-      });
-    }
-
-    /**
-     * Creates a function that accepts up to one argument, ignoring any
-     * additional arguments.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Function
-     * @param {Function} func The function to cap arguments for.
-     * @returns {Function} Returns the new capped function.
-     * @example
-     *
-     * _.map(['6', '8', '10'], _.unary(parseInt));
-     * // => [6, 8, 10]
-     */
-    function unary(func) {
-      return ary(func, 1);
-    }
-
-    /**
-     * Creates a function that provides `value` to `wrapper` as its first
-     * argument. Any additional arguments provided to the function are appended
-     * to those provided to the `wrapper`. The wrapper is invoked with the `this`
-     * binding of the created function.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Function
-     * @param {*} value The value to wrap.
-     * @param {Function} [wrapper=identity] The wrapper function.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var p = _.wrap(_.escape, function(func, text) {
-     *   return '<p>' + func(text) + '</p>';
-     * });
-     *
-     * p('fred, barney, & pebbles');
-     * // => '<p>fred, barney, &amp; pebbles</p>'
-     */
-    function wrap(value, wrapper) {
-      return partial(castFunction(wrapper), value);
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Casts `value` as an array if it's not one.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.4.0
-     * @category Lang
-     * @param {*} value The value to inspect.
-     * @returns {Array} Returns the cast array.
-     * @example
-     *
-     * _.castArray(1);
-     * // => [1]
-     *
-     * _.castArray({ 'a': 1 });
-     * // => [{ 'a': 1 }]
-     *
-     * _.castArray('abc');
-     * // => ['abc']
-     *
-     * _.castArray(null);
-     * // => [null]
-     *
-     * _.castArray(undefined);
-     * // => [undefined]
-     *
-     * _.castArray();
-     * // => []
-     *
-     * var array = [1, 2, 3];
-     * console.log(_.castArray(array) === array);
-     * // => true
-     */
-    function castArray() {
-      if (!arguments.length) {
-        return [];
-      }
-      var value = arguments[0];
-      return isArray(value) ? value : [value];
-    }
-
-    /**
-     * Creates a shallow clone of `value`.
-     *
-     * **Note:** This method is loosely based on the
-     * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
-     * and supports cloning arrays, array buffers, booleans, date objects, maps,
-     * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
-     * arrays. The own enumerable properties of `arguments` objects are cloned
-     * as plain objects. An empty object is returned for uncloneable values such
-     * as error objects, functions, DOM nodes, and WeakMaps.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to clone.
-     * @returns {*} Returns the cloned value.
-     * @see _.cloneDeep
-     * @example
-     *
-     * var objects = [{ 'a': 1 }, { 'b': 2 }];
-     *
-     * var shallow = _.clone(objects);
-     * console.log(shallow[0] === objects[0]);
-     * // => true
-     */
-    function clone(value) {
-      return baseClone(value, CLONE_SYMBOLS_FLAG);
-    }
-
-    /**
-     * This method is like `_.clone` except that it accepts `customizer` which
-     * is invoked to produce the cloned value. If `customizer` returns `undefined`,
-     * cloning is handled by the method instead. The `customizer` is invoked with
-     * up to four arguments; (value [, index|key, object, stack]).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to clone.
-     * @param {Function} [customizer] The function to customize cloning.
-     * @returns {*} Returns the cloned value.
-     * @see _.cloneDeepWith
-     * @example
-     *
-     * function customizer(value) {
-     *   if (_.isElement(value)) {
-     *     return value.cloneNode(false);
-     *   }
-     * }
-     *
-     * var el = _.cloneWith(document.body, customizer);
-     *
-     * console.log(el === document.body);
-     * // => false
-     * console.log(el.nodeName);
-     * // => 'BODY'
-     * console.log(el.childNodes.length);
-     * // => 0
-     */
-    function cloneWith(value, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      return baseClone(value, CLONE_SYMBOLS_FLAG, customizer);
-    }
-
-    /**
-     * This method is like `_.clone` except that it recursively clones `value`.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.0.0
-     * @category Lang
-     * @param {*} value The value to recursively clone.
-     * @returns {*} Returns the deep cloned value.
-     * @see _.clone
-     * @example
-     *
-     * var objects = [{ 'a': 1 }, { 'b': 2 }];
-     *
-     * var deep = _.cloneDeep(objects);
-     * console.log(deep[0] === objects[0]);
-     * // => false
-     */
-    function cloneDeep(value) {
-      return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG);
-    }
-
-    /**
-     * This method is like `_.cloneWith` except that it recursively clones `value`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to recursively clone.
-     * @param {Function} [customizer] The function to customize cloning.
-     * @returns {*} Returns the deep cloned value.
-     * @see _.cloneWith
-     * @example
-     *
-     * function customizer(value) {
-     *   if (_.isElement(value)) {
-     *     return value.cloneNode(true);
-     *   }
-     * }
-     *
-     * var el = _.cloneDeepWith(document.body, customizer);
-     *
-     * console.log(el === document.body);
-     * // => false
-     * console.log(el.nodeName);
-     * // => 'BODY'
-     * console.log(el.childNodes.length);
-     * // => 20
-     */
-    function cloneDeepWith(value, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG, customizer);
-    }
-
-    /**
-     * Checks if `object` conforms to `source` by invoking the predicate
-     * properties of `source` with the corresponding property values of `object`.
-     *
-     * **Note:** This method is equivalent to `_.conforms` when `source` is
-     * partially applied.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.14.0
-     * @category Lang
-     * @param {Object} object The object to inspect.
-     * @param {Object} source The object of property predicates to conform to.
-     * @returns {boolean} Returns `true` if `object` conforms, else `false`.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': 2 };
-     *
-     * _.conformsTo(object, { 'b': function(n) { return n > 1; } });
-     * // => true
-     *
-     * _.conformsTo(object, { 'b': function(n) { return n > 2; } });
-     * // => false
-     */
-    function conformsTo(object, source) {
-      return source == null || baseConformsTo(object, source, keys(source));
-    }
-
-    /**
-     * Performs a
-     * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
-     * comparison between two values to determine if they are equivalent.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-     * @example
-     *
-     * var object = { 'a': 1 };
-     * var other = { 'a': 1 };
-     *
-     * _.eq(object, object);
-     * // => true
-     *
-     * _.eq(object, other);
-     * // => false
-     *
-     * _.eq('a', 'a');
-     * // => true
-     *
-     * _.eq('a', Object('a'));
-     * // => false
-     *
-     * _.eq(NaN, NaN);
-     * // => true
-     */
-    function eq(value, other) {
-      return value === other || (value !== value && other !== other);
-    }
-
-    /**
-     * Checks if `value` is greater than `other`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.9.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if `value` is greater than `other`,
-     *  else `false`.
-     * @see _.lt
-     * @example
-     *
-     * _.gt(3, 1);
-     * // => true
-     *
-     * _.gt(3, 3);
-     * // => false
-     *
-     * _.gt(1, 3);
-     * // => false
-     */
-    var gt = createRelationalOperation(baseGt);
-
-    /**
-     * Checks if `value` is greater than or equal to `other`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.9.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if `value` is greater than or equal to
-     *  `other`, else `false`.
-     * @see _.lte
-     * @example
-     *
-     * _.gte(3, 1);
-     * // => true
-     *
-     * _.gte(3, 3);
-     * // => true
-     *
-     * _.gte(1, 3);
-     * // => false
-     */
-    var gte = createRelationalOperation(function(value, other) {
-      return value >= other;
-    });
-
-    /**
-     * Checks if `value` is likely an `arguments` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an `arguments` object,
-     *  else `false`.
-     * @example
-     *
-     * _.isArguments(function() { return arguments; }());
-     * // => true
-     *
-     * _.isArguments([1, 2, 3]);
-     * // => false
-     */
-    var isArguments = baseIsArguments(function() { return arguments; }()) ? baseIsArguments : function(value) {
-      return isObjectLike(value) && hasOwnProperty.call(value, 'callee') &&
-        !propertyIsEnumerable.call(value, 'callee');
-    };
-
-    /**
-     * Checks if `value` is classified as an `Array` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an array, else `false`.
-     * @example
-     *
-     * _.isArray([1, 2, 3]);
-     * // => true
-     *
-     * _.isArray(document.body.children);
-     * // => false
-     *
-     * _.isArray('abc');
-     * // => false
-     *
-     * _.isArray(_.noop);
-     * // => false
-     */
-    var isArray = Array.isArray;
-
-    /**
-     * Checks if `value` is classified as an `ArrayBuffer` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an array buffer, else `false`.
-     * @example
-     *
-     * _.isArrayBuffer(new ArrayBuffer(2));
-     * // => true
-     *
-     * _.isArrayBuffer(new Array(2));
-     * // => false
-     */
-    var isArrayBuffer = nodeIsArrayBuffer ? baseUnary(nodeIsArrayBuffer) : baseIsArrayBuffer;
-
-    /**
-     * Checks if `value` is array-like. A value is considered array-like if it's
-     * not a function and has a `value.length` that's an integer greater than or
-     * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-     * @example
-     *
-     * _.isArrayLike([1, 2, 3]);
-     * // => true
-     *
-     * _.isArrayLike(document.body.children);
-     * // => true
-     *
-     * _.isArrayLike('abc');
-     * // => true
-     *
-     * _.isArrayLike(_.noop);
-     * // => false
-     */
-    function isArrayLike(value) {
-      return value != null && isLength(value.length) && !isFunction(value);
-    }
-
-    /**
-     * This method is like `_.isArrayLike` except that it also checks if `value`
-     * is an object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an array-like object,
-     *  else `false`.
-     * @example
-     *
-     * _.isArrayLikeObject([1, 2, 3]);
-     * // => true
-     *
-     * _.isArrayLikeObject(document.body.children);
-     * // => true
-     *
-     * _.isArrayLikeObject('abc');
-     * // => false
-     *
-     * _.isArrayLikeObject(_.noop);
-     * // => false
-     */
-    function isArrayLikeObject(value) {
-      return isObjectLike(value) && isArrayLike(value);
-    }
-
-    /**
-     * Checks if `value` is classified as a boolean primitive or object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a boolean, else `false`.
-     * @example
-     *
-     * _.isBoolean(false);
-     * // => true
-     *
-     * _.isBoolean(null);
-     * // => false
-     */
-    function isBoolean(value) {
-      return value === true || value === false ||
-        (isObjectLike(value) && baseGetTag(value) == boolTag);
-    }
-
-    /**
-     * Checks if `value` is a buffer.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a buffer, else `false`.
-     * @example
-     *
-     * _.isBuffer(new Buffer(2));
-     * // => true
-     *
-     * _.isBuffer(new Uint8Array(2));
-     * // => false
-     */
-    var isBuffer = nativeIsBuffer || stubFalse;
-
-    /**
-     * Checks if `value` is classified as a `Date` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a date object, else `false`.
-     * @example
-     *
-     * _.isDate(new Date);
-     * // => true
-     *
-     * _.isDate('Mon April 23 2012');
-     * // => false
-     */
-    var isDate = nodeIsDate ? baseUnary(nodeIsDate) : baseIsDate;
-
-    /**
-     * Checks if `value` is likely a DOM element.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a DOM element, else `false`.
-     * @example
-     *
-     * _.isElement(document.body);
-     * // => true
-     *
-     * _.isElement('<body>');
-     * // => false
-     */
-    function isElement(value) {
-      return isObjectLike(value) && value.nodeType === 1 && !isPlainObject(value);
-    }
-
-    /**
-     * Checks if `value` is an empty object, collection, map, or set.
-     *
-     * Objects are considered empty if they have no own enumerable string keyed
-     * properties.
-     *
-     * Array-like values such as `arguments` objects, arrays, buffers, strings, or
-     * jQuery-like collections are considered empty if they have a `length` of `0`.
-     * Similarly, maps and sets are considered empty if they have a `size` of `0`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is empty, else `false`.
-     * @example
-     *
-     * _.isEmpty(null);
-     * // => true
-     *
-     * _.isEmpty(true);
-     * // => true
-     *
-     * _.isEmpty(1);
-     * // => true
-     *
-     * _.isEmpty([1, 2, 3]);
-     * // => false
-     *
-     * _.isEmpty({ 'a': 1 });
-     * // => false
-     */
-    function isEmpty(value) {
-      if (value == null) {
-        return true;
-      }
-      if (isArrayLike(value) &&
-          (isArray(value) || typeof value == 'string' || typeof value.splice == 'function' ||
-            isBuffer(value) || isTypedArray(value) || isArguments(value))) {
-        return !value.length;
-      }
-      var tag = getTag(value);
-      if (tag == mapTag || tag == setTag) {
-        return !value.size;
-      }
-      if (isPrototype(value)) {
-        return !baseKeys(value).length;
-      }
-      for (var key in value) {
-        if (hasOwnProperty.call(value, key)) {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    /**
-     * Performs a deep comparison between two values to determine if they are
-     * equivalent.
-     *
-     * **Note:** This method supports comparing arrays, array buffers, booleans,
-     * date objects, error objects, maps, numbers, `Object` objects, regexes,
-     * sets, strings, symbols, and typed arrays. `Object` objects are compared
-     * by their own, not inherited, enumerable properties. Functions and DOM
-     * nodes are compared by strict equality, i.e. `===`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-     * @example
-     *
-     * var object = { 'a': 1 };
-     * var other = { 'a': 1 };
-     *
-     * _.isEqual(object, other);
-     * // => true
-     *
-     * object === other;
-     * // => false
-     */
-    function isEqual(value, other) {
-      return baseIsEqual(value, other);
-    }
-
-    /**
-     * This method is like `_.isEqual` except that it accepts `customizer` which
-     * is invoked to compare values. If `customizer` returns `undefined`, comparisons
-     * are handled by the method instead. The `customizer` is invoked with up to
-     * six arguments: (objValue, othValue [, index|key, object, other, stack]).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @param {Function} [customizer] The function to customize comparisons.
-     * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-     * @example
-     *
-     * function isGreeting(value) {
-     *   return /^h(?:i|ello)$/.test(value);
-     * }
-     *
-     * function customizer(objValue, othValue) {
-     *   if (isGreeting(objValue) && isGreeting(othValue)) {
-     *     return true;
-     *   }
-     * }
-     *
-     * var array = ['hello', 'goodbye'];
-     * var other = ['hi', 'goodbye'];
-     *
-     * _.isEqualWith(array, other, customizer);
-     * // => true
-     */
-    function isEqualWith(value, other, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      var result = customizer ? customizer(value, other) : undefined;
-      return result === undefined ? baseIsEqual(value, other, undefined, customizer) : !!result;
-    }
-
-    /**
-     * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
-     * `SyntaxError`, `TypeError`, or `URIError` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an error object, else `false`.
-     * @example
-     *
-     * _.isError(new Error);
-     * // => true
-     *
-     * _.isError(Error);
-     * // => false
-     */
-    function isError(value) {
-      if (!isObjectLike(value)) {
-        return false;
-      }
-      var tag = baseGetTag(value);
-      return tag == errorTag || tag == domExcTag ||
-        (typeof value.message == 'string' && typeof value.name == 'string' && !isPlainObject(value));
-    }
-
-    /**
-     * Checks if `value` is a finite primitive number.
-     *
-     * **Note:** This method is based on
-     * [`Number.isFinite`](https://mdn.io/Number/isFinite).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a finite number, else `false`.
-     * @example
-     *
-     * _.isFinite(3);
-     * // => true
-     *
-     * _.isFinite(Number.MIN_VALUE);
-     * // => true
-     *
-     * _.isFinite(Infinity);
-     * // => false
-     *
-     * _.isFinite('3');
-     * // => false
-     */
-    function isFinite(value) {
-      return typeof value == 'number' && nativeIsFinite(value);
-    }
-
-    /**
-     * Checks if `value` is classified as a `Function` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a function, else `false`.
-     * @example
-     *
-     * _.isFunction(_);
-     * // => true
-     *
-     * _.isFunction(/abc/);
-     * // => false
-     */
-    function isFunction(value) {
-      if (!isObject(value)) {
-        return false;
-      }
-      // The use of `Object#toString` avoids issues with the `typeof` operator
-      // in Safari 9 which returns 'object' for typed arrays and other constructors.
-      var tag = baseGetTag(value);
-      return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
-    }
-
-    /**
-     * Checks if `value` is an integer.
-     *
-     * **Note:** This method is based on
-     * [`Number.isInteger`](https://mdn.io/Number/isInteger).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an integer, else `false`.
-     * @example
-     *
-     * _.isInteger(3);
-     * // => true
-     *
-     * _.isInteger(Number.MIN_VALUE);
-     * // => false
-     *
-     * _.isInteger(Infinity);
-     * // => false
-     *
-     * _.isInteger('3');
-     * // => false
-     */
-    function isInteger(value) {
-      return typeof value == 'number' && value == toInteger(value);
-    }
-
-    /**
-     * Checks if `value` is a valid array-like length.
-     *
-     * **Note:** This method is loosely based on
-     * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-     * @example
-     *
-     * _.isLength(3);
-     * // => true
-     *
-     * _.isLength(Number.MIN_VALUE);
-     * // => false
-     *
-     * _.isLength(Infinity);
-     * // => false
-     *
-     * _.isLength('3');
-     * // => false
-     */
-    function isLength(value) {
-      return typeof value == 'number' &&
-        value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-    }
-
-    /**
-     * Checks if `value` is the
-     * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
-     * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-     * @example
-     *
-     * _.isObject({});
-     * // => true
-     *
-     * _.isObject([1, 2, 3]);
-     * // => true
-     *
-     * _.isObject(_.noop);
-     * // => true
-     *
-     * _.isObject(null);
-     * // => false
-     */
-    function isObject(value) {
-      var type = typeof value;
-      return value != null && (type == 'object' || type == 'function');
-    }
-
-    /**
-     * Checks if `value` is object-like. A value is object-like if it's not `null`
-     * and has a `typeof` result of "object".
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-     * @example
-     *
-     * _.isObjectLike({});
-     * // => true
-     *
-     * _.isObjectLike([1, 2, 3]);
-     * // => true
-     *
-     * _.isObjectLike(_.noop);
-     * // => false
-     *
-     * _.isObjectLike(null);
-     * // => false
-     */
-    function isObjectLike(value) {
-      return value != null && typeof value == 'object';
-    }
-
-    /**
-     * Checks if `value` is classified as a `Map` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a map, else `false`.
-     * @example
-     *
-     * _.isMap(new Map);
-     * // => true
-     *
-     * _.isMap(new WeakMap);
-     * // => false
-     */
-    var isMap = nodeIsMap ? baseUnary(nodeIsMap) : baseIsMap;
-
-    /**
-     * Performs a partial deep comparison between `object` and `source` to
-     * determine if `object` contains equivalent property values.
-     *
-     * **Note:** This method is equivalent to `_.matches` when `source` is
-     * partially applied.
-     *
-     * Partial comparisons will match empty array and empty object `source`
-     * values against any array or object value, respectively. See `_.isEqual`
-     * for a list of supported value comparisons.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Lang
-     * @param {Object} object The object to inspect.
-     * @param {Object} source The object of property values to match.
-     * @returns {boolean} Returns `true` if `object` is a match, else `false`.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': 2 };
-     *
-     * _.isMatch(object, { 'b': 2 });
-     * // => true
-     *
-     * _.isMatch(object, { 'b': 1 });
-     * // => false
-     */
-    function isMatch(object, source) {
-      return object === source || baseIsMatch(object, source, getMatchData(source));
-    }
-
-    /**
-     * This method is like `_.isMatch` except that it accepts `customizer` which
-     * is invoked to compare values. If `customizer` returns `undefined`, comparisons
-     * are handled by the method instead. The `customizer` is invoked with five
-     * arguments: (objValue, srcValue, index|key, object, source).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {Object} object The object to inspect.
-     * @param {Object} source The object of property values to match.
-     * @param {Function} [customizer] The function to customize comparisons.
-     * @returns {boolean} Returns `true` if `object` is a match, else `false`.
-     * @example
-     *
-     * function isGreeting(value) {
-     *   return /^h(?:i|ello)$/.test(value);
-     * }
-     *
-     * function customizer(objValue, srcValue) {
-     *   if (isGreeting(objValue) && isGreeting(srcValue)) {
-     *     return true;
-     *   }
-     * }
-     *
-     * var object = { 'greeting': 'hello' };
-     * var source = { 'greeting': 'hi' };
-     *
-     * _.isMatchWith(object, source, customizer);
-     * // => true
-     */
-    function isMatchWith(object, source, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      return baseIsMatch(object, source, getMatchData(source), customizer);
-    }
-
-    /**
-     * Checks if `value` is `NaN`.
-     *
-     * **Note:** This method is based on
-     * [`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as
-     * global [`isNaN`](https://mdn.io/isNaN) which returns `true` for
-     * `undefined` and other non-number values.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is `NaN`, else `false`.
-     * @example
-     *
-     * _.isNaN(NaN);
-     * // => true
-     *
-     * _.isNaN(new Number(NaN));
-     * // => true
-     *
-     * isNaN(undefined);
-     * // => true
-     *
-     * _.isNaN(undefined);
-     * // => false
-     */
-    function isNaN(value) {
-      // An `NaN` primitive is the only value that is not equal to itself.
-      // Perform the `toStringTag` check first to avoid errors with some
-      // ActiveX objects in IE.
-      return isNumber(value) && value != +value;
-    }
-
-    /**
-     * Checks if `value` is a pristine native function.
-     *
-     * **Note:** This method can't reliably detect native functions in the presence
-     * of the core-js package because core-js circumvents this kind of detection.
-     * Despite multiple requests, the core-js maintainer has made it clear: any
-     * attempt to fix the detection will be obstructed. As a result, we're left
-     * with little choice but to throw an error. Unfortunately, this also affects
-     * packages, like [babel-polyfill](https://www.npmjs.com/package/babel-polyfill),
-     * which rely on core-js.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a native function,
-     *  else `false`.
-     * @example
-     *
-     * _.isNative(Array.prototype.push);
-     * // => true
-     *
-     * _.isNative(_);
-     * // => false
-     */
-    function isNative(value) {
-      if (isMaskable(value)) {
-        throw new Error(CORE_ERROR_TEXT);
-      }
-      return baseIsNative(value);
-    }
-
-    /**
-     * Checks if `value` is `null`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is `null`, else `false`.
-     * @example
-     *
-     * _.isNull(null);
-     * // => true
-     *
-     * _.isNull(void 0);
-     * // => false
-     */
-    function isNull(value) {
-      return value === null;
-    }
-
-    /**
-     * Checks if `value` is `null` or `undefined`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is nullish, else `false`.
-     * @example
-     *
-     * _.isNil(null);
-     * // => true
-     *
-     * _.isNil(void 0);
-     * // => true
-     *
-     * _.isNil(NaN);
-     * // => false
-     */
-    function isNil(value) {
-      return value == null;
-    }
-
-    /**
-     * Checks if `value` is classified as a `Number` primitive or object.
-     *
-     * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are
-     * classified as numbers, use the `_.isFinite` method.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a number, else `false`.
-     * @example
-     *
-     * _.isNumber(3);
-     * // => true
-     *
-     * _.isNumber(Number.MIN_VALUE);
-     * // => true
-     *
-     * _.isNumber(Infinity);
-     * // => true
-     *
-     * _.isNumber('3');
-     * // => false
-     */
-    function isNumber(value) {
-      return typeof value == 'number' ||
-        (isObjectLike(value) && baseGetTag(value) == numberTag);
-    }
-
-    /**
-     * Checks if `value` is a plain object, that is, an object created by the
-     * `Object` constructor or one with a `[[Prototype]]` of `null`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.8.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     * }
-     *
-     * _.isPlainObject(new Foo);
-     * // => false
-     *
-     * _.isPlainObject([1, 2, 3]);
-     * // => false
-     *
-     * _.isPlainObject({ 'x': 0, 'y': 0 });
-     * // => true
-     *
-     * _.isPlainObject(Object.create(null));
-     * // => true
-     */
-    function isPlainObject(value) {
-      if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
-        return false;
-      }
-      var proto = getPrototype(value);
-      if (proto === null) {
-        return true;
-      }
-      var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-      return typeof Ctor == 'function' && Ctor instanceof Ctor &&
-        funcToString.call(Ctor) == objectCtorString;
-    }
-
-    /**
-     * Checks if `value` is classified as a `RegExp` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.1.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a regexp, else `false`.
-     * @example
-     *
-     * _.isRegExp(/abc/);
-     * // => true
-     *
-     * _.isRegExp('/abc/');
-     * // => false
-     */
-    var isRegExp = nodeIsRegExp ? baseUnary(nodeIsRegExp) : baseIsRegExp;
-
-    /**
-     * Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754
-     * double precision number which isn't the result of a rounded unsafe integer.
-     *
-     * **Note:** This method is based on
-     * [`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a safe integer, else `false`.
-     * @example
-     *
-     * _.isSafeInteger(3);
-     * // => true
-     *
-     * _.isSafeInteger(Number.MIN_VALUE);
-     * // => false
-     *
-     * _.isSafeInteger(Infinity);
-     * // => false
-     *
-     * _.isSafeInteger('3');
-     * // => false
-     */
-    function isSafeInteger(value) {
-      return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
-    }
-
-    /**
-     * Checks if `value` is classified as a `Set` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a set, else `false`.
-     * @example
-     *
-     * _.isSet(new Set);
-     * // => true
-     *
-     * _.isSet(new WeakSet);
-     * // => false
-     */
-    var isSet = nodeIsSet ? baseUnary(nodeIsSet) : baseIsSet;
-
-    /**
-     * Checks if `value` is classified as a `String` primitive or object.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a string, else `false`.
-     * @example
-     *
-     * _.isString('abc');
-     * // => true
-     *
-     * _.isString(1);
-     * // => false
-     */
-    function isString(value) {
-      return typeof value == 'string' ||
-        (!isArray(value) && isObjectLike(value) && baseGetTag(value) == stringTag);
-    }
-
-    /**
-     * Checks if `value` is classified as a `Symbol` primitive or object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
-     * @example
-     *
-     * _.isSymbol(Symbol.iterator);
-     * // => true
-     *
-     * _.isSymbol('abc');
-     * // => false
-     */
-    function isSymbol(value) {
-      return typeof value == 'symbol' ||
-        (isObjectLike(value) && baseGetTag(value) == symbolTag);
-    }
-
-    /**
-     * Checks if `value` is classified as a typed array.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a typed array, else `false`.
-     * @example
-     *
-     * _.isTypedArray(new Uint8Array);
-     * // => true
-     *
-     * _.isTypedArray([]);
-     * // => false
-     */
-    var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-
-    /**
-     * Checks if `value` is `undefined`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
-     * @example
-     *
-     * _.isUndefined(void 0);
-     * // => true
-     *
-     * _.isUndefined(null);
-     * // => false
-     */
-    function isUndefined(value) {
-      return value === undefined;
-    }
-
-    /**
-     * Checks if `value` is classified as a `WeakMap` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a weak map, else `false`.
-     * @example
-     *
-     * _.isWeakMap(new WeakMap);
-     * // => true
-     *
-     * _.isWeakMap(new Map);
-     * // => false
-     */
-    function isWeakMap(value) {
-      return isObjectLike(value) && getTag(value) == weakMapTag;
-    }
-
-    /**
-     * Checks if `value` is classified as a `WeakSet` object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.3.0
-     * @category Lang
-     * @param {*} value The value to check.
-     * @returns {boolean} Returns `true` if `value` is a weak set, else `false`.
-     * @example
-     *
-     * _.isWeakSet(new WeakSet);
-     * // => true
-     *
-     * _.isWeakSet(new Set);
-     * // => false
-     */
-    function isWeakSet(value) {
-      return isObjectLike(value) && baseGetTag(value) == weakSetTag;
-    }
-
-    /**
-     * Checks if `value` is less than `other`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.9.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if `value` is less than `other`,
-     *  else `false`.
-     * @see _.gt
-     * @example
-     *
-     * _.lt(1, 3);
-     * // => true
-     *
-     * _.lt(3, 3);
-     * // => false
-     *
-     * _.lt(3, 1);
-     * // => false
-     */
-    var lt = createRelationalOperation(baseLt);
-
-    /**
-     * Checks if `value` is less than or equal to `other`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.9.0
-     * @category Lang
-     * @param {*} value The value to compare.
-     * @param {*} other The other value to compare.
-     * @returns {boolean} Returns `true` if `value` is less than or equal to
-     *  `other`, else `false`.
-     * @see _.gte
-     * @example
-     *
-     * _.lte(1, 3);
-     * // => true
-     *
-     * _.lte(3, 3);
-     * // => true
-     *
-     * _.lte(3, 1);
-     * // => false
-     */
-    var lte = createRelationalOperation(function(value, other) {
-      return value <= other;
-    });
-
-    /**
-     * Converts `value` to an array.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {Array} Returns the converted array.
-     * @example
-     *
-     * _.toArray({ 'a': 1, 'b': 2 });
-     * // => [1, 2]
-     *
-     * _.toArray('abc');
-     * // => ['a', 'b', 'c']
-     *
-     * _.toArray(1);
-     * // => []
-     *
-     * _.toArray(null);
-     * // => []
-     */
-    function toArray(value) {
-      if (!value) {
-        return [];
-      }
-      if (isArrayLike(value)) {
-        return isString(value) ? stringToArray(value) : copyArray(value);
-      }
-      if (symIterator && value[symIterator]) {
-        return iteratorToArray(value[symIterator]());
-      }
-      var tag = getTag(value),
-          func = tag == mapTag ? mapToArray : (tag == setTag ? setToArray : values);
-
-      return func(value);
-    }
-
-    /**
-     * Converts `value` to a finite number.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.12.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the converted number.
-     * @example
-     *
-     * _.toFinite(3.2);
-     * // => 3.2
-     *
-     * _.toFinite(Number.MIN_VALUE);
-     * // => 5e-324
-     *
-     * _.toFinite(Infinity);
-     * // => 1.7976931348623157e+308
-     *
-     * _.toFinite('3.2');
-     * // => 3.2
-     */
-    function toFinite(value) {
-      if (!value) {
-        return value === 0 ? value : 0;
-      }
-      value = toNumber(value);
-      if (value === INFINITY || value === -INFINITY) {
-        var sign = (value < 0 ? -1 : 1);
-        return sign * MAX_INTEGER;
-      }
-      return value === value ? value : 0;
-    }
-
-    /**
-     * Converts `value` to an integer.
-     *
-     * **Note:** This method is loosely based on
-     * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the converted integer.
-     * @example
-     *
-     * _.toInteger(3.2);
-     * // => 3
-     *
-     * _.toInteger(Number.MIN_VALUE);
-     * // => 0
-     *
-     * _.toInteger(Infinity);
-     * // => 1.7976931348623157e+308
-     *
-     * _.toInteger('3.2');
-     * // => 3
-     */
-    function toInteger(value) {
-      var result = toFinite(value),
-          remainder = result % 1;
-
-      return result === result ? (remainder ? result - remainder : result) : 0;
-    }
-
-    /**
-     * Converts `value` to an integer suitable for use as the length of an
-     * array-like object.
-     *
-     * **Note:** This method is based on
-     * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the converted integer.
-     * @example
-     *
-     * _.toLength(3.2);
-     * // => 3
-     *
-     * _.toLength(Number.MIN_VALUE);
-     * // => 0
-     *
-     * _.toLength(Infinity);
-     * // => 4294967295
-     *
-     * _.toLength('3.2');
-     * // => 3
-     */
-    function toLength(value) {
-      return value ? baseClamp(toInteger(value), 0, MAX_ARRAY_LENGTH) : 0;
-    }
-
-    /**
-     * Converts `value` to a number.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to process.
-     * @returns {number} Returns the number.
-     * @example
-     *
-     * _.toNumber(3.2);
-     * // => 3.2
-     *
-     * _.toNumber(Number.MIN_VALUE);
-     * // => 5e-324
-     *
-     * _.toNumber(Infinity);
-     * // => Infinity
-     *
-     * _.toNumber('3.2');
-     * // => 3.2
-     */
-    function toNumber(value) {
-      if (typeof value == 'number') {
-        return value;
-      }
-      if (isSymbol(value)) {
-        return NAN;
-      }
-      if (isObject(value)) {
-        var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
-        value = isObject(other) ? (other + '') : other;
-      }
-      if (typeof value != 'string') {
-        return value === 0 ? value : +value;
-      }
-      value = baseTrim(value);
-      var isBinary = reIsBinary.test(value);
-      return (isBinary || reIsOctal.test(value))
-        ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
-        : (reIsBadHex.test(value) ? NAN : +value);
-    }
-
-    /**
-     * Converts `value` to a plain object flattening inherited enumerable string
-     * keyed properties of `value` to own properties of the plain object.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {Object} Returns the converted plain object.
-     * @example
-     *
-     * function Foo() {
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.assign({ 'a': 1 }, new Foo);
-     * // => { 'a': 1, 'b': 2 }
-     *
-     * _.assign({ 'a': 1 }, _.toPlainObject(new Foo));
-     * // => { 'a': 1, 'b': 2, 'c': 3 }
-     */
-    function toPlainObject(value) {
-      return copyObject(value, keysIn(value));
-    }
-
-    /**
-     * Converts `value` to a safe integer. A safe integer can be compared and
-     * represented correctly.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {number} Returns the converted integer.
-     * @example
-     *
-     * _.toSafeInteger(3.2);
-     * // => 3
-     *
-     * _.toSafeInteger(Number.MIN_VALUE);
-     * // => 0
-     *
-     * _.toSafeInteger(Infinity);
-     * // => 9007199254740991
-     *
-     * _.toSafeInteger('3.2');
-     * // => 3
-     */
-    function toSafeInteger(value) {
-      return value
-        ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER)
-        : (value === 0 ? value : 0);
-    }
-
-    /**
-     * Converts `value` to a string. An empty string is returned for `null`
-     * and `undefined` values. The sign of `-0` is preserved.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Lang
-     * @param {*} value The value to convert.
-     * @returns {string} Returns the converted string.
-     * @example
-     *
-     * _.toString(null);
-     * // => ''
-     *
-     * _.toString(-0);
-     * // => '-0'
-     *
-     * _.toString([1, 2, 3]);
-     * // => '1,2,3'
-     */
-    function toString(value) {
-      return value == null ? '' : baseToString(value);
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Assigns own enumerable string keyed properties of source objects to the
-     * destination object. Source objects are applied from left to right.
-     * Subsequent sources overwrite property assignments of previous sources.
-     *
-     * **Note:** This method mutates `object` and is loosely based on
-     * [`Object.assign`](https://mdn.io/Object/assign).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.10.0
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @see _.assignIn
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     * }
-     *
-     * function Bar() {
-     *   this.c = 3;
-     * }
-     *
-     * Foo.prototype.b = 2;
-     * Bar.prototype.d = 4;
-     *
-     * _.assign({ 'a': 0 }, new Foo, new Bar);
-     * // => { 'a': 1, 'c': 3 }
-     */
-    var assign = createAssigner(function(object, source) {
-      if (isPrototype(source) || isArrayLike(source)) {
-        copyObject(source, keys(source), object);
-        return;
-      }
-      for (var key in source) {
-        if (hasOwnProperty.call(source, key)) {
-          assignValue(object, key, source[key]);
-        }
-      }
-    });
-
-    /**
-     * This method is like `_.assign` except that it iterates over own and
-     * inherited source properties.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @alias extend
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @see _.assign
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     * }
-     *
-     * function Bar() {
-     *   this.c = 3;
-     * }
-     *
-     * Foo.prototype.b = 2;
-     * Bar.prototype.d = 4;
-     *
-     * _.assignIn({ 'a': 0 }, new Foo, new Bar);
-     * // => { 'a': 1, 'b': 2, 'c': 3, 'd': 4 }
-     */
-    var assignIn = createAssigner(function(object, source) {
-      copyObject(source, keysIn(source), object);
-    });
-
-    /**
-     * This method is like `_.assignIn` except that it accepts `customizer`
-     * which is invoked to produce the assigned values. If `customizer` returns
-     * `undefined`, assignment is handled by the method instead. The `customizer`
-     * is invoked with five arguments: (objValue, srcValue, key, object, source).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @alias extendWith
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} sources The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @see _.assignWith
-     * @example
-     *
-     * function customizer(objValue, srcValue) {
-     *   return _.isUndefined(objValue) ? srcValue : objValue;
-     * }
-     *
-     * var defaults = _.partialRight(_.assignInWith, customizer);
-     *
-     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-     * // => { 'a': 1, 'b': 2 }
-     */
-    var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
-      copyObject(source, keysIn(source), object, customizer);
-    });
-
-    /**
-     * This method is like `_.assign` except that it accepts `customizer`
-     * which is invoked to produce the assigned values. If `customizer` returns
-     * `undefined`, assignment is handled by the method instead. The `customizer`
-     * is invoked with five arguments: (objValue, srcValue, key, object, source).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} sources The source objects.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @see _.assignInWith
-     * @example
-     *
-     * function customizer(objValue, srcValue) {
-     *   return _.isUndefined(objValue) ? srcValue : objValue;
-     * }
-     *
-     * var defaults = _.partialRight(_.assignWith, customizer);
-     *
-     * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-     * // => { 'a': 1, 'b': 2 }
-     */
-    var assignWith = createAssigner(function(object, source, srcIndex, customizer) {
-      copyObject(source, keys(source), object, customizer);
-    });
-
-    /**
-     * Creates an array of values corresponding to `paths` of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.0.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {...(string|string[])} [paths] The property paths to pick.
-     * @returns {Array} Returns the picked values.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 3 } }, 4] };
-     *
-     * _.at(object, ['a[0].b.c', 'a[1]']);
-     * // => [3, 4]
-     */
-    var at = flatRest(baseAt);
-
-    /**
-     * Creates an object that inherits from the `prototype` object. If a
-     * `properties` object is given, its own enumerable string keyed properties
-     * are assigned to the created object.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.3.0
-     * @category Object
-     * @param {Object} prototype The object to inherit from.
-     * @param {Object} [properties] The properties to assign to the object.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * function Shape() {
-     *   this.x = 0;
-     *   this.y = 0;
-     * }
-     *
-     * function Circle() {
-     *   Shape.call(this);
-     * }
-     *
-     * Circle.prototype = _.create(Shape.prototype, {
-     *   'constructor': Circle
-     * });
-     *
-     * var circle = new Circle;
-     * circle instanceof Circle;
-     * // => true
-     *
-     * circle instanceof Shape;
-     * // => true
-     */
-    function create(prototype, properties) {
-      var result = baseCreate(prototype);
-      return properties == null ? result : baseAssign(result, properties);
-    }
-
-    /**
-     * Assigns own and inherited enumerable string keyed properties of source
-     * objects to the destination object for all destination properties that
-     * resolve to `undefined`. Source objects are applied from left to right.
-     * Once a property is set, additional values of the same property are ignored.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @see _.defaultsDeep
-     * @example
-     *
-     * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
-     * // => { 'a': 1, 'b': 2 }
-     */
-    var defaults = baseRest(function(object, sources) {
-      object = Object(object);
-
-      var index = -1;
-      var length = sources.length;
-      var guard = length > 2 ? sources[2] : undefined;
-
-      if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-        length = 1;
-      }
-
-      while (++index < length) {
-        var source = sources[index];
-        var props = keysIn(source);
-        var propsIndex = -1;
-        var propsLength = props.length;
-
-        while (++propsIndex < propsLength) {
-          var key = props[propsIndex];
-          var value = object[key];
-
-          if (value === undefined ||
-              (eq(value, objectProto[key]) && !hasOwnProperty.call(object, key))) {
-            object[key] = source[key];
-          }
-        }
-      }
-
-      return object;
-    });
-
-    /**
-     * This method is like `_.defaults` except that it recursively assigns
-     * default properties.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.10.0
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @see _.defaults
-     * @example
-     *
-     * _.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } });
-     * // => { 'a': { 'b': 2, 'c': 3 } }
-     */
-    var defaultsDeep = baseRest(function(args) {
-      args.push(undefined, customDefaultsMerge);
-      return apply(mergeWith, undefined, args);
-    });
-
-    /**
-     * This method is like `_.find` except that it returns the key of the first
-     * element `predicate` returns truthy for instead of the element itself.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.1.0
-     * @category Object
-     * @param {Object} object The object to inspect.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @returns {string|undefined} Returns the key of the matched element,
-     *  else `undefined`.
-     * @example
-     *
-     * var users = {
-     *   'barney':  { 'age': 36, 'active': true },
-     *   'fred':    { 'age': 40, 'active': false },
-     *   'pebbles': { 'age': 1,  'active': true }
-     * };
-     *
-     * _.findKey(users, function(o) { return o.age < 40; });
-     * // => 'barney' (iteration order is not guaranteed)
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.findKey(users, { 'age': 1, 'active': true });
-     * // => 'pebbles'
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.findKey(users, ['active', false]);
-     * // => 'fred'
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.findKey(users, 'active');
-     * // => 'barney'
-     */
-    function findKey(object, predicate) {
-      return baseFindKey(object, getIteratee(predicate, 3), baseForOwn);
-    }
-
-    /**
-     * This method is like `_.findKey` except that it iterates over elements of
-     * a collection in the opposite order.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Object
-     * @param {Object} object The object to inspect.
-     * @param {Function} [predicate=_.identity] The function invoked per iteration.
-     * @returns {string|undefined} Returns the key of the matched element,
-     *  else `undefined`.
-     * @example
-     *
-     * var users = {
-     *   'barney':  { 'age': 36, 'active': true },
-     *   'fred':    { 'age': 40, 'active': false },
-     *   'pebbles': { 'age': 1,  'active': true }
-     * };
-     *
-     * _.findLastKey(users, function(o) { return o.age < 40; });
-     * // => returns 'pebbles' assuming `_.findKey` returns 'barney'
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.findLastKey(users, { 'age': 36, 'active': true });
-     * // => 'barney'
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.findLastKey(users, ['active', false]);
-     * // => 'fred'
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.findLastKey(users, 'active');
-     * // => 'pebbles'
-     */
-    function findLastKey(object, predicate) {
-      return baseFindKey(object, getIteratee(predicate, 3), baseForOwnRight);
-    }
-
-    /**
-     * Iterates over own and inherited enumerable string keyed properties of an
-     * object and invokes `iteratee` for each property. The iteratee is invoked
-     * with three arguments: (value, key, object). Iteratee functions may exit
-     * iteration early by explicitly returning `false`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.3.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns `object`.
-     * @see _.forInRight
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.forIn(new Foo, function(value, key) {
-     *   console.log(key);
-     * });
-     * // => Logs 'a', 'b', then 'c' (iteration order is not guaranteed).
-     */
-    function forIn(object, iteratee) {
-      return object == null
-        ? object
-        : baseFor(object, getIteratee(iteratee, 3), keysIn);
-    }
-
-    /**
-     * This method is like `_.forIn` except that it iterates over properties of
-     * `object` in the opposite order.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns `object`.
-     * @see _.forIn
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.forInRight(new Foo, function(value, key) {
-     *   console.log(key);
-     * });
-     * // => Logs 'c', 'b', then 'a' assuming `_.forIn` logs 'a', 'b', then 'c'.
-     */
-    function forInRight(object, iteratee) {
-      return object == null
-        ? object
-        : baseForRight(object, getIteratee(iteratee, 3), keysIn);
-    }
-
-    /**
-     * Iterates over own enumerable string keyed properties of an object and
-     * invokes `iteratee` for each property. The iteratee is invoked with three
-     * arguments: (value, key, object). Iteratee functions may exit iteration
-     * early by explicitly returning `false`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.3.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns `object`.
-     * @see _.forOwnRight
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.forOwn(new Foo, function(value, key) {
-     *   console.log(key);
-     * });
-     * // => Logs 'a' then 'b' (iteration order is not guaranteed).
-     */
-    function forOwn(object, iteratee) {
-      return object && baseForOwn(object, getIteratee(iteratee, 3));
-    }
-
-    /**
-     * This method is like `_.forOwn` except that it iterates over properties of
-     * `object` in the opposite order.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.0.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns `object`.
-     * @see _.forOwn
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.forOwnRight(new Foo, function(value, key) {
-     *   console.log(key);
-     * });
-     * // => Logs 'b' then 'a' assuming `_.forOwn` logs 'a' then 'b'.
-     */
-    function forOwnRight(object, iteratee) {
-      return object && baseForOwnRight(object, getIteratee(iteratee, 3));
-    }
-
-    /**
-     * Creates an array of function property names from own enumerable properties
-     * of `object`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the function names.
-     * @see _.functionsIn
-     * @example
-     *
-     * function Foo() {
-     *   this.a = _.constant('a');
-     *   this.b = _.constant('b');
-     * }
-     *
-     * Foo.prototype.c = _.constant('c');
-     *
-     * _.functions(new Foo);
-     * // => ['a', 'b']
-     */
-    function functions(object) {
-      return object == null ? [] : baseFunctions(object, keys(object));
-    }
-
-    /**
-     * Creates an array of function property names from own and inherited
-     * enumerable properties of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The object to inspect.
-     * @returns {Array} Returns the function names.
-     * @see _.functions
-     * @example
-     *
-     * function Foo() {
-     *   this.a = _.constant('a');
-     *   this.b = _.constant('b');
-     * }
-     *
-     * Foo.prototype.c = _.constant('c');
-     *
-     * _.functionsIn(new Foo);
-     * // => ['a', 'b', 'c']
-     */
-    function functionsIn(object) {
-      return object == null ? [] : baseFunctions(object, keysIn(object));
-    }
-
-    /**
-     * Gets the value at `path` of `object`. If the resolved value is
-     * `undefined`, the `defaultValue` is returned in its place.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.7.0
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the property to get.
-     * @param {*} [defaultValue] The value returned for `undefined` resolved values.
-     * @returns {*} Returns the resolved value.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-     *
-     * _.get(object, 'a[0].b.c');
-     * // => 3
-     *
-     * _.get(object, ['a', '0', 'b', 'c']);
-     * // => 3
-     *
-     * _.get(object, 'a.b.c', 'default');
-     * // => 'default'
-     */
-    function get(object, path, defaultValue) {
-      var result = object == null ? undefined : baseGet(object, path);
-      return result === undefined ? defaultValue : result;
-    }
-
-    /**
-     * Checks if `path` is a direct property of `object`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path to check.
-     * @returns {boolean} Returns `true` if `path` exists, else `false`.
-     * @example
-     *
-     * var object = { 'a': { 'b': 2 } };
-     * var other = _.create({ 'a': _.create({ 'b': 2 }) });
-     *
-     * _.has(object, 'a');
-     * // => true
-     *
-     * _.has(object, 'a.b');
-     * // => true
-     *
-     * _.has(object, ['a', 'b']);
-     * // => true
-     *
-     * _.has(other, 'a');
-     * // => false
-     */
-    function has(object, path) {
-      return object != null && hasPath(object, path, baseHas);
-    }
-
-    /**
-     * Checks if `path` is a direct or inherited property of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path to check.
-     * @returns {boolean} Returns `true` if `path` exists, else `false`.
-     * @example
-     *
-     * var object = _.create({ 'a': _.create({ 'b': 2 }) });
-     *
-     * _.hasIn(object, 'a');
-     * // => true
-     *
-     * _.hasIn(object, 'a.b');
-     * // => true
-     *
-     * _.hasIn(object, ['a', 'b']);
-     * // => true
-     *
-     * _.hasIn(object, 'b');
-     * // => false
-     */
-    function hasIn(object, path) {
-      return object != null && hasPath(object, path, baseHasIn);
-    }
-
-    /**
-     * Creates an object composed of the inverted keys and values of `object`.
-     * If `object` contains duplicate values, subsequent values overwrite
-     * property assignments of previous values.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.7.0
-     * @category Object
-     * @param {Object} object The object to invert.
-     * @returns {Object} Returns the new inverted object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': 2, 'c': 1 };
-     *
-     * _.invert(object);
-     * // => { '1': 'c', '2': 'b' }
-     */
-    var invert = createInverter(function(result, value, key) {
-      if (value != null &&
-          typeof value.toString != 'function') {
-        value = nativeObjectToString.call(value);
-      }
-
-      result[value] = key;
-    }, constant(identity));
-
-    /**
-     * This method is like `_.invert` except that the inverted object is generated
-     * from the results of running each element of `object` thru `iteratee`. The
-     * corresponding inverted value of each inverted key is an array of keys
-     * responsible for generating the inverted value. The iteratee is invoked
-     * with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.1.0
-     * @category Object
-     * @param {Object} object The object to invert.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {Object} Returns the new inverted object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': 2, 'c': 1 };
-     *
-     * _.invertBy(object);
-     * // => { '1': ['a', 'c'], '2': ['b'] }
-     *
-     * _.invertBy(object, function(value) {
-     *   return 'group' + value;
-     * });
-     * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
-     */
-    var invertBy = createInverter(function(result, value, key) {
-      if (value != null &&
-          typeof value.toString != 'function') {
-        value = nativeObjectToString.call(value);
-      }
-
-      if (hasOwnProperty.call(result, value)) {
-        result[value].push(key);
-      } else {
-        result[value] = [key];
-      }
-    }, getIteratee);
-
-    /**
-     * Invokes the method at `path` of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the method to invoke.
-     * @param {...*} [args] The arguments to invoke the method with.
-     * @returns {*} Returns the result of the invoked method.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] };
-     *
-     * _.invoke(object, 'a[0].b.c.slice', 1, 3);
-     * // => [2, 3]
-     */
-    var invoke = baseRest(baseInvoke);
-
-    /**
-     * Creates an array of the own enumerable property names of `object`.
-     *
-     * **Note:** Non-object values are coerced to objects. See the
-     * [ES spec](http://ecma-international.org/ecma-262/7.0/#sec-object.keys)
-     * for more details.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the array of property names.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.keys(new Foo);
-     * // => ['a', 'b'] (iteration order is not guaranteed)
-     *
-     * _.keys('hi');
-     * // => ['0', '1']
-     */
-    function keys(object) {
-      return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-    }
-
-    /**
-     * Creates an array of the own and inherited enumerable property names of `object`.
-     *
-     * **Note:** Non-object values are coerced to objects.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the array of property names.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.keysIn(new Foo);
-     * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
-     */
-    function keysIn(object) {
-      return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
-    }
-
-    /**
-     * The opposite of `_.mapValues`; this method creates an object with the
-     * same values as `object` and keys generated by running each own enumerable
-     * string keyed property of `object` thru `iteratee`. The iteratee is invoked
-     * with three arguments: (value, key, object).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.8.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns the new mapped object.
-     * @see _.mapValues
-     * @example
-     *
-     * _.mapKeys({ 'a': 1, 'b': 2 }, function(value, key) {
-     *   return key + value;
-     * });
-     * // => { 'a1': 1, 'b2': 2 }
-     */
-    function mapKeys(object, iteratee) {
-      var result = {};
-      iteratee = getIteratee(iteratee, 3);
-
-      baseForOwn(object, function(value, key, object) {
-        baseAssignValue(result, iteratee(value, key, object), value);
-      });
-      return result;
-    }
-
-    /**
-     * Creates an object with the same keys as `object` and values generated
-     * by running each own enumerable string keyed property of `object` thru
-     * `iteratee`. The iteratee is invoked with three arguments:
-     * (value, key, object).
-     *
-     * @static
-     * @memberOf _
-     * @since 2.4.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Object} Returns the new mapped object.
-     * @see _.mapKeys
-     * @example
-     *
-     * var users = {
-     *   'fred':    { 'user': 'fred',    'age': 40 },
-     *   'pebbles': { 'user': 'pebbles', 'age': 1 }
-     * };
-     *
-     * _.mapValues(users, function(o) { return o.age; });
-     * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.mapValues(users, 'age');
-     * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
-     */
-    function mapValues(object, iteratee) {
-      var result = {};
-      iteratee = getIteratee(iteratee, 3);
-
-      baseForOwn(object, function(value, key, object) {
-        baseAssignValue(result, key, iteratee(value, key, object));
-      });
-      return result;
-    }
-
-    /**
-     * This method is like `_.assign` except that it recursively merges own and
-     * inherited enumerable string keyed properties of source objects into the
-     * destination object. Source properties that resolve to `undefined` are
-     * skipped if a destination value exists. Array and plain object properties
-     * are merged recursively. Other objects and value types are overridden by
-     * assignment. Source objects are applied from left to right. Subsequent
-     * sources overwrite property assignments of previous sources.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.5.0
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} [sources] The source objects.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var object = {
-     *   'a': [{ 'b': 2 }, { 'd': 4 }]
-     * };
-     *
-     * var other = {
-     *   'a': [{ 'c': 3 }, { 'e': 5 }]
-     * };
-     *
-     * _.merge(object, other);
-     * // => { 'a': [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }] }
-     */
-    var merge = createAssigner(function(object, source, srcIndex) {
-      baseMerge(object, source, srcIndex);
-    });
-
-    /**
-     * This method is like `_.merge` except that it accepts `customizer` which
-     * is invoked to produce the merged values of the destination and source
-     * properties. If `customizer` returns `undefined`, merging is handled by the
-     * method instead. The `customizer` is invoked with six arguments:
-     * (objValue, srcValue, key, object, source, stack).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The destination object.
-     * @param {...Object} sources The source objects.
-     * @param {Function} customizer The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * function customizer(objValue, srcValue) {
-     *   if (_.isArray(objValue)) {
-     *     return objValue.concat(srcValue);
-     *   }
-     * }
-     *
-     * var object = { 'a': [1], 'b': [2] };
-     * var other = { 'a': [3], 'b': [4] };
-     *
-     * _.mergeWith(object, other, customizer);
-     * // => { 'a': [1, 3], 'b': [2, 4] }
-     */
-    var mergeWith = createAssigner(function(object, source, srcIndex, customizer) {
-      baseMerge(object, source, srcIndex, customizer);
-    });
-
-    /**
-     * The opposite of `_.pick`; this method creates an object composed of the
-     * own and inherited enumerable property paths of `object` that are not omitted.
-     *
-     * **Note:** This method is considerably slower than `_.pick`.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The source object.
-     * @param {...(string|string[])} [paths] The property paths to omit.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': '2', 'c': 3 };
-     *
-     * _.omit(object, ['a', 'c']);
-     * // => { 'b': '2' }
-     */
-    var omit = flatRest(function(object, paths) {
-      var result = {};
-      if (object == null) {
-        return result;
-      }
-      var isDeep = false;
-      paths = arrayMap(paths, function(path) {
-        path = castPath(path, object);
-        isDeep || (isDeep = path.length > 1);
-        return path;
-      });
-      copyObject(object, getAllKeysIn(object), result);
-      if (isDeep) {
-        result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
-      }
-      var length = paths.length;
-      while (length--) {
-        baseUnset(result, paths[length]);
-      }
-      return result;
-    });
-
-    /**
-     * The opposite of `_.pickBy`; this method creates an object composed of
-     * the own and inherited enumerable string keyed properties of `object` that
-     * `predicate` doesn't return truthy for. The predicate is invoked with two
-     * arguments: (value, key).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The source object.
-     * @param {Function} [predicate=_.identity] The function invoked per property.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': '2', 'c': 3 };
-     *
-     * _.omitBy(object, _.isNumber);
-     * // => { 'b': '2' }
-     */
-    function omitBy(object, predicate) {
-      return pickBy(object, negate(getIteratee(predicate)));
-    }
-
-    /**
-     * Creates an object composed of the picked `object` properties.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The source object.
-     * @param {...(string|string[])} [paths] The property paths to pick.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': '2', 'c': 3 };
-     *
-     * _.pick(object, ['a', 'c']);
-     * // => { 'a': 1, 'c': 3 }
-     */
-    var pick = flatRest(function(object, paths) {
-      return object == null ? {} : basePick(object, paths);
-    });
-
-    /**
-     * Creates an object composed of the `object` properties `predicate` returns
-     * truthy for. The predicate is invoked with two arguments: (value, key).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The source object.
-     * @param {Function} [predicate=_.identity] The function invoked per property.
-     * @returns {Object} Returns the new object.
-     * @example
-     *
-     * var object = { 'a': 1, 'b': '2', 'c': 3 };
-     *
-     * _.pickBy(object, _.isNumber);
-     * // => { 'a': 1, 'c': 3 }
-     */
-    function pickBy(object, predicate) {
-      if (object == null) {
-        return {};
-      }
-      var props = arrayMap(getAllKeysIn(object), function(prop) {
-        return [prop];
-      });
-      predicate = getIteratee(predicate);
-      return basePickBy(object, props, function(value, path) {
-        return predicate(value, path[0]);
-      });
-    }
-
-    /**
-     * This method is like `_.get` except that if the resolved value is a
-     * function it's invoked with the `this` binding of its parent object and
-     * its result is returned.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @param {Array|string} path The path of the property to resolve.
-     * @param {*} [defaultValue] The value returned for `undefined` resolved values.
-     * @returns {*} Returns the resolved value.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c1': 3, 'c2': _.constant(4) } }] };
-     *
-     * _.result(object, 'a[0].b.c1');
-     * // => 3
-     *
-     * _.result(object, 'a[0].b.c2');
-     * // => 4
-     *
-     * _.result(object, 'a[0].b.c3', 'default');
-     * // => 'default'
-     *
-     * _.result(object, 'a[0].b.c3', _.constant('default'));
-     * // => 'default'
-     */
-    function result(object, path, defaultValue) {
-      path = castPath(path, object);
-
-      var index = -1,
-          length = path.length;
-
-      // Ensure the loop is entered when path is empty.
-      if (!length) {
-        length = 1;
-        object = undefined;
-      }
-      while (++index < length) {
-        var value = object == null ? undefined : object[toKey(path[index])];
-        if (value === undefined) {
-          index = length;
-          value = defaultValue;
-        }
-        object = isFunction(value) ? value.call(object) : value;
-      }
-      return object;
-    }
-
-    /**
-     * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
-     * it's created. Arrays are created for missing index properties while objects
-     * are created for all other missing properties. Use `_.setWith` to customize
-     * `path` creation.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.7.0
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to set.
-     * @param {*} value The value to set.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-     *
-     * _.set(object, 'a[0].b.c', 4);
-     * console.log(object.a[0].b.c);
-     * // => 4
-     *
-     * _.set(object, ['x', '0', 'y', 'z'], 5);
-     * console.log(object.x[0].y.z);
-     * // => 5
-     */
-    function set(object, path, value) {
-      return object == null ? object : baseSet(object, path, value);
-    }
-
-    /**
-     * This method is like `_.set` except that it accepts `customizer` which is
-     * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
-     * path creation is handled by the method instead. The `customizer` is invoked
-     * with three arguments: (nsValue, key, nsObject).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to set.
-     * @param {*} value The value to set.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var object = {};
-     *
-     * _.setWith(object, '[0][1]', 'a', Object);
-     * // => { '0': { '1': 'a' } }
-     */
-    function setWith(object, path, value, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      return object == null ? object : baseSet(object, path, value, customizer);
-    }
-
-    /**
-     * Creates an array of own enumerable string keyed-value pairs for `object`
-     * which can be consumed by `_.fromPairs`. If `object` is a map or set, its
-     * entries are returned.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @alias entries
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the key-value pairs.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.toPairs(new Foo);
-     * // => [['a', 1], ['b', 2]] (iteration order is not guaranteed)
-     */
-    var toPairs = createToPairs(keys);
-
-    /**
-     * Creates an array of own and inherited enumerable string keyed-value pairs
-     * for `object` which can be consumed by `_.fromPairs`. If `object` is a map
-     * or set, its entries are returned.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @alias entriesIn
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the key-value pairs.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.toPairsIn(new Foo);
-     * // => [['a', 1], ['b', 2], ['c', 3]] (iteration order is not guaranteed)
-     */
-    var toPairsIn = createToPairs(keysIn);
-
-    /**
-     * An alternative to `_.reduce`; this method transforms `object` to a new
-     * `accumulator` object which is the result of running each of its own
-     * enumerable string keyed properties thru `iteratee`, with each invocation
-     * potentially mutating the `accumulator` object. If `accumulator` is not
-     * provided, a new object with the same `[[Prototype]]` will be used. The
-     * iteratee is invoked with four arguments: (accumulator, value, key, object).
-     * Iteratee functions may exit iteration early by explicitly returning `false`.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.3.0
-     * @category Object
-     * @param {Object} object The object to iterate over.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @param {*} [accumulator] The custom accumulator value.
-     * @returns {*} Returns the accumulated value.
-     * @example
-     *
-     * _.transform([2, 3, 4], function(result, n) {
-     *   result.push(n *= n);
-     *   return n % 2 == 0;
-     * }, []);
-     * // => [4, 9]
-     *
-     * _.transform({ 'a': 1, 'b': 2, 'c': 1 }, function(result, value, key) {
-     *   (result[value] || (result[value] = [])).push(key);
-     * }, {});
-     * // => { '1': ['a', 'c'], '2': ['b'] }
-     */
-    function transform(object, iteratee, accumulator) {
-      var isArr = isArray(object),
-          isArrLike = isArr || isBuffer(object) || isTypedArray(object);
-
-      iteratee = getIteratee(iteratee, 4);
-      if (accumulator == null) {
-        var Ctor = object && object.constructor;
-        if (isArrLike) {
-          accumulator = isArr ? new Ctor : [];
-        }
-        else if (isObject(object)) {
-          accumulator = isFunction(Ctor) ? baseCreate(getPrototype(object)) : {};
-        }
-        else {
-          accumulator = {};
-        }
-      }
-      (isArrLike ? arrayEach : baseForOwn)(object, function(value, index, object) {
-        return iteratee(accumulator, value, index, object);
-      });
-      return accumulator;
-    }
-
-    /**
-     * Removes the property at `path` of `object`.
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to unset.
-     * @returns {boolean} Returns `true` if the property is deleted, else `false`.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 7 } }] };
-     * _.unset(object, 'a[0].b.c');
-     * // => true
-     *
-     * console.log(object);
-     * // => { 'a': [{ 'b': {} }] };
-     *
-     * _.unset(object, ['a', '0', 'b', 'c']);
-     * // => true
-     *
-     * console.log(object);
-     * // => { 'a': [{ 'b': {} }] };
-     */
-    function unset(object, path) {
-      return object == null ? true : baseUnset(object, path);
-    }
-
-    /**
-     * This method is like `_.set` except that accepts `updater` to produce the
-     * value to set. Use `_.updateWith` to customize `path` creation. The `updater`
-     * is invoked with one argument: (value).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.6.0
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to set.
-     * @param {Function} updater The function to produce the updated value.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-     *
-     * _.update(object, 'a[0].b.c', function(n) { return n * n; });
-     * console.log(object.a[0].b.c);
-     * // => 9
-     *
-     * _.update(object, 'x[0].y.z', function(n) { return n ? n + 1 : 0; });
-     * console.log(object.x[0].y.z);
-     * // => 0
-     */
-    function update(object, path, updater) {
-      return object == null ? object : baseUpdate(object, path, castFunction(updater));
-    }
-
-    /**
-     * This method is like `_.update` except that it accepts `customizer` which is
-     * invoked to produce the objects of `path`.  If `customizer` returns `undefined`
-     * path creation is handled by the method instead. The `customizer` is invoked
-     * with three arguments: (nsValue, key, nsObject).
-     *
-     * **Note:** This method mutates `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.6.0
-     * @category Object
-     * @param {Object} object The object to modify.
-     * @param {Array|string} path The path of the property to set.
-     * @param {Function} updater The function to produce the updated value.
-     * @param {Function} [customizer] The function to customize assigned values.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var object = {};
-     *
-     * _.updateWith(object, '[0][1]', _.constant('a'), Object);
-     * // => { '0': { '1': 'a' } }
-     */
-    function updateWith(object, path, updater, customizer) {
-      customizer = typeof customizer == 'function' ? customizer : undefined;
-      return object == null ? object : baseUpdate(object, path, castFunction(updater), customizer);
-    }
-
-    /**
-     * Creates an array of the own enumerable string keyed property values of `object`.
-     *
-     * **Note:** Non-object values are coerced to objects.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the array of property values.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.values(new Foo);
-     * // => [1, 2] (iteration order is not guaranteed)
-     *
-     * _.values('hi');
-     * // => ['h', 'i']
-     */
-    function values(object) {
-      return object == null ? [] : baseValues(object, keys(object));
-    }
-
-    /**
-     * Creates an array of the own and inherited enumerable string keyed property
-     * values of `object`.
-     *
-     * **Note:** Non-object values are coerced to objects.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Object
-     * @param {Object} object The object to query.
-     * @returns {Array} Returns the array of property values.
-     * @example
-     *
-     * function Foo() {
-     *   this.a = 1;
-     *   this.b = 2;
-     * }
-     *
-     * Foo.prototype.c = 3;
-     *
-     * _.valuesIn(new Foo);
-     * // => [1, 2, 3] (iteration order is not guaranteed)
-     */
-    function valuesIn(object) {
-      return object == null ? [] : baseValues(object, keysIn(object));
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Clamps `number` within the inclusive `lower` and `upper` bounds.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Number
-     * @param {number} number The number to clamp.
-     * @param {number} [lower] The lower bound.
-     * @param {number} upper The upper bound.
-     * @returns {number} Returns the clamped number.
-     * @example
-     *
-     * _.clamp(-10, -5, 5);
-     * // => -5
-     *
-     * _.clamp(10, -5, 5);
-     * // => 5
-     */
-    function clamp(number, lower, upper) {
-      if (upper === undefined) {
-        upper = lower;
-        lower = undefined;
-      }
-      if (upper !== undefined) {
-        upper = toNumber(upper);
-        upper = upper === upper ? upper : 0;
-      }
-      if (lower !== undefined) {
-        lower = toNumber(lower);
-        lower = lower === lower ? lower : 0;
-      }
-      return baseClamp(toNumber(number), lower, upper);
-    }
-
-    /**
-     * Checks if `n` is between `start` and up to, but not including, `end`. If
-     * `end` is not specified, it's set to `start` with `start` then set to `0`.
-     * If `start` is greater than `end` the params are swapped to support
-     * negative ranges.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.3.0
-     * @category Number
-     * @param {number} number The number to check.
-     * @param {number} [start=0] The start of the range.
-     * @param {number} end The end of the range.
-     * @returns {boolean} Returns `true` if `number` is in the range, else `false`.
-     * @see _.range, _.rangeRight
-     * @example
-     *
-     * _.inRange(3, 2, 4);
-     * // => true
-     *
-     * _.inRange(4, 8);
-     * // => true
-     *
-     * _.inRange(4, 2);
-     * // => false
-     *
-     * _.inRange(2, 2);
-     * // => false
-     *
-     * _.inRange(1.2, 2);
-     * // => true
-     *
-     * _.inRange(5.2, 4);
-     * // => false
-     *
-     * _.inRange(-3, -2, -6);
-     * // => true
-     */
-    function inRange(number, start, end) {
-      start = toFinite(start);
-      if (end === undefined) {
-        end = start;
-        start = 0;
-      } else {
-        end = toFinite(end);
-      }
-      number = toNumber(number);
-      return baseInRange(number, start, end);
-    }
-
-    /**
-     * Produces a random number between the inclusive `lower` and `upper` bounds.
-     * If only one argument is provided a number between `0` and the given number
-     * is returned. If `floating` is `true`, or either `lower` or `upper` are
-     * floats, a floating-point number is returned instead of an integer.
-     *
-     * **Note:** JavaScript follows the IEEE-754 standard for resolving
-     * floating-point values which can produce unexpected results.
-     *
-     * @static
-     * @memberOf _
-     * @since 0.7.0
-     * @category Number
-     * @param {number} [lower=0] The lower bound.
-     * @param {number} [upper=1] The upper bound.
-     * @param {boolean} [floating] Specify returning a floating-point number.
-     * @returns {number} Returns the random number.
-     * @example
-     *
-     * _.random(0, 5);
-     * // => an integer between 0 and 5
-     *
-     * _.random(5);
-     * // => also an integer between 0 and 5
-     *
-     * _.random(5, true);
-     * // => a floating-point number between 0 and 5
-     *
-     * _.random(1.2, 5.2);
-     * // => a floating-point number between 1.2 and 5.2
-     */
-    function random(lower, upper, floating) {
-      if (floating && typeof floating != 'boolean' && isIterateeCall(lower, upper, floating)) {
-        upper = floating = undefined;
-      }
-      if (floating === undefined) {
-        if (typeof upper == 'boolean') {
-          floating = upper;
-          upper = undefined;
-        }
-        else if (typeof lower == 'boolean') {
-          floating = lower;
-          lower = undefined;
-        }
-      }
-      if (lower === undefined && upper === undefined) {
-        lower = 0;
-        upper = 1;
-      }
-      else {
-        lower = toFinite(lower);
-        if (upper === undefined) {
-          upper = lower;
-          lower = 0;
-        } else {
-          upper = toFinite(upper);
-        }
-      }
-      if (lower > upper) {
-        var temp = lower;
-        lower = upper;
-        upper = temp;
-      }
-      if (floating || lower % 1 || upper % 1) {
-        var rand = nativeRandom();
-        return nativeMin(lower + (rand * (upper - lower + freeParseFloat('1e-' + ((rand + '').length - 1)))), upper);
-      }
-      return baseRandom(lower, upper);
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the camel cased string.
-     * @example
-     *
-     * _.camelCase('Foo Bar');
-     * // => 'fooBar'
-     *
-     * _.camelCase('--foo-bar--');
-     * // => 'fooBar'
-     *
-     * _.camelCase('__FOO_BAR__');
-     * // => 'fooBar'
-     */
-    var camelCase = createCompounder(function(result, word, index) {
-      word = word.toLowerCase();
-      return result + (index ? capitalize(word) : word);
-    });
-
-    /**
-     * Converts the first character of `string` to upper case and the remaining
-     * to lower case.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to capitalize.
-     * @returns {string} Returns the capitalized string.
-     * @example
-     *
-     * _.capitalize('FRED');
-     * // => 'Fred'
-     */
-    function capitalize(string) {
-      return upperFirst(toString(string).toLowerCase());
-    }
-
-    /**
-     * Deburrs `string` by converting
-     * [Latin-1 Supplement](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)
-     * and [Latin Extended-A](https://en.wikipedia.org/wiki/Latin_Extended-A)
-     * letters to basic Latin letters and removing
-     * [combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to deburr.
-     * @returns {string} Returns the deburred string.
-     * @example
-     *
-     * _.deburr('déjà vu');
-     * // => 'deja vu'
-     */
-    function deburr(string) {
-      string = toString(string);
-      return string && string.replace(reLatin, deburrLetter).replace(reComboMark, '');
-    }
-
-    /**
-     * Checks if `string` ends with the given target string.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to inspect.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=string.length] The position to search up to.
-     * @returns {boolean} Returns `true` if `string` ends with `target`,
-     *  else `false`.
-     * @example
-     *
-     * _.endsWith('abc', 'c');
-     * // => true
-     *
-     * _.endsWith('abc', 'b');
-     * // => false
-     *
-     * _.endsWith('abc', 'b', 2);
-     * // => true
-     */
-    function endsWith(string, target, position) {
-      string = toString(string);
-      target = baseToString(target);
-
-      var length = string.length;
-      position = position === undefined
-        ? length
-        : baseClamp(toInteger(position), 0, length);
-
-      var end = position;
-      position -= target.length;
-      return position >= 0 && string.slice(position, end) == target;
-    }
-
-    /**
-     * Converts the characters "&", "<", ">", '"', and "'" in `string` to their
-     * corresponding HTML entities.
-     *
-     * **Note:** No other characters are escaped. To escape additional
-     * characters use a third-party library like [_he_](https://mths.be/he).
-     *
-     * Though the ">" character is escaped for symmetry, characters like
-     * ">" and "/" don't need escaping in HTML and have no special meaning
-     * unless they're part of a tag or unquoted attribute value. See
-     * [Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)
-     * (under "semi-related fun fact") for more details.
-     *
-     * When working with HTML you should always
-     * [quote attribute values](http://wonko.com/post/html-escaping) to reduce
-     * XSS vectors.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category String
-     * @param {string} [string=''] The string to escape.
-     * @returns {string} Returns the escaped string.
-     * @example
-     *
-     * _.escape('fred, barney, & pebbles');
-     * // => 'fred, barney, &amp; pebbles'
-     */
-    function escape(string) {
-      string = toString(string);
-      return (string && reHasUnescapedHtml.test(string))
-        ? string.replace(reUnescapedHtml, escapeHtmlChar)
-        : string;
-    }
-
-    /**
-     * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
-     * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to escape.
-     * @returns {string} Returns the escaped string.
-     * @example
-     *
-     * _.escapeRegExp('[lodash](https://lodash.com/)');
-     * // => '\[lodash\]\(https://lodash\.com/\)'
-     */
-    function escapeRegExp(string) {
-      string = toString(string);
-      return (string && reHasRegExpChar.test(string))
-        ? string.replace(reRegExpChar, '\\$&')
-        : string;
-    }
-
-    /**
-     * Converts `string` to
-     * [kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the kebab cased string.
-     * @example
-     *
-     * _.kebabCase('Foo Bar');
-     * // => 'foo-bar'
-     *
-     * _.kebabCase('fooBar');
-     * // => 'foo-bar'
-     *
-     * _.kebabCase('__FOO_BAR__');
-     * // => 'foo-bar'
-     */
-    var kebabCase = createCompounder(function(result, word, index) {
-      return result + (index ? '-' : '') + word.toLowerCase();
-    });
-
-    /**
-     * Converts `string`, as space separated words, to lower case.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the lower cased string.
-     * @example
-     *
-     * _.lowerCase('--Foo-Bar--');
-     * // => 'foo bar'
-     *
-     * _.lowerCase('fooBar');
-     * // => 'foo bar'
-     *
-     * _.lowerCase('__FOO_BAR__');
-     * // => 'foo bar'
-     */
-    var lowerCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + word.toLowerCase();
-    });
-
-    /**
-     * Converts the first character of `string` to lower case.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the converted string.
-     * @example
-     *
-     * _.lowerFirst('Fred');
-     * // => 'fred'
-     *
-     * _.lowerFirst('FRED');
-     * // => 'fRED'
-     */
-    var lowerFirst = createCaseFirst('toLowerCase');
-
-    /**
-     * Pads `string` on the left and right sides if it's shorter than `length`.
-     * Padding characters are truncated if they can't be evenly divided by `length`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to pad.
-     * @param {number} [length=0] The padding length.
-     * @param {string} [chars=' '] The string used as padding.
-     * @returns {string} Returns the padded string.
-     * @example
-     *
-     * _.pad('abc', 8);
-     * // => '  abc   '
-     *
-     * _.pad('abc', 8, '_-');
-     * // => '_-abc_-_'
-     *
-     * _.pad('abc', 3);
-     * // => 'abc'
-     */
-    function pad(string, length, chars) {
-      string = toString(string);
-      length = toInteger(length);
-
-      var strLength = length ? stringSize(string) : 0;
-      if (!length || strLength >= length) {
-        return string;
-      }
-      var mid = (length - strLength) / 2;
-      return (
-        createPadding(nativeFloor(mid), chars) +
-        string +
-        createPadding(nativeCeil(mid), chars)
-      );
-    }
-
-    /**
-     * Pads `string` on the right side if it's shorter than `length`. Padding
-     * characters are truncated if they exceed `length`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to pad.
-     * @param {number} [length=0] The padding length.
-     * @param {string} [chars=' '] The string used as padding.
-     * @returns {string} Returns the padded string.
-     * @example
-     *
-     * _.padEnd('abc', 6);
-     * // => 'abc   '
-     *
-     * _.padEnd('abc', 6, '_-');
-     * // => 'abc_-_'
-     *
-     * _.padEnd('abc', 3);
-     * // => 'abc'
-     */
-    function padEnd(string, length, chars) {
-      string = toString(string);
-      length = toInteger(length);
-
-      var strLength = length ? stringSize(string) : 0;
-      return (length && strLength < length)
-        ? (string + createPadding(length - strLength, chars))
-        : string;
-    }
-
-    /**
-     * Pads `string` on the left side if it's shorter than `length`. Padding
-     * characters are truncated if they exceed `length`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to pad.
-     * @param {number} [length=0] The padding length.
-     * @param {string} [chars=' '] The string used as padding.
-     * @returns {string} Returns the padded string.
-     * @example
-     *
-     * _.padStart('abc', 6);
-     * // => '   abc'
-     *
-     * _.padStart('abc', 6, '_-');
-     * // => '_-_abc'
-     *
-     * _.padStart('abc', 3);
-     * // => 'abc'
-     */
-    function padStart(string, length, chars) {
-      string = toString(string);
-      length = toInteger(length);
-
-      var strLength = length ? stringSize(string) : 0;
-      return (length && strLength < length)
-        ? (createPadding(length - strLength, chars) + string)
-        : string;
-    }
-
-    /**
-     * Converts `string` to an integer of the specified radix. If `radix` is
-     * `undefined` or `0`, a `radix` of `10` is used unless `value` is a
-     * hexadecimal, in which case a `radix` of `16` is used.
-     *
-     * **Note:** This method aligns with the
-     * [ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.
-     *
-     * @static
-     * @memberOf _
-     * @since 1.1.0
-     * @category String
-     * @param {string} string The string to convert.
-     * @param {number} [radix=10] The radix to interpret `value` by.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {number} Returns the converted integer.
-     * @example
-     *
-     * _.parseInt('08');
-     * // => 8
-     *
-     * _.map(['6', '08', '10'], _.parseInt);
-     * // => [6, 8, 10]
-     */
-    function parseInt(string, radix, guard) {
-      if (guard || radix == null) {
-        radix = 0;
-      } else if (radix) {
-        radix = +radix;
-      }
-      return nativeParseInt(toString(string).replace(reTrimStart, ''), radix || 0);
-    }
-
-    /**
-     * Repeats the given string `n` times.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to repeat.
-     * @param {number} [n=1] The number of times to repeat the string.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {string} Returns the repeated string.
-     * @example
-     *
-     * _.repeat('*', 3);
-     * // => '***'
-     *
-     * _.repeat('abc', 2);
-     * // => 'abcabc'
-     *
-     * _.repeat('abc', 0);
-     * // => ''
-     */
-    function repeat(string, n, guard) {
-      if ((guard ? isIterateeCall(string, n, guard) : n === undefined)) {
-        n = 1;
-      } else {
-        n = toInteger(n);
-      }
-      return baseRepeat(toString(string), n);
-    }
-
-    /**
-     * Replaces matches for `pattern` in `string` with `replacement`.
-     *
-     * **Note:** This method is based on
-     * [`String#replace`](https://mdn.io/String/replace).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to modify.
-     * @param {RegExp|string} pattern The pattern to replace.
-     * @param {Function|string} replacement The match replacement.
-     * @returns {string} Returns the modified string.
-     * @example
-     *
-     * _.replace('Hi Fred', 'Fred', 'Barney');
-     * // => 'Hi Barney'
-     */
-    function replace() {
-      var args = arguments,
-          string = toString(args[0]);
-
-      return args.length < 3 ? string : string.replace(args[1], args[2]);
-    }
-
-    /**
-     * Converts `string` to
-     * [snake case](https://en.wikipedia.org/wiki/Snake_case).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the snake cased string.
-     * @example
-     *
-     * _.snakeCase('Foo Bar');
-     * // => 'foo_bar'
-     *
-     * _.snakeCase('fooBar');
-     * // => 'foo_bar'
-     *
-     * _.snakeCase('--FOO-BAR--');
-     * // => 'foo_bar'
-     */
-    var snakeCase = createCompounder(function(result, word, index) {
-      return result + (index ? '_' : '') + word.toLowerCase();
-    });
-
-    /**
-     * Splits `string` by `separator`.
-     *
-     * **Note:** This method is based on
-     * [`String#split`](https://mdn.io/String/split).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to split.
-     * @param {RegExp|string} separator The separator pattern to split by.
-     * @param {number} [limit] The length to truncate results to.
-     * @returns {Array} Returns the string segments.
-     * @example
-     *
-     * _.split('a-b-c', '-', 2);
-     * // => ['a', 'b']
-     */
-    function split(string, separator, limit) {
-      if (limit && typeof limit != 'number' && isIterateeCall(string, separator, limit)) {
-        separator = limit = undefined;
-      }
-      limit = limit === undefined ? MAX_ARRAY_LENGTH : limit >>> 0;
-      if (!limit) {
-        return [];
-      }
-      string = toString(string);
-      if (string && (
-            typeof separator == 'string' ||
-            (separator != null && !isRegExp(separator))
-          )) {
-        separator = baseToString(separator);
-        if (!separator && hasUnicode(string)) {
-          return castSlice(stringToArray(string), 0, limit);
-        }
-      }
-      return string.split(separator, limit);
-    }
-
-    /**
-     * Converts `string` to
-     * [start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).
-     *
-     * @static
-     * @memberOf _
-     * @since 3.1.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the start cased string.
-     * @example
-     *
-     * _.startCase('--foo-bar--');
-     * // => 'Foo Bar'
-     *
-     * _.startCase('fooBar');
-     * // => 'Foo Bar'
-     *
-     * _.startCase('__FOO_BAR__');
-     * // => 'FOO BAR'
-     */
-    var startCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + upperFirst(word);
-    });
-
-    /**
-     * Checks if `string` starts with the given target string.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to inspect.
-     * @param {string} [target] The string to search for.
-     * @param {number} [position=0] The position to search from.
-     * @returns {boolean} Returns `true` if `string` starts with `target`,
-     *  else `false`.
-     * @example
-     *
-     * _.startsWith('abc', 'a');
-     * // => true
-     *
-     * _.startsWith('abc', 'b');
-     * // => false
-     *
-     * _.startsWith('abc', 'b', 1);
-     * // => true
-     */
-    function startsWith(string, target, position) {
-      string = toString(string);
-      position = position == null
-        ? 0
-        : baseClamp(toInteger(position), 0, string.length);
-
-      target = baseToString(target);
-      return string.slice(position, position + target.length) == target;
-    }
-
-    /**
-     * Creates a compiled template function that can interpolate data properties
-     * in "interpolate" delimiters, HTML-escape interpolated data properties in
-     * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
-     * properties may be accessed as free variables in the template. If a setting
-     * object is given, it takes precedence over `_.templateSettings` values.
-     *
-     * **Note:** In the development build `_.template` utilizes
-     * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
-     * for easier debugging.
-     *
-     * For more information on precompiling templates see
-     * [lodash's custom builds documentation](https://lodash.com/custom-builds).
-     *
-     * For more information on Chrome extension sandboxes see
-     * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category String
-     * @param {string} [string=''] The template string.
-     * @param {Object} [options={}] The options object.
-     * @param {RegExp} [options.escape=_.templateSettings.escape]
-     *  The HTML "escape" delimiter.
-     * @param {RegExp} [options.evaluate=_.templateSettings.evaluate]
-     *  The "evaluate" delimiter.
-     * @param {Object} [options.imports=_.templateSettings.imports]
-     *  An object to import into the template as free variables.
-     * @param {RegExp} [options.interpolate=_.templateSettings.interpolate]
-     *  The "interpolate" delimiter.
-     * @param {string} [options.sourceURL='lodash.templateSources[n]']
-     *  The sourceURL of the compiled template.
-     * @param {string} [options.variable='obj']
-     *  The data object variable name.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Function} Returns the compiled template function.
-     * @example
-     *
-     * // Use the "interpolate" delimiter to create a compiled template.
-     * var compiled = _.template('hello <%= user %>!');
-     * compiled({ 'user': 'fred' });
-     * // => 'hello fred!'
-     *
-     * // Use the HTML "escape" delimiter to escape data property values.
-     * var compiled = _.template('<b><%- value %></b>');
-     * compiled({ 'value': '<script>' });
-     * // => '<b>&lt;script&gt;</b>'
-     *
-     * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
-     * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
-     * compiled({ 'users': ['fred', 'barney'] });
-     * // => '<li>fred</li><li>barney</li>'
-     *
-     * // Use the internal `print` function in "evaluate" delimiters.
-     * var compiled = _.template('<% print("hello " + user); %>!');
-     * compiled({ 'user': 'barney' });
-     * // => 'hello barney!'
-     *
-     * // Use the ES template literal delimiter as an "interpolate" delimiter.
-     * // Disable support by replacing the "interpolate" delimiter.
-     * var compiled = _.template('hello ${ user }!');
-     * compiled({ 'user': 'pebbles' });
-     * // => 'hello pebbles!'
-     *
-     * // Use backslashes to treat delimiters as plain text.
-     * var compiled = _.template('<%= "\\<%- value %\\>" %>');
-     * compiled({ 'value': 'ignored' });
-     * // => '<%- value %>'
-     *
-     * // Use the `imports` option to import `jQuery` as `jq`.
-     * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
-     * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
-     * compiled({ 'users': ['fred', 'barney'] });
-     * // => '<li>fred</li><li>barney</li>'
-     *
-     * // Use the `sourceURL` option to specify a custom sourceURL for the template.
-     * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
-     * compiled(data);
-     * // => Find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector.
-     *
-     * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
-     * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
-     * compiled.source;
-     * // => function(data) {
-     * //   var __t, __p = '';
-     * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
-     * //   return __p;
-     * // }
-     *
-     * // Use custom template delimiters.
-     * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-     * var compiled = _.template('hello {{ user }}!');
-     * compiled({ 'user': 'mustache' });
-     * // => 'hello mustache!'
-     *
-     * // Use the `source` property to inline compiled templates for meaningful
-     * // line numbers in error messages and stack traces.
-     * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
-     *   var JST = {\
-     *     "main": ' + _.template(mainText).source + '\
-     *   };\
-     * ');
-     */
-    function template(string, options, guard) {
-      // Based on John Resig's `tmpl` implementation
-      // (http://ejohn.org/blog/javascript-micro-templating/)
-      // and Laura Doktorova's doT.js (https://github.com/olado/doT).
-      var settings = lodash.templateSettings;
-
-      if (guard && isIterateeCall(string, options, guard)) {
-        options = undefined;
-      }
-      string = toString(string);
-      options = assignInWith({}, options, settings, customDefaultsAssignIn);
-
-      var imports = assignInWith({}, options.imports, settings.imports, customDefaultsAssignIn),
-          importsKeys = keys(imports),
-          importsValues = baseValues(imports, importsKeys);
-
-      var isEscaping,
-          isEvaluating,
-          index = 0,
-          interpolate = options.interpolate || reNoMatch,
-          source = "__p += '";
-
-      // Compile the regexp to match each delimiter.
-      var reDelimiters = RegExp(
-        (options.escape || reNoMatch).source + '|' +
-        interpolate.source + '|' +
-        (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
-        (options.evaluate || reNoMatch).source + '|$'
-      , 'g');
-
-      // Use a sourceURL for easier debugging.
-      // The sourceURL gets injected into the source that's eval-ed, so be careful
-      // to normalize all kinds of whitespace, so e.g. newlines (and unicode versions of it) can't sneak in
-      // and escape the comment, thus injecting code that gets evaled.
-      var sourceURL = '//# sourceURL=' +
-        (hasOwnProperty.call(options, 'sourceURL')
-          ? (options.sourceURL + '').replace(/\s/g, ' ')
-          : ('lodash.templateSources[' + (++templateCounter) + ']')
-        ) + '\n';
-
-      string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
-        interpolateValue || (interpolateValue = esTemplateValue);
-
-        // Escape characters that can't be included in string literals.
-        source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
-
-        // Replace delimiters with snippets.
-        if (escapeValue) {
-          isEscaping = true;
-          source += "' +\n__e(" + escapeValue + ") +\n'";
-        }
-        if (evaluateValue) {
-          isEvaluating = true;
-          source += "';\n" + evaluateValue + ";\n__p += '";
-        }
-        if (interpolateValue) {
-          source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
-        }
-        index = offset + match.length;
-
-        // The JS engine embedded in Adobe products needs `match` returned in
-        // order to produce the correct `offset` value.
-        return match;
-      });
-
-      source += "';\n";
-
-      // If `variable` is not specified wrap a with-statement around the generated
-      // code to add the data object to the top of the scope chain.
-      var variable = hasOwnProperty.call(options, 'variable') && options.variable;
-      if (!variable) {
-        source = 'with (obj) {\n' + source + '\n}\n';
-      }
-      // Throw an error if a forbidden character was found in `variable`, to prevent
-      // potential command injection attacks.
-      else if (reForbiddenIdentifierChars.test(variable)) {
-        throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
-      }
-
-      // Cleanup code by stripping empty strings.
-      source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
-        .replace(reEmptyStringMiddle, '$1')
-        .replace(reEmptyStringTrailing, '$1;');
-
-      // Frame code as the function body.
-      source = 'function(' + (variable || 'obj') + ') {\n' +
-        (variable
-          ? ''
-          : 'obj || (obj = {});\n'
-        ) +
-        "var __t, __p = ''" +
-        (isEscaping
-           ? ', __e = _.escape'
-           : ''
-        ) +
-        (isEvaluating
-          ? ', __j = Array.prototype.join;\n' +
-            "function print() { __p += __j.call(arguments, '') }\n"
-          : ';\n'
-        ) +
-        source +
-        'return __p\n}';
-
-      var result = attempt(function() {
-        return Function(importsKeys, sourceURL + 'return ' + source)
-          .apply(undefined, importsValues);
-      });
-
-      // Provide the compiled function's source by its `toString` method or
-      // the `source` property as a convenience for inlining compiled templates.
-      result.source = source;
-      if (isError(result)) {
-        throw result;
-      }
-      return result;
-    }
-
-    /**
-     * Converts `string`, as a whole, to lower case just like
-     * [String#toLowerCase](https://mdn.io/toLowerCase).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the lower cased string.
-     * @example
-     *
-     * _.toLower('--Foo-Bar--');
-     * // => '--foo-bar--'
-     *
-     * _.toLower('fooBar');
-     * // => 'foobar'
-     *
-     * _.toLower('__FOO_BAR__');
-     * // => '__foo_bar__'
-     */
-    function toLower(value) {
-      return toString(value).toLowerCase();
-    }
-
-    /**
-     * Converts `string`, as a whole, to upper case just like
-     * [String#toUpperCase](https://mdn.io/toUpperCase).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the upper cased string.
-     * @example
-     *
-     * _.toUpper('--foo-bar--');
-     * // => '--FOO-BAR--'
-     *
-     * _.toUpper('fooBar');
-     * // => 'FOOBAR'
-     *
-     * _.toUpper('__foo_bar__');
-     * // => '__FOO_BAR__'
-     */
-    function toUpper(value) {
-      return toString(value).toUpperCase();
-    }
-
-    /**
-     * Removes leading and trailing whitespace or specified characters from `string`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to trim.
-     * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {string} Returns the trimmed string.
-     * @example
-     *
-     * _.trim('  abc  ');
-     * // => 'abc'
-     *
-     * _.trim('-_-abc-_-', '_-');
-     * // => 'abc'
-     *
-     * _.map(['  foo  ', '  bar  '], _.trim);
-     * // => ['foo', 'bar']
-     */
-    function trim(string, chars, guard) {
-      string = toString(string);
-      if (string && (guard || chars === undefined)) {
-        return baseTrim(string);
-      }
-      if (!string || !(chars = baseToString(chars))) {
-        return string;
-      }
-      var strSymbols = stringToArray(string),
-          chrSymbols = stringToArray(chars),
-          start = charsStartIndex(strSymbols, chrSymbols),
-          end = charsEndIndex(strSymbols, chrSymbols) + 1;
-
-      return castSlice(strSymbols, start, end).join('');
-    }
-
-    /**
-     * Removes trailing whitespace or specified characters from `string`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to trim.
-     * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {string} Returns the trimmed string.
-     * @example
-     *
-     * _.trimEnd('  abc  ');
-     * // => '  abc'
-     *
-     * _.trimEnd('-_-abc-_-', '_-');
-     * // => '-_-abc'
-     */
-    function trimEnd(string, chars, guard) {
-      string = toString(string);
-      if (string && (guard || chars === undefined)) {
-        return string.slice(0, trimmedEndIndex(string) + 1);
-      }
-      if (!string || !(chars = baseToString(chars))) {
-        return string;
-      }
-      var strSymbols = stringToArray(string),
-          end = charsEndIndex(strSymbols, stringToArray(chars)) + 1;
-
-      return castSlice(strSymbols, 0, end).join('');
-    }
-
-    /**
-     * Removes leading whitespace or specified characters from `string`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to trim.
-     * @param {string} [chars=whitespace] The characters to trim.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {string} Returns the trimmed string.
-     * @example
-     *
-     * _.trimStart('  abc  ');
-     * // => 'abc  '
-     *
-     * _.trimStart('-_-abc-_-', '_-');
-     * // => 'abc-_-'
-     */
-    function trimStart(string, chars, guard) {
-      string = toString(string);
-      if (string && (guard || chars === undefined)) {
-        return string.replace(reTrimStart, '');
-      }
-      if (!string || !(chars = baseToString(chars))) {
-        return string;
-      }
-      var strSymbols = stringToArray(string),
-          start = charsStartIndex(strSymbols, stringToArray(chars));
-
-      return castSlice(strSymbols, start).join('');
-    }
-
-    /**
-     * Truncates `string` if it's longer than the given maximum string length.
-     * The last characters of the truncated string are replaced with the omission
-     * string which defaults to "...".
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to truncate.
-     * @param {Object} [options={}] The options object.
-     * @param {number} [options.length=30] The maximum string length.
-     * @param {string} [options.omission='...'] The string to indicate text is omitted.
-     * @param {RegExp|string} [options.separator] The separator pattern to truncate to.
-     * @returns {string} Returns the truncated string.
-     * @example
-     *
-     * _.truncate('hi-diddly-ho there, neighborino');
-     * // => 'hi-diddly-ho there, neighbo...'
-     *
-     * _.truncate('hi-diddly-ho there, neighborino', {
-     *   'length': 24,
-     *   'separator': ' '
-     * });
-     * // => 'hi-diddly-ho there,...'
-     *
-     * _.truncate('hi-diddly-ho there, neighborino', {
-     *   'length': 24,
-     *   'separator': /,? +/
-     * });
-     * // => 'hi-diddly-ho there...'
-     *
-     * _.truncate('hi-diddly-ho there, neighborino', {
-     *   'omission': ' [...]'
-     * });
-     * // => 'hi-diddly-ho there, neig [...]'
-     */
-    function truncate(string, options) {
-      var length = DEFAULT_TRUNC_LENGTH,
-          omission = DEFAULT_TRUNC_OMISSION;
-
-      if (isObject(options)) {
-        var separator = 'separator' in options ? options.separator : separator;
-        length = 'length' in options ? toInteger(options.length) : length;
-        omission = 'omission' in options ? baseToString(options.omission) : omission;
-      }
-      string = toString(string);
-
-      var strLength = string.length;
-      if (hasUnicode(string)) {
-        var strSymbols = stringToArray(string);
-        strLength = strSymbols.length;
-      }
-      if (length >= strLength) {
-        return string;
-      }
-      var end = length - stringSize(omission);
-      if (end < 1) {
-        return omission;
-      }
-      var result = strSymbols
-        ? castSlice(strSymbols, 0, end).join('')
-        : string.slice(0, end);
-
-      if (separator === undefined) {
-        return result + omission;
-      }
-      if (strSymbols) {
-        end += (result.length - end);
-      }
-      if (isRegExp(separator)) {
-        if (string.slice(end).search(separator)) {
-          var match,
-              substring = result;
-
-          if (!separator.global) {
-            separator = RegExp(separator.source, toString(reFlags.exec(separator)) + 'g');
-          }
-          separator.lastIndex = 0;
-          while ((match = separator.exec(substring))) {
-            var newEnd = match.index;
-          }
-          result = result.slice(0, newEnd === undefined ? end : newEnd);
-        }
-      } else if (string.indexOf(baseToString(separator), end) != end) {
-        var index = result.lastIndexOf(separator);
-        if (index > -1) {
-          result = result.slice(0, index);
-        }
-      }
-      return result + omission;
-    }
-
-    /**
-     * The inverse of `_.escape`; this method converts the HTML entities
-     * `&amp;`, `&lt;`, `&gt;`, `&quot;`, and `&#39;` in `string` to
-     * their corresponding characters.
-     *
-     * **Note:** No other HTML entities are unescaped. To unescape additional
-     * HTML entities use a third-party library like [_he_](https://mths.be/he).
-     *
-     * @static
-     * @memberOf _
-     * @since 0.6.0
-     * @category String
-     * @param {string} [string=''] The string to unescape.
-     * @returns {string} Returns the unescaped string.
-     * @example
-     *
-     * _.unescape('fred, barney, &amp; pebbles');
-     * // => 'fred, barney, & pebbles'
-     */
-    function unescape(string) {
-      string = toString(string);
-      return (string && reHasEscapedHtml.test(string))
-        ? string.replace(reEscapedHtml, unescapeHtmlChar)
-        : string;
-    }
-
-    /**
-     * Converts `string`, as space separated words, to upper case.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the upper cased string.
-     * @example
-     *
-     * _.upperCase('--foo-bar');
-     * // => 'FOO BAR'
-     *
-     * _.upperCase('fooBar');
-     * // => 'FOO BAR'
-     *
-     * _.upperCase('__foo_bar__');
-     * // => 'FOO BAR'
-     */
-    var upperCase = createCompounder(function(result, word, index) {
-      return result + (index ? ' ' : '') + word.toUpperCase();
-    });
-
-    /**
-     * Converts the first character of `string` to upper case.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category String
-     * @param {string} [string=''] The string to convert.
-     * @returns {string} Returns the converted string.
-     * @example
-     *
-     * _.upperFirst('fred');
-     * // => 'Fred'
-     *
-     * _.upperFirst('FRED');
-     * // => 'FRED'
-     */
-    var upperFirst = createCaseFirst('toUpperCase');
-
-    /**
-     * Splits `string` into an array of its words.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category String
-     * @param {string} [string=''] The string to inspect.
-     * @param {RegExp|string} [pattern] The pattern to match words.
-     * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
-     * @returns {Array} Returns the words of `string`.
-     * @example
-     *
-     * _.words('fred, barney, & pebbles');
-     * // => ['fred', 'barney', 'pebbles']
-     *
-     * _.words('fred, barney, & pebbles', /[^, ]+/g);
-     * // => ['fred', 'barney', '&', 'pebbles']
-     */
-    function words(string, pattern, guard) {
-      string = toString(string);
-      pattern = guard ? undefined : pattern;
-
-      if (pattern === undefined) {
-        return hasUnicodeWord(string) ? unicodeWords(string) : asciiWords(string);
-      }
-      return string.match(pattern) || [];
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Attempts to invoke `func`, returning either the result or the caught error
-     * object. Any additional arguments are provided to `func` when it's invoked.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Util
-     * @param {Function} func The function to attempt.
-     * @param {...*} [args] The arguments to invoke `func` with.
-     * @returns {*} Returns the `func` result or error object.
-     * @example
-     *
-     * // Avoid throwing errors for invalid selectors.
-     * var elements = _.attempt(function(selector) {
-     *   return document.querySelectorAll(selector);
-     * }, '>_>');
-     *
-     * if (_.isError(elements)) {
-     *   elements = [];
-     * }
-     */
-    var attempt = baseRest(function(func, args) {
-      try {
-        return apply(func, undefined, args);
-      } catch (e) {
-        return isError(e) ? e : new Error(e);
-      }
-    });
-
-    /**
-     * Binds methods of an object to the object itself, overwriting the existing
-     * method.
-     *
-     * **Note:** This method doesn't set the "length" property of bound functions.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {Object} object The object to bind and assign the bound methods to.
-     * @param {...(string|string[])} methodNames The object method names to bind.
-     * @returns {Object} Returns `object`.
-     * @example
-     *
-     * var view = {
-     *   'label': 'docs',
-     *   'click': function() {
-     *     console.log('clicked ' + this.label);
-     *   }
-     * };
-     *
-     * _.bindAll(view, ['click']);
-     * jQuery(element).on('click', view.click);
-     * // => Logs 'clicked docs' when clicked.
-     */
-    var bindAll = flatRest(function(object, methodNames) {
-      arrayEach(methodNames, function(key) {
-        key = toKey(key);
-        baseAssignValue(object, key, bind(object[key], object));
-      });
-      return object;
-    });
-
-    /**
-     * Creates a function that iterates over `pairs` and invokes the corresponding
-     * function of the first predicate to return truthy. The predicate-function
-     * pairs are invoked with the `this` binding and arguments of the created
-     * function.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {Array} pairs The predicate-function pairs.
-     * @returns {Function} Returns the new composite function.
-     * @example
-     *
-     * var func = _.cond([
-     *   [_.matches({ 'a': 1 }),           _.constant('matches A')],
-     *   [_.conforms({ 'b': _.isNumber }), _.constant('matches B')],
-     *   [_.stubTrue,                      _.constant('no match')]
-     * ]);
-     *
-     * func({ 'a': 1, 'b': 2 });
-     * // => 'matches A'
-     *
-     * func({ 'a': 0, 'b': 1 });
-     * // => 'matches B'
-     *
-     * func({ 'a': '1', 'b': '2' });
-     * // => 'no match'
-     */
-    function cond(pairs) {
-      var length = pairs == null ? 0 : pairs.length,
-          toIteratee = getIteratee();
-
-      pairs = !length ? [] : arrayMap(pairs, function(pair) {
-        if (typeof pair[1] != 'function') {
-          throw new TypeError(FUNC_ERROR_TEXT);
-        }
-        return [toIteratee(pair[0]), pair[1]];
-      });
-
-      return baseRest(function(args) {
-        var index = -1;
-        while (++index < length) {
-          var pair = pairs[index];
-          if (apply(pair[0], this, args)) {
-            return apply(pair[1], this, args);
-          }
-        }
-      });
-    }
-
-    /**
-     * Creates a function that invokes the predicate properties of `source` with
-     * the corresponding property values of a given object, returning `true` if
-     * all predicates return truthy, else `false`.
-     *
-     * **Note:** The created function is equivalent to `_.conformsTo` with
-     * `source` partially applied.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {Object} source The object of property predicates to conform to.
-     * @returns {Function} Returns the new spec function.
-     * @example
-     *
-     * var objects = [
-     *   { 'a': 2, 'b': 1 },
-     *   { 'a': 1, 'b': 2 }
-     * ];
-     *
-     * _.filter(objects, _.conforms({ 'b': function(n) { return n > 1; } }));
-     * // => [{ 'a': 1, 'b': 2 }]
-     */
-    function conforms(source) {
-      return baseConforms(baseClone(source, CLONE_DEEP_FLAG));
-    }
-
-    /**
-     * Creates a function that returns `value`.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.4.0
-     * @category Util
-     * @param {*} value The value to return from the new function.
-     * @returns {Function} Returns the new constant function.
-     * @example
-     *
-     * var objects = _.times(2, _.constant({ 'a': 1 }));
-     *
-     * console.log(objects);
-     * // => [{ 'a': 1 }, { 'a': 1 }]
-     *
-     * console.log(objects[0] === objects[1]);
-     * // => true
-     */
-    function constant(value) {
-      return function() {
-        return value;
-      };
-    }
-
-    /**
-     * Checks `value` to determine whether a default value should be returned in
-     * its place. The `defaultValue` is returned if `value` is `NaN`, `null`,
-     * or `undefined`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.14.0
-     * @category Util
-     * @param {*} value The value to check.
-     * @param {*} defaultValue The default value.
-     * @returns {*} Returns the resolved value.
-     * @example
-     *
-     * _.defaultTo(1, 10);
-     * // => 1
-     *
-     * _.defaultTo(undefined, 10);
-     * // => 10
-     */
-    function defaultTo(value, defaultValue) {
-      return (value == null || value !== value) ? defaultValue : value;
-    }
-
-    /**
-     * Creates a function that returns the result of invoking the given functions
-     * with the `this` binding of the created function, where each successive
-     * invocation is supplied the return value of the previous.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Util
-     * @param {...(Function|Function[])} [funcs] The functions to invoke.
-     * @returns {Function} Returns the new composite function.
-     * @see _.flowRight
-     * @example
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.flow([_.add, square]);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    var flow = createFlow();
-
-    /**
-     * This method is like `_.flow` except that it creates a function that
-     * invokes the given functions from right to left.
-     *
-     * @static
-     * @since 3.0.0
-     * @memberOf _
-     * @category Util
-     * @param {...(Function|Function[])} [funcs] The functions to invoke.
-     * @returns {Function} Returns the new composite function.
-     * @see _.flow
-     * @example
-     *
-     * function square(n) {
-     *   return n * n;
-     * }
-     *
-     * var addSquare = _.flowRight([square, _.add]);
-     * addSquare(1, 2);
-     * // => 9
-     */
-    var flowRight = createFlow(true);
-
-    /**
-     * This method returns the first argument it receives.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {*} value Any value.
-     * @returns {*} Returns `value`.
-     * @example
-     *
-     * var object = { 'a': 1 };
-     *
-     * console.log(_.identity(object) === object);
-     * // => true
-     */
-    function identity(value) {
-      return value;
-    }
-
-    /**
-     * Creates a function that invokes `func` with the arguments of the created
-     * function. If `func` is a property name, the created function returns the
-     * property value for a given element. If `func` is an array or object, the
-     * created function returns `true` for elements that contain the equivalent
-     * source properties, otherwise it returns `false`.
-     *
-     * @static
-     * @since 4.0.0
-     * @memberOf _
-     * @category Util
-     * @param {*} [func=_.identity] The value to convert to a callback.
-     * @returns {Function} Returns the callback.
-     * @example
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36, 'active': true },
-     *   { 'user': 'fred',   'age': 40, 'active': false }
-     * ];
-     *
-     * // The `_.matches` iteratee shorthand.
-     * _.filter(users, _.iteratee({ 'user': 'barney', 'active': true }));
-     * // => [{ 'user': 'barney', 'age': 36, 'active': true }]
-     *
-     * // The `_.matchesProperty` iteratee shorthand.
-     * _.filter(users, _.iteratee(['user', 'fred']));
-     * // => [{ 'user': 'fred', 'age': 40 }]
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.map(users, _.iteratee('user'));
-     * // => ['barney', 'fred']
-     *
-     * // Create custom iteratee shorthands.
-     * _.iteratee = _.wrap(_.iteratee, function(iteratee, func) {
-     *   return !_.isRegExp(func) ? iteratee(func) : function(string) {
-     *     return func.test(string);
-     *   };
-     * });
-     *
-     * _.filter(['abc', 'def'], /ef/);
-     * // => ['def']
-     */
-    function iteratee(func) {
-      return baseIteratee(typeof func == 'function' ? func : baseClone(func, CLONE_DEEP_FLAG));
-    }
-
-    /**
-     * Creates a function that performs a partial deep comparison between a given
-     * object and `source`, returning `true` if the given object has equivalent
-     * property values, else `false`.
-     *
-     * **Note:** The created function is equivalent to `_.isMatch` with `source`
-     * partially applied.
-     *
-     * Partial comparisons will match empty array and empty object `source`
-     * values against any array or object value, respectively. See `_.isEqual`
-     * for a list of supported value comparisons.
-     *
-     * **Note:** Multiple values can be checked by combining several matchers
-     * using `_.overSome`
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Util
-     * @param {Object} source The object of property values to match.
-     * @returns {Function} Returns the new spec function.
-     * @example
-     *
-     * var objects = [
-     *   { 'a': 1, 'b': 2, 'c': 3 },
-     *   { 'a': 4, 'b': 5, 'c': 6 }
-     * ];
-     *
-     * _.filter(objects, _.matches({ 'a': 4, 'c': 6 }));
-     * // => [{ 'a': 4, 'b': 5, 'c': 6 }]
-     *
-     * // Checking for several possible values
-     * _.filter(objects, _.overSome([_.matches({ 'a': 1 }), _.matches({ 'a': 4 })]));
-     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
-     */
-    function matches(source) {
-      return baseMatches(baseClone(source, CLONE_DEEP_FLAG));
-    }
-
-    /**
-     * Creates a function that performs a partial deep comparison between the
-     * value at `path` of a given object to `srcValue`, returning `true` if the
-     * object value is equivalent, else `false`.
-     *
-     * **Note:** Partial comparisons will match empty array and empty object
-     * `srcValue` values against any array or object value, respectively. See
-     * `_.isEqual` for a list of supported value comparisons.
-     *
-     * **Note:** Multiple values can be checked by combining several matchers
-     * using `_.overSome`
-     *
-     * @static
-     * @memberOf _
-     * @since 3.2.0
-     * @category Util
-     * @param {Array|string} path The path of the property to get.
-     * @param {*} srcValue The value to match.
-     * @returns {Function} Returns the new spec function.
-     * @example
-     *
-     * var objects = [
-     *   { 'a': 1, 'b': 2, 'c': 3 },
-     *   { 'a': 4, 'b': 5, 'c': 6 }
-     * ];
-     *
-     * _.find(objects, _.matchesProperty('a', 4));
-     * // => { 'a': 4, 'b': 5, 'c': 6 }
-     *
-     * // Checking for several possible values
-     * _.filter(objects, _.overSome([_.matchesProperty('a', 1), _.matchesProperty('a', 4)]));
-     * // => [{ 'a': 1, 'b': 2, 'c': 3 }, { 'a': 4, 'b': 5, 'c': 6 }]
-     */
-    function matchesProperty(path, srcValue) {
-      return baseMatchesProperty(path, baseClone(srcValue, CLONE_DEEP_FLAG));
-    }
-
-    /**
-     * Creates a function that invokes the method at `path` of a given object.
-     * Any additional arguments are provided to the invoked method.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.7.0
-     * @category Util
-     * @param {Array|string} path The path of the method to invoke.
-     * @param {...*} [args] The arguments to invoke the method with.
-     * @returns {Function} Returns the new invoker function.
-     * @example
-     *
-     * var objects = [
-     *   { 'a': { 'b': _.constant(2) } },
-     *   { 'a': { 'b': _.constant(1) } }
-     * ];
-     *
-     * _.map(objects, _.method('a.b'));
-     * // => [2, 1]
-     *
-     * _.map(objects, _.method(['a', 'b']));
-     * // => [2, 1]
-     */
-    var method = baseRest(function(path, args) {
-      return function(object) {
-        return baseInvoke(object, path, args);
-      };
-    });
-
-    /**
-     * The opposite of `_.method`; this method creates a function that invokes
-     * the method at a given path of `object`. Any additional arguments are
-     * provided to the invoked method.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.7.0
-     * @category Util
-     * @param {Object} object The object to query.
-     * @param {...*} [args] The arguments to invoke the method with.
-     * @returns {Function} Returns the new invoker function.
-     * @example
-     *
-     * var array = _.times(3, _.constant),
-     *     object = { 'a': array, 'b': array, 'c': array };
-     *
-     * _.map(['a[2]', 'c[0]'], _.methodOf(object));
-     * // => [2, 0]
-     *
-     * _.map([['a', '2'], ['c', '0']], _.methodOf(object));
-     * // => [2, 0]
-     */
-    var methodOf = baseRest(function(object, args) {
-      return function(path) {
-        return baseInvoke(object, path, args);
-      };
-    });
-
-    /**
-     * Adds all own enumerable string keyed function properties of a source
-     * object to the destination object. If `object` is a function, then methods
-     * are added to its prototype as well.
-     *
-     * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
-     * avoid conflicts caused by modifying the original.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {Function|Object} [object=lodash] The destination object.
-     * @param {Object} source The object of functions to add.
-     * @param {Object} [options={}] The options object.
-     * @param {boolean} [options.chain=true] Specify whether mixins are chainable.
-     * @returns {Function|Object} Returns `object`.
-     * @example
-     *
-     * function vowels(string) {
-     *   return _.filter(string, function(v) {
-     *     return /[aeiou]/i.test(v);
-     *   });
-     * }
-     *
-     * _.mixin({ 'vowels': vowels });
-     * _.vowels('fred');
-     * // => ['e']
-     *
-     * _('fred').vowels().value();
-     * // => ['e']
-     *
-     * _.mixin({ 'vowels': vowels }, { 'chain': false });
-     * _('fred').vowels();
-     * // => ['e']
-     */
-    function mixin(object, source, options) {
-      var props = keys(source),
-          methodNames = baseFunctions(source, props);
-
-      if (options == null &&
-          !(isObject(source) && (methodNames.length || !props.length))) {
-        options = source;
-        source = object;
-        object = this;
-        methodNames = baseFunctions(source, keys(source));
-      }
-      var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
-          isFunc = isFunction(object);
-
-      arrayEach(methodNames, function(methodName) {
-        var func = source[methodName];
-        object[methodName] = func;
-        if (isFunc) {
-          object.prototype[methodName] = function() {
-            var chainAll = this.__chain__;
-            if (chain || chainAll) {
-              var result = object(this.__wrapped__),
-                  actions = result.__actions__ = copyArray(this.__actions__);
-
-              actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
-              result.__chain__ = chainAll;
-              return result;
-            }
-            return func.apply(object, arrayPush([this.value()], arguments));
-          };
-        }
-      });
-
-      return object;
-    }
-
-    /**
-     * Reverts the `_` variable to its previous value and returns a reference to
-     * the `lodash` function.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @returns {Function} Returns the `lodash` function.
-     * @example
-     *
-     * var lodash = _.noConflict();
-     */
-    function noConflict() {
-      if (root._ === this) {
-        root._ = oldDash;
-      }
-      return this;
-    }
-
-    /**
-     * This method returns `undefined`.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.3.0
-     * @category Util
-     * @example
-     *
-     * _.times(2, _.noop);
-     * // => [undefined, undefined]
-     */
-    function noop() {
-      // No operation performed.
-    }
-
-    /**
-     * Creates a function that gets the argument at index `n`. If `n` is negative,
-     * the nth argument from the end is returned.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {number} [n=0] The index of the argument to return.
-     * @returns {Function} Returns the new pass-thru function.
-     * @example
-     *
-     * var func = _.nthArg(1);
-     * func('a', 'b', 'c', 'd');
-     * // => 'b'
-     *
-     * var func = _.nthArg(-2);
-     * func('a', 'b', 'c', 'd');
-     * // => 'c'
-     */
-    function nthArg(n) {
-      n = toInteger(n);
-      return baseRest(function(args) {
-        return baseNth(args, n);
-      });
-    }
-
-    /**
-     * Creates a function that invokes `iteratees` with the arguments it receives
-     * and returns their results.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {...(Function|Function[])} [iteratees=[_.identity]]
-     *  The iteratees to invoke.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var func = _.over([Math.max, Math.min]);
-     *
-     * func(1, 2, 3, 4);
-     * // => [4, 1]
-     */
-    var over = createOver(arrayMap);
-
-    /**
-     * Creates a function that checks if **all** of the `predicates` return
-     * truthy when invoked with the arguments it receives.
-     *
-     * Following shorthands are possible for providing predicates.
-     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
-     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {...(Function|Function[])} [predicates=[_.identity]]
-     *  The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var func = _.overEvery([Boolean, isFinite]);
-     *
-     * func('1');
-     * // => true
-     *
-     * func(null);
-     * // => false
-     *
-     * func(NaN);
-     * // => false
-     */
-    var overEvery = createOver(arrayEvery);
-
-    /**
-     * Creates a function that checks if **any** of the `predicates` return
-     * truthy when invoked with the arguments it receives.
-     *
-     * Following shorthands are possible for providing predicates.
-     * Pass an `Object` and it will be used as an parameter for `_.matches` to create the predicate.
-     * Pass an `Array` of parameters for `_.matchesProperty` and the predicate will be created using them.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {...(Function|Function[])} [predicates=[_.identity]]
-     *  The predicates to check.
-     * @returns {Function} Returns the new function.
-     * @example
-     *
-     * var func = _.overSome([Boolean, isFinite]);
-     *
-     * func('1');
-     * // => true
-     *
-     * func(null);
-     * // => true
-     *
-     * func(NaN);
-     * // => false
-     *
-     * var matchesFunc = _.overSome([{ 'a': 1 }, { 'a': 2 }])
-     * var matchesPropertyFunc = _.overSome([['a', 1], ['a', 2]])
-     */
-    var overSome = createOver(arraySome);
-
-    /**
-     * Creates a function that returns the value at `path` of a given object.
-     *
-     * @static
-     * @memberOf _
-     * @since 2.4.0
-     * @category Util
-     * @param {Array|string} path The path of the property to get.
-     * @returns {Function} Returns the new accessor function.
-     * @example
-     *
-     * var objects = [
-     *   { 'a': { 'b': 2 } },
-     *   { 'a': { 'b': 1 } }
-     * ];
-     *
-     * _.map(objects, _.property('a.b'));
-     * // => [2, 1]
-     *
-     * _.map(_.sortBy(objects, _.property(['a', 'b'])), 'a.b');
-     * // => [1, 2]
-     */
-    function property(path) {
-      return isKey(path) ? baseProperty(toKey(path)) : basePropertyDeep(path);
-    }
-
-    /**
-     * The opposite of `_.property`; this method creates a function that returns
-     * the value at a given path of `object`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.0.0
-     * @category Util
-     * @param {Object} object The object to query.
-     * @returns {Function} Returns the new accessor function.
-     * @example
-     *
-     * var array = [0, 1, 2],
-     *     object = { 'a': array, 'b': array, 'c': array };
-     *
-     * _.map(['a[2]', 'c[0]'], _.propertyOf(object));
-     * // => [2, 0]
-     *
-     * _.map([['a', '2'], ['c', '0']], _.propertyOf(object));
-     * // => [2, 0]
-     */
-    function propertyOf(object) {
-      return function(path) {
-        return object == null ? undefined : baseGet(object, path);
-      };
-    }
-
-    /**
-     * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to, but not including, `end`. A step of `-1` is used if a negative
-     * `start` is specified without an `end` or `step`. If `end` is not specified,
-     * it's set to `start` with `start` then set to `0`.
-     *
-     * **Note:** JavaScript follows the IEEE-754 standard for resolving
-     * floating-point values which can produce unexpected results.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {number} [start=0] The start of the range.
-     * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
-     * @returns {Array} Returns the range of numbers.
-     * @see _.inRange, _.rangeRight
-     * @example
-     *
-     * _.range(4);
-     * // => [0, 1, 2, 3]
-     *
-     * _.range(-4);
-     * // => [0, -1, -2, -3]
-     *
-     * _.range(1, 5);
-     * // => [1, 2, 3, 4]
-     *
-     * _.range(0, 20, 5);
-     * // => [0, 5, 10, 15]
-     *
-     * _.range(0, -4, -1);
-     * // => [0, -1, -2, -3]
-     *
-     * _.range(1, 4, 0);
-     * // => [1, 1, 1]
-     *
-     * _.range(0);
-     * // => []
-     */
-    var range = createRange();
-
-    /**
-     * This method is like `_.range` except that it populates values in
-     * descending order.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {number} [start=0] The start of the range.
-     * @param {number} end The end of the range.
-     * @param {number} [step=1] The value to increment or decrement by.
-     * @returns {Array} Returns the range of numbers.
-     * @see _.inRange, _.range
-     * @example
-     *
-     * _.rangeRight(4);
-     * // => [3, 2, 1, 0]
-     *
-     * _.rangeRight(-4);
-     * // => [-3, -2, -1, 0]
-     *
-     * _.rangeRight(1, 5);
-     * // => [4, 3, 2, 1]
-     *
-     * _.rangeRight(0, 20, 5);
-     * // => [15, 10, 5, 0]
-     *
-     * _.rangeRight(0, -4, -1);
-     * // => [-3, -2, -1, 0]
-     *
-     * _.rangeRight(1, 4, 0);
-     * // => [1, 1, 1]
-     *
-     * _.rangeRight(0);
-     * // => []
-     */
-    var rangeRight = createRange(true);
-
-    /**
-     * This method returns a new empty array.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.13.0
-     * @category Util
-     * @returns {Array} Returns the new empty array.
-     * @example
-     *
-     * var arrays = _.times(2, _.stubArray);
-     *
-     * console.log(arrays);
-     * // => [[], []]
-     *
-     * console.log(arrays[0] === arrays[1]);
-     * // => false
-     */
-    function stubArray() {
-      return [];
-    }
-
-    /**
-     * This method returns `false`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.13.0
-     * @category Util
-     * @returns {boolean} Returns `false`.
-     * @example
-     *
-     * _.times(2, _.stubFalse);
-     * // => [false, false]
-     */
-    function stubFalse() {
-      return false;
-    }
-
-    /**
-     * This method returns a new empty object.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.13.0
-     * @category Util
-     * @returns {Object} Returns the new empty object.
-     * @example
-     *
-     * var objects = _.times(2, _.stubObject);
-     *
-     * console.log(objects);
-     * // => [{}, {}]
-     *
-     * console.log(objects[0] === objects[1]);
-     * // => false
-     */
-    function stubObject() {
-      return {};
-    }
-
-    /**
-     * This method returns an empty string.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.13.0
-     * @category Util
-     * @returns {string} Returns the empty string.
-     * @example
-     *
-     * _.times(2, _.stubString);
-     * // => ['', '']
-     */
-    function stubString() {
-      return '';
-    }
-
-    /**
-     * This method returns `true`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.13.0
-     * @category Util
-     * @returns {boolean} Returns `true`.
-     * @example
-     *
-     * _.times(2, _.stubTrue);
-     * // => [true, true]
-     */
-    function stubTrue() {
-      return true;
-    }
-
-    /**
-     * Invokes the iteratee `n` times, returning an array of the results of
-     * each invocation. The iteratee is invoked with one argument; (index).
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {number} n The number of times to invoke `iteratee`.
-     * @param {Function} [iteratee=_.identity] The function invoked per iteration.
-     * @returns {Array} Returns the array of results.
-     * @example
-     *
-     * _.times(3, String);
-     * // => ['0', '1', '2']
-     *
-     *  _.times(4, _.constant(0));
-     * // => [0, 0, 0, 0]
-     */
-    function times(n, iteratee) {
-      n = toInteger(n);
-      if (n < 1 || n > MAX_SAFE_INTEGER) {
-        return [];
-      }
-      var index = MAX_ARRAY_LENGTH,
-          length = nativeMin(n, MAX_ARRAY_LENGTH);
-
-      iteratee = getIteratee(iteratee);
-      n -= MAX_ARRAY_LENGTH;
-
-      var result = baseTimes(length, iteratee);
-      while (++index < n) {
-        iteratee(index);
-      }
-      return result;
-    }
-
-    /**
-     * Converts `value` to a property path array.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Util
-     * @param {*} value The value to convert.
-     * @returns {Array} Returns the new property path array.
-     * @example
-     *
-     * _.toPath('a.b.c');
-     * // => ['a', 'b', 'c']
-     *
-     * _.toPath('a[0].b.c');
-     * // => ['a', '0', 'b', 'c']
-     */
-    function toPath(value) {
-      if (isArray(value)) {
-        return arrayMap(value, toKey);
-      }
-      return isSymbol(value) ? [value] : copyArray(stringToPath(toString(value)));
-    }
-
-    /**
-     * Generates a unique ID. If `prefix` is given, the ID is appended to it.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Util
-     * @param {string} [prefix=''] The value to prefix the ID with.
-     * @returns {string} Returns the unique ID.
-     * @example
-     *
-     * _.uniqueId('contact_');
-     * // => 'contact_104'
-     *
-     * _.uniqueId();
-     * // => '105'
-     */
-    function uniqueId(prefix) {
-      var id = ++idCounter;
-      return toString(prefix) + id;
-    }
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * Adds two numbers.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.4.0
-     * @category Math
-     * @param {number} augend The first number in an addition.
-     * @param {number} addend The second number in an addition.
-     * @returns {number} Returns the total.
-     * @example
-     *
-     * _.add(6, 4);
-     * // => 10
-     */
-    var add = createMathOperation(function(augend, addend) {
-      return augend + addend;
-    }, 0);
-
-    /**
-     * Computes `number` rounded up to `precision`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.10.0
-     * @category Math
-     * @param {number} number The number to round up.
-     * @param {number} [precision=0] The precision to round up to.
-     * @returns {number} Returns the rounded up number.
-     * @example
-     *
-     * _.ceil(4.006);
-     * // => 5
-     *
-     * _.ceil(6.004, 2);
-     * // => 6.01
-     *
-     * _.ceil(6040, -2);
-     * // => 6100
-     */
-    var ceil = createRound('ceil');
-
-    /**
-     * Divide two numbers.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.7.0
-     * @category Math
-     * @param {number} dividend The first number in a division.
-     * @param {number} divisor The second number in a division.
-     * @returns {number} Returns the quotient.
-     * @example
-     *
-     * _.divide(6, 4);
-     * // => 1.5
-     */
-    var divide = createMathOperation(function(dividend, divisor) {
-      return dividend / divisor;
-    }, 1);
-
-    /**
-     * Computes `number` rounded down to `precision`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.10.0
-     * @category Math
-     * @param {number} number The number to round down.
-     * @param {number} [precision=0] The precision to round down to.
-     * @returns {number} Returns the rounded down number.
-     * @example
-     *
-     * _.floor(4.006);
-     * // => 4
-     *
-     * _.floor(0.046, 2);
-     * // => 0.04
-     *
-     * _.floor(4060, -2);
-     * // => 4000
-     */
-    var floor = createRound('floor');
-
-    /**
-     * Computes the maximum value of `array`. If `array` is empty or falsey,
-     * `undefined` is returned.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {*} Returns the maximum value.
-     * @example
-     *
-     * _.max([4, 2, 8, 6]);
-     * // => 8
-     *
-     * _.max([]);
-     * // => undefined
-     */
-    function max(array) {
-      return (array && array.length)
-        ? baseExtremum(array, identity, baseGt)
-        : undefined;
-    }
-
-    /**
-     * This method is like `_.max` except that it accepts `iteratee` which is
-     * invoked for each element in `array` to generate the criterion by which
-     * the value is ranked. The iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {*} Returns the maximum value.
-     * @example
-     *
-     * var objects = [{ 'n': 1 }, { 'n': 2 }];
-     *
-     * _.maxBy(objects, function(o) { return o.n; });
-     * // => { 'n': 2 }
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.maxBy(objects, 'n');
-     * // => { 'n': 2 }
-     */
-    function maxBy(array, iteratee) {
-      return (array && array.length)
-        ? baseExtremum(array, getIteratee(iteratee, 2), baseGt)
-        : undefined;
-    }
-
-    /**
-     * Computes the mean of the values in `array`.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the mean.
-     * @example
-     *
-     * _.mean([4, 2, 8, 6]);
-     * // => 5
-     */
-    function mean(array) {
-      return baseMean(array, identity);
-    }
-
-    /**
-     * This method is like `_.mean` except that it accepts `iteratee` which is
-     * invoked for each element in `array` to generate the value to be averaged.
-     * The iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.7.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the mean.
-     * @example
-     *
-     * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
-     *
-     * _.meanBy(objects, function(o) { return o.n; });
-     * // => 5
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.meanBy(objects, 'n');
-     * // => 5
-     */
-    function meanBy(array, iteratee) {
-      return baseMean(array, getIteratee(iteratee, 2));
-    }
-
-    /**
-     * Computes the minimum value of `array`. If `array` is empty or falsey,
-     * `undefined` is returned.
-     *
-     * @static
-     * @since 0.1.0
-     * @memberOf _
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {*} Returns the minimum value.
-     * @example
-     *
-     * _.min([4, 2, 8, 6]);
-     * // => 2
-     *
-     * _.min([]);
-     * // => undefined
-     */
-    function min(array) {
-      return (array && array.length)
-        ? baseExtremum(array, identity, baseLt)
-        : undefined;
-    }
-
-    /**
-     * This method is like `_.min` except that it accepts `iteratee` which is
-     * invoked for each element in `array` to generate the criterion by which
-     * the value is ranked. The iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {*} Returns the minimum value.
-     * @example
-     *
-     * var objects = [{ 'n': 1 }, { 'n': 2 }];
-     *
-     * _.minBy(objects, function(o) { return o.n; });
-     * // => { 'n': 1 }
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.minBy(objects, 'n');
-     * // => { 'n': 1 }
-     */
-    function minBy(array, iteratee) {
-      return (array && array.length)
-        ? baseExtremum(array, getIteratee(iteratee, 2), baseLt)
-        : undefined;
-    }
-
-    /**
-     * Multiply two numbers.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.7.0
-     * @category Math
-     * @param {number} multiplier The first number in a multiplication.
-     * @param {number} multiplicand The second number in a multiplication.
-     * @returns {number} Returns the product.
-     * @example
-     *
-     * _.multiply(6, 4);
-     * // => 24
-     */
-    var multiply = createMathOperation(function(multiplier, multiplicand) {
-      return multiplier * multiplicand;
-    }, 1);
-
-    /**
-     * Computes `number` rounded to `precision`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.10.0
-     * @category Math
-     * @param {number} number The number to round.
-     * @param {number} [precision=0] The precision to round to.
-     * @returns {number} Returns the rounded number.
-     * @example
-     *
-     * _.round(4.006);
-     * // => 4
-     *
-     * _.round(4.006, 2);
-     * // => 4.01
-     *
-     * _.round(4060, -2);
-     * // => 4100
-     */
-    var round = createRound('round');
-
-    /**
-     * Subtract two numbers.
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Math
-     * @param {number} minuend The first number in a subtraction.
-     * @param {number} subtrahend The second number in a subtraction.
-     * @returns {number} Returns the difference.
-     * @example
-     *
-     * _.subtract(6, 4);
-     * // => 2
-     */
-    var subtract = createMathOperation(function(minuend, subtrahend) {
-      return minuend - subtrahend;
-    }, 0);
-
-    /**
-     * Computes the sum of the values in `array`.
-     *
-     * @static
-     * @memberOf _
-     * @since 3.4.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @returns {number} Returns the sum.
-     * @example
-     *
-     * _.sum([4, 2, 8, 6]);
-     * // => 20
-     */
-    function sum(array) {
-      return (array && array.length)
-        ? baseSum(array, identity)
-        : 0;
-    }
-
-    /**
-     * This method is like `_.sum` except that it accepts `iteratee` which is
-     * invoked for each element in `array` to generate the value to be summed.
-     * The iteratee is invoked with one argument: (value).
-     *
-     * @static
-     * @memberOf _
-     * @since 4.0.0
-     * @category Math
-     * @param {Array} array The array to iterate over.
-     * @param {Function} [iteratee=_.identity] The iteratee invoked per element.
-     * @returns {number} Returns the sum.
-     * @example
-     *
-     * var objects = [{ 'n': 4 }, { 'n': 2 }, { 'n': 8 }, { 'n': 6 }];
-     *
-     * _.sumBy(objects, function(o) { return o.n; });
-     * // => 20
-     *
-     * // The `_.property` iteratee shorthand.
-     * _.sumBy(objects, 'n');
-     * // => 20
-     */
-    function sumBy(array, iteratee) {
-      return (array && array.length)
-        ? baseSum(array, getIteratee(iteratee, 2))
-        : 0;
-    }
-
-    /*------------------------------------------------------------------------*/
-
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
     // Add methods that return wrapped values in chain sequences.
     lodash.after = after;
     lodash.ary = ary;
@@ -38773,8 +27878,6 @@ const chalk = __webpack_require__(/*! chalk */ "./node_modules/chalk/source/inde
     lodash.zipObject = zipObject;
     lodash.zipObjectDeep = zipObjectDeep;
     lodash.zipWith = zipWith;
-<<<<<<< HEAD
-=======
 
     // Add aliases.
     lodash.entries = toPairs;
@@ -39223,19 +28326,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/css/style.css":
-/*!*********************************!*\
-  !*** ./resources/css/style.css ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "./node_modules/process/browser.js":
 /*!*****************************************!*\
   !*** ./node_modules/process/browser.js ***!
@@ -39392,4788 +28482,6 @@ process.nextTick = function (fun) {
 function Item(fun, array) {
     this.fun = fun;
     this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-
-/***/ "./node_modules/supports-color/browser.js":
-/*!************************************************!*\
-  !*** ./node_modules/supports-color/browser.js ***!
-  \************************************************/
-/***/ ((module) => {
-
-"use strict";
-
-module.exports = {
-	stdout: false,
-	stderr: false
-};
-
-
-/***/ }),
-
-/***/ "./resources/js/components/CartaTrucada.vue":
-/*!**************************************************!*\
-  !*** ./resources/js/components/CartaTrucada.vue ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CartaTrucada.vue?vue&type=template&id=d9780308& */ "./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&");
-/* harmony import */ var _CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CartaTrucada.vue?vue&type=script&lang=js& */ "./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.render,
-  _CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/CartaTrucada.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue ***!
-  \***************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f& */ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f&");
-/* harmony import */ var _BackgroundDecorationDerecha_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackgroundDecorationDerecha.vue?vue&type=script&lang=js& */ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackgroundDecorationDerecha_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/background-decoration/BackgroundDecorationDerecha.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue":
-/*!*****************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue ***!
-  \*****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6& */ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6&");
-/* harmony import */ var _BackgroundDecorationIzquierda_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackgroundDecorationIzquierda.vue?vue&type=script&lang=js& */ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackgroundDecorationIzquierda_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataCheck.vue":
-/*!*****************************************************!*\
-  !*** ./resources/js/components/forms/DataCheck.vue ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataCheck.vue?vue&type=template&id=39b3d703& */ "./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&");
-/* harmony import */ var _DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataCheck.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/forms/DataCheck.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataEmergency.vue":
-/*!*********************************************************!*\
-  !*** ./resources/js/components/forms/DataEmergency.vue ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataEmergency.vue?vue&type=template&id=e5063ce8& */ "./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&");
-/* harmony import */ var _DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataEmergency.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/forms/DataEmergency.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataInput.vue":
-/*!*****************************************************!*\
-  !*** ./resources/js/components/forms/DataInput.vue ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataInput.vue?vue&type=template&id=f09fce76& */ "./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76&");
-/* harmony import */ var _DataInput_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataInput.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _DataInput_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/forms/DataInput.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataSelect.vue":
-/*!******************************************************!*\
-  !*** ./resources/js/components/forms/DataSelect.vue ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataSelect.vue?vue&type=template&id=88cf1ade& */ "./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade&");
-/* harmony import */ var _DataSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataSelect.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataSelect.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _DataSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/forms/DataSelect.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataTime.vue":
-/*!****************************************************!*\
-  !*** ./resources/js/components/forms/DataTime.vue ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DataTime.vue?vue&type=template&id=506b49bc& */ "./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc&");
-/* harmony import */ var _DataTime_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DataTime.vue?vue&type=script&lang=js& */ "./resources/js/components/forms/DataTime.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _DataTime_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/forms/DataTime.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/ApartNavbar.vue":
-/*!*****************************************************!*\
-  !*** ./resources/js/components/nav/ApartNavbar.vue ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ApartNavbar.vue?vue&type=template&id=27a1be7d& */ "./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d&");
-/* harmony import */ var _ApartNavbar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ApartNavbar.vue?vue&type=script&lang=js& */ "./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _ApartNavbar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__.render,
-  _ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/nav/ApartNavbar.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/TabApart.vue":
-/*!**************************************************!*\
-  !*** ./resources/js/components/nav/TabApart.vue ***!
-  \**************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TabApart.vue?vue&type=template&id=4538d1d4& */ "./resources/js/components/nav/TabApart.vue?vue&type=template&id=4538d1d4&");
-/* harmony import */ var _TabApart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TabApart.vue?vue&type=script&lang=js& */ "./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _TabApart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__.render,
-  _TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/nav/TabApart.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AgencySection.vue":
-/*!************************************************************!*\
-  !*** ./resources/js/components/sections/AgencySection.vue ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AgencySection.vue?vue&type=template&id=4aa8896a& */ "./resources/js/components/sections/AgencySection.vue?vue&type=template&id=4aa8896a&");
-/* harmony import */ var _AgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AgencySection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _AgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__.render,
-  _AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/AgencySection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AlertSection.vue":
-/*!***********************************************************!*\
-  !*** ./resources/js/components/sections/AlertSection.vue ***!
-  \***********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AlertSection.vue?vue&type=template&id=3241da0f& */ "./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&");
-/* harmony import */ var _AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AlertSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.render,
-  _AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/AlertSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/CommuneNoteSection.vue":
-/*!*****************************************************************!*\
-  !*** ./resources/js/components/sections/CommuneNoteSection.vue ***!
-  \*****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CommuneNoteSection.vue?vue&type=template&id=908fce8e& */ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e&");
-/* harmony import */ var _CommuneNoteSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CommuneNoteSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CommuneNoteSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__.render,
-  _CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/CommuneNoteSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/EmergencySection.vue":
-/*!***************************************************************!*\
-  !*** ./resources/js/components/sections/EmergencySection.vue ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EmergencySection.vue?vue&type=template&id=f852b88c& */ "./resources/js/components/sections/EmergencySection.vue?vue&type=template&id=f852b88c&");
-/* harmony import */ var _EmergencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EmergencySection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/EmergencySection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _EmergencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__.render,
-  _EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/EmergencySection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/FinishSection.vue":
-/*!************************************************************!*\
-  !*** ./resources/js/components/sections/FinishSection.vue ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FinishSection.vue?vue&type=template&id=743857c8& */ "./resources/js/components/sections/FinishSection.vue?vue&type=template&id=743857c8&");
-/* harmony import */ var _FinishSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FinishSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/FinishSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _FinishSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__.render,
-  _FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/FinishSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/ListAgencySection.vue":
-/*!****************************************************************!*\
-  !*** ./resources/js/components/sections/ListAgencySection.vue ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ListAgencySection.vue?vue&type=template&id=4a487f6c& */ "./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&");
-/* harmony import */ var _ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ListAgencySection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.render,
-  _ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/ListAgencySection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/LocationSection.vue":
-/*!**************************************************************!*\
-  !*** ./resources/js/components/sections/LocationSection.vue ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LocationSection.vue?vue&type=template&id=9bb0998c& */ "./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&");
-/* harmony import */ var _LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LocationSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__.render,
-  _LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/LocationSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/MapSection.vue":
-/*!*********************************************************!*\
-  !*** ./resources/js/components/sections/MapSection.vue ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MapSection.vue?vue&type=template&id=1dd2698f& */ "./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&");
-/* harmony import */ var _MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MapSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.render,
-  _MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/MapSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/PersonalSection.vue":
-/*!**************************************************************!*\
-  !*** ./resources/js/components/sections/PersonalSection.vue ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PersonalSection.vue?vue&type=template&id=5ed237cf& */ "./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf&");
-/* harmony import */ var _PersonalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PersonalSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/PersonalSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _PersonalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__.render,
-  _PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/PersonalSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationModalSection.vue":
-/*!*******************************************************************!*\
-  !*** ./resources/js/components/sections/RelationModalSection.vue ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RelationModalSection.vue?vue&type=template&id=3f10f43a& */ "./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&");
-/* harmony import */ var _RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RelationModalSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.render,
-  _RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/RelationModalSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationSection.vue":
-/*!**************************************************************!*\
-  !*** ./resources/js/components/sections/RelationSection.vue ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RelationSection.vue?vue&type=template&id=a72812da& */ "./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da&");
-/* harmony import */ var _RelationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RelationSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _RelationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__.render,
-  _RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/RelationSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/TimeSection.vue":
-/*!**********************************************************!*\
-  !*** ./resources/js/components/sections/TimeSection.vue ***!
-  \**********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TimeSection.vue?vue&type=template&id=949bebbc& */ "./resources/js/components/sections/TimeSection.vue?vue&type=template&id=949bebbc&");
-/* harmony import */ var _TimeSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TimeSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/TimeSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _TimeSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__.render,
-  _TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/TimeSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBox.vue":
-/*!**************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBox.vue ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpBox.vue?vue&type=template&id=e810c022& */ "./resources/js/components/sections/helpBox/helpBox.vue?vue&type=template&id=e810c022&");
-/* harmony import */ var _helpBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpBox.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/helpBox/helpBox.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _helpBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__.render,
-  _helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/helpBox/helpBox.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxIcon.vue":
-/*!******************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxIcon.vue ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpBoxIcon.vue?vue&type=template&id=f78c4ef0& */ "./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=template&id=f78c4ef0&");
-/* harmony import */ var _helpBoxIcon_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpBoxIcon.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _helpBoxIcon_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__.render,
-  _helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/helpBox/helpBoxIcon.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue":
-/*!**********************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxQuestion.vue ***!
-  \**********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helpBoxQuestion.vue?vue&type=template&id=695d85f5& */ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=template&id=695d85f5&");
-/* harmony import */ var _helpBoxQuestion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helpBoxQuestion.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _helpBoxQuestion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__.render,
-  _helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/helpBox/helpBoxQuestion.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropRefresh.vue":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropRefresh.vue ***!
-  \***************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackdropRefresh.vue?vue&type=template&id=0aa21fe6& */ "./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=template&id=0aa21fe6&");
-/* harmony import */ var _BackdropRefresh_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackdropRefresh.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackdropRefresh_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/videoSection/BackdropRefresh.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideo.vue":
-/*!*************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideo.vue ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackdropVideo.vue?vue&type=template&id=5ae99b74& */ "./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=template&id=5ae99b74&");
-/* harmony import */ var _BackdropVideo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackdropVideo.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackdropVideo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/videoSection/BackdropVideo.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoButton.vue ***!
-  \*******************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackdropVideoButton.vue?vue&type=template&id=39155bd0& */ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=template&id=39155bd0&");
-/* harmony import */ var _BackdropVideoButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackdropVideoButton.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackdropVideoButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/videoSection/BackdropVideoButton.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue":
-/*!**************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue ***!
-  \**************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7& */ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7&");
-/* harmony import */ var _BackdropVideoRefreshButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackdropVideoRefreshButton.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _BackdropVideoRefreshButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__.render,
-  _BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/VideoSection.vue":
-/*!************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/VideoSection.vue ***!
-  \************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./VideoSection.vue?vue&type=template&id=297625f9& */ "./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=template&id=297625f9&");
-/* harmony import */ var _VideoSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./VideoSection.vue?vue&type=script&lang=js& */ "./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=script&lang=js&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-;
-var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _VideoSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__.render,
-  _VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/sections/videoSection/VideoSection.vue"
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CartaTrucada.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationDerecha_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackgroundDecorationDerecha.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationDerecha_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js&":
-/*!******************************************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationIzquierda_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackgroundDecorationIzquierda.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationIzquierda_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataCheck.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************!*\
-  !*** ./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataEmergency.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataInput_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataInput.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataInput_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataSelect.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/forms/DataSelect.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataSelect.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataSelect.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataTime.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************!*\
-  !*** ./resources/js/components/forms/DataTime.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataTime_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataTime.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataTime.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DataTime_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ApartNavbar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ApartNavbar.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ApartNavbar_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js&":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TabApart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TabApart.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/TabApart.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TabApart_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AgencySection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AgencySection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AlertSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js&":
-/*!******************************************************************************************!*\
-  !*** ./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js& ***!
-  \******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CommuneNoteSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CommuneNoteSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/CommuneNoteSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CommuneNoteSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/EmergencySection.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************!*\
-  !*** ./resources/js/components/sections/EmergencySection.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmergencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./EmergencySection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/EmergencySection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_EmergencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/FinishSection.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/sections/FinishSection.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FinishSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./FinishSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/FinishSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FinishSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&":
-/*!*****************************************************************************************!*\
-  !*** ./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js& ***!
-  \*****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListAgencySection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LocationSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&":
-/*!**********************************************************************************!*\
-  !*** ./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js& ***!
-  \**********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MapSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/PersonalSection.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/sections/PersonalSection.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PersonalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PersonalSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/PersonalSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PersonalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************!*\
-  !*** ./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationModalSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/TimeSection.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/sections/TimeSection.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimeSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimeSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/TimeSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TimeSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBox.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBox.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBox.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBox.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxIcon_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBoxIcon.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxIcon_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxQuestion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBoxQuestion.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxQuestion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropRefresh_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropRefresh.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropRefresh_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=script&lang=js&":
-/*!**************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=script&lang=js& ***!
-  \**************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideo.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideoButton.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoRefreshButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideoRefreshButton.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoRefreshButton_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./VideoSection.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=script&lang=js&");
- /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoSection_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308& ***!
-  \*********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CartaTrucada.vue?vue&type=template&id=d9780308& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f&":
-/*!**********************************************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f& ***!
-  \**********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationDerecha_vue_vue_type_template_id_3688d40f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6&":
-/*!************************************************************************************************************************!*\
-  !*** ./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6& ***!
-  \************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackgroundDecorationIzquierda_vue_vue_type_template_id_5cd228f6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703& ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataCheck_vue_vue_type_template_id_39b3d703___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataCheck.vue?vue&type=template&id=39b3d703& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&":
-/*!****************************************************************************************!*\
-  !*** ./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8& ***!
-  \****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataEmergency_vue_vue_type_template_id_e5063ce8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataEmergency.vue?vue&type=template&id=e5063ce8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76& ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataInput_vue_vue_type_template_id_f09fce76___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataInput.vue?vue&type=template&id=f09fce76& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade& ***!
-  \*************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataSelect_vue_vue_type_template_id_88cf1ade___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataSelect.vue?vue&type=template&id=88cf1ade& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc&":
-/*!***********************************************************************************!*\
-  !*** ./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc& ***!
-  \***********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DataTime_vue_vue_type_template_id_506b49bc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DataTime.vue?vue&type=template&id=506b49bc& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d&":
-/*!************************************************************************************!*\
-  !*** ./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d& ***!
-  \************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ApartNavbar_vue_vue_type_template_id_27a1be7d___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ApartNavbar.vue?vue&type=template&id=27a1be7d& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/nav/TabApart.vue?vue&type=template&id=4538d1d4&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/components/nav/TabApart.vue?vue&type=template&id=4538d1d4& ***!
-  \*********************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TabApart_vue_vue_type_template_id_4538d1d4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TabApart.vue?vue&type=template&id=4538d1d4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/TabApart.vue?vue&type=template&id=4538d1d4&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AgencySection.vue?vue&type=template&id=4aa8896a&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/js/components/sections/AgencySection.vue?vue&type=template&id=4aa8896a& ***!
-  \*******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AgencySection_vue_vue_type_template_id_4aa8896a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AgencySection.vue?vue&type=template&id=4aa8896a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AgencySection.vue?vue&type=template&id=4aa8896a&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&":
-/*!******************************************************************************************!*\
-  !*** ./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f& ***!
-  \******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_AlertSection_vue_vue_type_template_id_3241da0f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./AlertSection.vue?vue&type=template&id=3241da0f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/AlertSection.vue?vue&type=template&id=3241da0f&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e&":
-/*!************************************************************************************************!*\
-  !*** ./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e& ***!
-  \************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CommuneNoteSection_vue_vue_type_template_id_908fce8e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CommuneNoteSection.vue?vue&type=template&id=908fce8e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/CommuneNoteSection.vue?vue&type=template&id=908fce8e&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/EmergencySection.vue?vue&type=template&id=f852b88c&":
-/*!**********************************************************************************************!*\
-  !*** ./resources/js/components/sections/EmergencySection.vue?vue&type=template&id=f852b88c& ***!
-  \**********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_EmergencySection_vue_vue_type_template_id_f852b88c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./EmergencySection.vue?vue&type=template&id=f852b88c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/EmergencySection.vue?vue&type=template&id=f852b88c&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/FinishSection.vue?vue&type=template&id=743857c8&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/js/components/sections/FinishSection.vue?vue&type=template&id=743857c8& ***!
-  \*******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FinishSection_vue_vue_type_template_id_743857c8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./FinishSection.vue?vue&type=template&id=743857c8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/FinishSection.vue?vue&type=template&id=743857c8&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c& ***!
-  \***********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ListAgencySection_vue_vue_type_template_id_4a487f6c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ListAgencySection.vue?vue&type=template&id=4a487f6c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/ListAgencySection.vue?vue&type=template&id=4a487f6c&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&":
-/*!*********************************************************************************************!*\
-  !*** ./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c& ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LocationSection_vue_vue_type_template_id_9bb0998c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LocationSection.vue?vue&type=template&id=9bb0998c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/LocationSection.vue?vue&type=template&id=9bb0998c&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&":
-/*!****************************************************************************************!*\
-  !*** ./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f& ***!
-  \****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MapSection_vue_vue_type_template_id_1dd2698f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MapSection.vue?vue&type=template&id=1dd2698f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/MapSection.vue?vue&type=template&id=1dd2698f&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf&":
-/*!*********************************************************************************************!*\
-  !*** ./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf& ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PersonalSection_vue_vue_type_template_id_5ed237cf___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PersonalSection.vue?vue&type=template&id=5ed237cf& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/PersonalSection.vue?vue&type=template&id=5ed237cf&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&":
-/*!**************************************************************************************************!*\
-  !*** ./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a& ***!
-  \**************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationModalSection_vue_vue_type_template_id_3f10f43a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationModalSection.vue?vue&type=template&id=3f10f43a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da&":
-/*!*********************************************************************************************!*\
-  !*** ./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da& ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RelationSection_vue_vue_type_template_id_a72812da___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RelationSection.vue?vue&type=template&id=a72812da& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationSection.vue?vue&type=template&id=a72812da&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/TimeSection.vue?vue&type=template&id=949bebbc&":
-/*!*****************************************************************************************!*\
-  !*** ./resources/js/components/sections/TimeSection.vue?vue&type=template&id=949bebbc& ***!
-  \*****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TimeSection_vue_vue_type_template_id_949bebbc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./TimeSection.vue?vue&type=template&id=949bebbc& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/TimeSection.vue?vue&type=template&id=949bebbc&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBox.vue?vue&type=template&id=e810c022&":
-/*!*********************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBox.vue?vue&type=template&id=e810c022& ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBox_vue_vue_type_template_id_e810c022___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBox.vue?vue&type=template&id=e810c022& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBox.vue?vue&type=template&id=e810c022&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=template&id=f78c4ef0&":
-/*!*************************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=template&id=f78c4ef0& ***!
-  \*************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxIcon_vue_vue_type_template_id_f78c4ef0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBoxIcon.vue?vue&type=template&id=f78c4ef0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBoxIcon.vue?vue&type=template&id=f78c4ef0&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=template&id=695d85f5&":
-/*!*****************************************************************************************************!*\
-  !*** ./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=template&id=695d85f5& ***!
-  \*****************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_helpBoxQuestion_vue_vue_type_template_id_695d85f5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./helpBoxQuestion.vue?vue&type=template&id=695d85f5& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/helpBox/helpBoxQuestion.vue?vue&type=template&id=695d85f5&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=template&id=0aa21fe6&":
-/*!**********************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=template&id=0aa21fe6& ***!
-  \**********************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropRefresh_vue_vue_type_template_id_0aa21fe6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropRefresh.vue?vue&type=template&id=0aa21fe6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropRefresh.vue?vue&type=template&id=0aa21fe6&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=template&id=5ae99b74&":
-/*!********************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=template&id=5ae99b74& ***!
-  \********************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideo_vue_vue_type_template_id_5ae99b74___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideo.vue?vue&type=template&id=5ae99b74& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideo.vue?vue&type=template&id=5ae99b74&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=template&id=39155bd0&":
-/*!**************************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=template&id=39155bd0& ***!
-  \**************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoButton_vue_vue_type_template_id_39155bd0___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideoButton.vue?vue&type=template&id=39155bd0& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideoButton.vue?vue&type=template&id=39155bd0&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7&":
-/*!*********************************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7& ***!
-  \*********************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_BackdropVideoRefreshButton_vue_vue_type_template_id_247df4f7___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/BackdropVideoRefreshButton.vue?vue&type=template&id=247df4f7&");
-
-
-/***/ }),
-
-/***/ "./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=template&id=297625f9&":
-/*!*******************************************************************************************************!*\
-  !*** ./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=template&id=297625f9& ***!
-  \*******************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
-/* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_VideoSection_vue_vue_type_template_id_297625f9___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./VideoSection.vue?vue&type=template&id=297625f9& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/videoSection/VideoSection.vue?vue&type=template&id=297625f9&");
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&":
-/*!************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308& ***!
-  \************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _vm.mapOpen
-        ? _c("map-section", { attrs: { selectMarks: _vm.selectMarks } })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.backdropRelationOpen
-        ? _c("div", { attrs: { id: "backdropRelation" } })
-        : _vm._e(),
-      _vm._v(" "),
-      _c("relation-modal", {
-        style: _vm.modalOpen == true ? "display: block;" : "display: none;",
-        attrs: { expedients: _vm.expedients },
-      }),
-      _vm._v(" "),
-      _vm.selectSection != _vm.interactiveVideo && _vm.show == false
-        ? _c("finish-section")
-        : _vm._e(),
-      _vm._v(" "),
-      _c("div", { staticClass: "container-fluid" }, [
-        _c(
-          "div",
-          { staticClass: "row" },
-          [
-            _c(
-              "div",
-              { staticClass: "col col-2 colCard colNavBarHorizontal" },
-              [_c("tab-apart", { attrs: { show: _vm.show } })],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                class:
-                  _vm.selectSection != _vm.interactiveVideo
-                    ? "col col-7 colCard"
-                    : "col col-10 colCard",
-              },
-              [
-                _vm.selectSection != _vm.interactiveVideo &&
-                _vm.alertShow == true
-                  ? _c(
-                      "div",
-                      [
-                        _c("alert-section", {
-                          attrs: {
-                            mensajeAlert: _vm.mensajeAlert,
-                            alertDanger: _vm.alertDanger,
-                            selectSectionCreate: _vm.selectSection,
-                          },
-                        }),
-                      ],
-                      1
-                    )
-                  : _vm._e(),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.personalData
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("personal-section", {
-                      attrs: {
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        dadaPersonalShow: _vm.dadaPersonalShow,
-                        localitzacioTrucadaShow: _vm.localitzacioTrucadaShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.locate
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("location-section", {
-                      attrs: {
-                        marginTopLocation: _vm.marginTopLocation,
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        localitzacioShow: _vm.localitzacioShow,
-                        tipusLocalitzacioShow: _vm.tipusLocalitzacioShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.agency
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("agency-section", {
-                      attrs: {
-                        selectMarks: _vm.selectMarks,
-                        agencies: _vm.agencies,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.emergency
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("emergency-section", {
-                      attrs: { incidentShow: _vm.incidentShow, show: _vm.show },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.communeNote
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("commune-note-section", {
-                      attrs: {
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.relationExpedient &&
-                      _vm.show == false
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [_c("relation-section")],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.interactiveVideo &&
-                      _vm.show == false
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [_c("video-section")],
-                  1
-                ),
-              ]
-            ),
-            _vm._v(" "),
-            _vm.selectSection != _vm.interactiveVideo
-              ? _c("time-section", {
-                  attrs: {
-                    cartaTrucadaShow: _vm.cartaTrucadaShow,
-                    show: _vm.show,
-                  },
-                })
-              : _vm._e(),
-          ],
-          1
-        ),
-      ]),
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f&":
-/*!*************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=template&id=3688d40f& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("img", {
-        staticClass:
-          "parteLogoAbajoDerecha rotarParteAbajoIzquierda animationPink p-0 m-0 position-absolute bottom-0 end-0",
-        attrs: {
-          src: "http://daw.abp-politecnics.com/daw03/images/pinkSquare.png",
-          alt: "Logo Broggi",
-          width: "150",
-          height: "150",
-        },
-      }),
-      _vm._v(" "),
-      _c("img", {
-        staticClass:
-          "parteLogoArribaDerecha partesSeparadasLogoRotar animationBlue p-0 m-0 position-absolute top-0 end-0",
-        attrs: {
-          src: "http://daw.abp-politecnics.com/daw03/images/blueSquare.png",
-          alt: "Logo Broggi",
-          width: "325",
-          height: "325",
-        },
-      }),
-    ])
-  },
-]
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6&":
-/*!***************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue?vue&type=template&id=5cd228f6& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("img", {
-        staticClass:
-          "parteLogoArribaIzquierda animationPink p-0 m-0 position-absolute top-0 start-0",
-        attrs: {
-          src: "http://daw.abp-politecnics.com/daw03/images/pinkSquare.png",
-          alt: "Logo Broggi",
-          width: "150",
-          height: "150",
-        },
-      }),
-      _vm._v(" "),
-      _c("img", {
-        staticClass:
-          "parteLogoAbajoIzquierda partesSeparadasLogoRotar animationYellow p-0 m-0 position-absolute start-0 bottom-0",
-        attrs: {
-          src: "http://daw.abp-politecnics.com/daw03/images/yellowSquare.png",
-          alt: "Logo Broggi",
-          width: "325",
-          height: "325",
-        },
-      }),
-    ])
-  },
-]
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703&":
-/*!***************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataCheck.vue?vue&type=template&id=39b3d703& ***!
-  \***************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row", staticStyle: { "margin-top": "20px" } },
-    [
-      _c("div", { staticClass: "col" }, [
-        _c("div", { staticClass: "form-check" }, [
-          _c(
-            "label",
-            { staticClass: "form-check-label", attrs: { for: _vm.idCheck } },
-            [_vm._v("\n            " + _vm._s(_vm.name) + "\n        ")]
-          ),
-          _vm._v(" "),
-          _vm.checked
-            ? _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.checkValueChecked,
-                    expression: "checkValueChecked",
-                  },
-                ],
-                ref: "checkBox",
-                staticClass: "form-check-input",
-                attrs: {
-                  type: "checkbox",
-                  value: "",
-                  id: _vm.idCheck,
-                  checked: "",
-                  disabled: _vm.disabledCheck,
-                },
-                domProps: {
-                  checked: Array.isArray(_vm.checkValueChecked)
-                    ? _vm._i(_vm.checkValueChecked, "") > -1
-                    : _vm.checkValueChecked,
-                },
-                on: {
-                  click: _vm.clickCheck,
-                  change: function ($event) {
-                    var $$a = _vm.checkValueChecked,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = "",
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 && (_vm.checkValueChecked = $$a.concat([$$v]))
-                      } else {
-                        $$i > -1 &&
-                          (_vm.checkValueChecked = $$a
-                            .slice(0, $$i)
-                            .concat($$a.slice($$i + 1)))
-                      }
-                    } else {
-                      _vm.checkValueChecked = $$c
-                    }
-                  },
-                },
-              })
-            : _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.checkValue,
-                    expression: "checkValue",
-                  },
-                ],
-                staticClass: "form-check-input",
-                attrs: {
-                  type: "checkbox",
-                  value: "",
-                  id: _vm.idCheck,
-                  disabled: _vm.disabledCheck,
-                },
-                domProps: {
-                  checked: Array.isArray(_vm.checkValue)
-                    ? _vm._i(_vm.checkValue, "") > -1
-                    : _vm.checkValue,
-                },
-                on: {
-                  change: function ($event) {
-                    var $$a = _vm.checkValue,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = "",
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 && (_vm.checkValue = $$a.concat([$$v]))
-                      } else {
-                        $$i > -1 &&
-                          (_vm.checkValue = $$a
-                            .slice(0, $$i)
-                            .concat($$a.slice($$i + 1)))
-                      }
-                    } else {
-                      _vm.checkValue = $$c
-                    }
-                  },
-                },
-              }),
-        ]),
-      ]),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8&":
-/*!*******************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataEmergency.vue?vue&type=template&id=e5063ce8& ***!
-  \*******************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row form-row", staticStyle: { "margin-top": "25px" } },
-    [
-      _c("div", { staticClass: "col col-5 align-items-center" }, [
-        _c("p", [_vm._v(_vm._s(_vm.firstText))]),
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col col-7" }, [
-        _c("p", [_vm._v(_vm._s(_vm.secondText))]),
-      ]),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76&":
-/*!***************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataInput.vue?vue&type=template&id=f09fce76& ***!
-  \***************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row form-row", staticStyle: { "margin-top": "20px" } },
-    [
-      _c(
-        "div",
-        { staticClass: "col d-flex align-items-center", class: _vm.colSmall },
-        [
-          _c("label", { attrs: { for: _vm.idInput } }, [
-            _vm._v(_vm._s(_vm.name)),
-          ]),
-        ]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "col", class: _vm.colBig }, [
-        _vm.number == false
-          ? _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.text,
-                  expression: "text",
-                },
-              ],
-              staticClass: "form-control",
-              attrs: {
-                type: "text",
-                id: _vm.idInput,
-                disabled: _vm.disabledInput,
-              },
-              domProps: { value: _vm.text },
-              on: {
-                click: _vm.startTime,
-                change: _vm.changeInput,
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.text = $event.target.value
-                },
-              },
-            })
-          : _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.text,
-                  expression: "text",
-                },
-              ],
-              staticClass: "form-control noFlechaNumber",
-              attrs: {
-                maxlength: "12",
-                type: "number",
-                id: _vm.idInput,
-                disabled: _vm.disabledInput,
-              },
-              domProps: { value: _vm.text },
-              on: {
-                click: _vm.startTime,
-                change: _vm.changeInput,
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.text = $event.target.value
-                },
-              },
-            }),
-      ]),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade&":
-/*!****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataSelect.vue?vue&type=template&id=88cf1ade& ***!
-  \****************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row form-row", staticStyle: { "margin-top": "20px" } },
-    [
-      _c("div", { staticClass: "col d-flex", class: _vm.colSmall }, [
-        _c("label", { attrs: { for: _vm.idSelect } }, [
-          _vm._v(_vm._s(_vm.name)),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "col d-flex justify-content-center align-items-center",
-          class: _vm.colBig,
-        },
-        [
-          _vm.name == this.$comarca ||
-          _vm.name == this.$provincia ||
-          _vm.name == this.$municipi
-            ? _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selectSelected,
-                      expression: "selectSelected",
-                    },
-                  ],
-                  ref: "select",
-                  staticClass: "form-select",
-                  attrs: { id: _vm.idSelect, disabled: _vm.disabledSelect },
-                  on: {
-                    change: [
-                      function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.selectSelected = $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      },
-                      _vm.changeSelect,
-                    ],
-                    click: _vm.startTime,
-                  },
-                },
-                [
-                  _vm.show == false
-                    ? _c("option", { attrs: { value: "0" } })
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm._l(_vm.arrayElements, function (arrayElement) {
-                    return _c(
-                      "option",
-                      {
-                        key: arrayElement.id,
-                        domProps: { value: arrayElement.id },
-                      },
-                      [_vm._v("\n            " + _vm._s(arrayElement.nom))]
-                    )
-                  }),
-                ],
-                2
-              )
-            : _vm.name == this.$tipusLocalitzacio
-            ? _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selectSelectedTipusLocation,
-                      expression: "selectSelectedTipusLocation",
-                    },
-                  ],
-                  ref: "select",
-                  staticClass: "form-select",
-                  attrs: { id: _vm.idSelect, disabled: _vm.disabledSelect },
-                  on: {
-                    change: [
-                      function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.selectSelectedTipusLocation = $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      },
-                      _vm.changeSelect,
-                    ],
-                    click: _vm.startTime,
-                  },
-                },
-                _vm._l(_vm.arrayElements, function (arrayElement) {
-                  return _c(
-                    "option",
-                    {
-                      key: arrayElement.id,
-                      domProps: { value: arrayElement.id },
-                    },
-                    [_vm._v("\n            " + _vm._s(arrayElement.tipus))]
-                  )
-                }),
-                0
-              )
-            : _vm.idSelect == this.$tipusEmergenciaId
-            ? _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selectSelectedTipusIncident,
-                      expression: "selectSelectedTipusIncident",
-                    },
-                  ],
-                  ref: "select",
-                  staticClass: "form-select",
-                  attrs: { id: _vm.idSelect, disabled: _vm.disabledSelect },
-                  on: {
-                    change: [
-                      function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.selectSelectedTipusIncident = $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      },
-                      _vm.changeSelect,
-                    ],
-                    click: _vm.startTime,
-                  },
-                },
-                _vm._l(_vm.arrayElements, function (arrayElement) {
-                  return _c(
-                    "option",
-                    {
-                      key: arrayElement.id,
-                      domProps: { value: arrayElement.id },
-                    },
-                    [_vm._v("\n            " + _vm._s(arrayElement.descripcio))]
-                  )
-                }),
-                0
-              )
-            : _c(
-                "select",
-                {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selectSelectedIncident,
-                      expression: "selectSelectedIncident",
-                    },
-                  ],
-                  ref: "select",
-                  staticClass: "form-select",
-                  attrs: { id: _vm.idSelect, disabled: _vm.disabledSelect },
-                  on: {
-                    change: [
-                      function ($event) {
-                        var $$selectedVal = Array.prototype.filter
-                          .call($event.target.options, function (o) {
-                            return o.selected
-                          })
-                          .map(function (o) {
-                            var val = "_value" in o ? o._value : o.value
-                            return val
-                          })
-                        _vm.selectSelectedIncident = $event.target.multiple
-                          ? $$selectedVal
-                          : $$selectedVal[0]
-                      },
-                      _vm.changeSelect,
-                    ],
-                    click: _vm.startTime,
-                  },
-                },
-                _vm._l(_vm.arrayElements, function (arrayElement) {
-                  return _c(
-                    "option",
-                    {
-                      key: arrayElement.id,
-                      domProps: { value: arrayElement.id },
-                    },
-                    [_vm._v("\n            " + _vm._s(arrayElement.descripcio))]
-                  )
-                }),
-                0
-              ),
-        ]
-      ),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc&":
-/*!**************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/forms/DataTime.vue?vue&type=template&id=506b49bc& ***!
-  \**************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    {
-      staticClass: "row",
-      style: _vm.first ? "margin-top: 0px;" : "margin-top: 20px;",
-    },
-    [
-      _c(
-        "div",
-        {
-          staticClass:
-            "col col-6 d-flex justify-content-start align-items-center",
-          staticStyle: { fontWeight: "bold" },
-        },
-        [_vm._v("\n        " + _vm._s(_vm.titleData) + "\n    ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "col col-6 d-flex justify-content-end align-items-center",
-        },
-        [_vm._v("\n        " + _vm._s(_vm.data) + "\n    ")]
-      ),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d&":
-/*!***************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/nav/ApartNavbar.vue?vue&type=template&id=27a1be7d& ***!
-  \***************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "row", style: { "margin-top": _vm.marginTopApart + "px" } },
-    [
-      _c("div", { staticClass: "col colApart" }, [
-        _c("div", { staticClass: "row form-row" }, [
-          _c(
-            "div",
-            {
-              staticClass:
-                "col col-2 d-flex justify-content-end align-items-center",
-            },
-            [_c("i", { class: _vm.emoticon })]
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass:
-                "col col-10 d-flex justify-content-start align-items-center",
-            },
-            [_c("p", { staticClass: "pApart" }, [_vm._v(_vm._s(_vm.name))])]
-          ),
-        ]),
-      ]),
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    // Add aliases.
-    lodash.entries = toPairs;
-    lodash.entriesIn = toPairsIn;
-    lodash.extend = assignIn;
-    lodash.extendWith = assignInWith;
-
-    // Add methods to `lodash.prototype`.
-    mixin(lodash, lodash);
-
-    /*------------------------------------------------------------------------*/
-
-<<<<<<< HEAD
-    // Add methods that return unwrapped values in chain sequences.
-    lodash.add = add;
-    lodash.attempt = attempt;
-    lodash.camelCase = camelCase;
-    lodash.capitalize = capitalize;
-    lodash.ceil = ceil;
-    lodash.clamp = clamp;
-    lodash.clone = clone;
-    lodash.cloneDeep = cloneDeep;
-    lodash.cloneDeepWith = cloneDeepWith;
-    lodash.cloneWith = cloneWith;
-    lodash.conformsTo = conformsTo;
-    lodash.deburr = deburr;
-    lodash.defaultTo = defaultTo;
-    lodash.divide = divide;
-    lodash.endsWith = endsWith;
-    lodash.eq = eq;
-    lodash.escape = escape;
-    lodash.escapeRegExp = escapeRegExp;
-    lodash.every = every;
-    lodash.find = find;
-    lodash.findIndex = findIndex;
-    lodash.findKey = findKey;
-    lodash.findLast = findLast;
-    lodash.findLastIndex = findLastIndex;
-    lodash.findLastKey = findLastKey;
-    lodash.floor = floor;
-    lodash.forEach = forEach;
-    lodash.forEachRight = forEachRight;
-    lodash.forIn = forIn;
-    lodash.forInRight = forInRight;
-    lodash.forOwn = forOwn;
-    lodash.forOwnRight = forOwnRight;
-    lodash.get = get;
-    lodash.gt = gt;
-    lodash.gte = gte;
-    lodash.has = has;
-    lodash.hasIn = hasIn;
-    lodash.head = head;
-    lodash.identity = identity;
-    lodash.includes = includes;
-    lodash.indexOf = indexOf;
-    lodash.inRange = inRange;
-    lodash.invoke = invoke;
-    lodash.isArguments = isArguments;
-    lodash.isArray = isArray;
-    lodash.isArrayBuffer = isArrayBuffer;
-    lodash.isArrayLike = isArrayLike;
-    lodash.isArrayLikeObject = isArrayLikeObject;
-    lodash.isBoolean = isBoolean;
-    lodash.isBuffer = isBuffer;
-    lodash.isDate = isDate;
-    lodash.isElement = isElement;
-    lodash.isEmpty = isEmpty;
-    lodash.isEqual = isEqual;
-    lodash.isEqualWith = isEqualWith;
-    lodash.isError = isError;
-    lodash.isFinite = isFinite;
-    lodash.isFunction = isFunction;
-    lodash.isInteger = isInteger;
-    lodash.isLength = isLength;
-    lodash.isMap = isMap;
-    lodash.isMatch = isMatch;
-    lodash.isMatchWith = isMatchWith;
-    lodash.isNaN = isNaN;
-    lodash.isNative = isNative;
-    lodash.isNil = isNil;
-    lodash.isNull = isNull;
-    lodash.isNumber = isNumber;
-    lodash.isObject = isObject;
-    lodash.isObjectLike = isObjectLike;
-    lodash.isPlainObject = isPlainObject;
-    lodash.isRegExp = isRegExp;
-    lodash.isSafeInteger = isSafeInteger;
-    lodash.isSet = isSet;
-    lodash.isString = isString;
-    lodash.isSymbol = isSymbol;
-    lodash.isTypedArray = isTypedArray;
-    lodash.isUndefined = isUndefined;
-    lodash.isWeakMap = isWeakMap;
-    lodash.isWeakSet = isWeakSet;
-    lodash.join = join;
-    lodash.kebabCase = kebabCase;
-    lodash.last = last;
-    lodash.lastIndexOf = lastIndexOf;
-    lodash.lowerCase = lowerCase;
-    lodash.lowerFirst = lowerFirst;
-    lodash.lt = lt;
-    lodash.lte = lte;
-    lodash.max = max;
-    lodash.maxBy = maxBy;
-    lodash.mean = mean;
-    lodash.meanBy = meanBy;
-    lodash.min = min;
-    lodash.minBy = minBy;
-    lodash.stubArray = stubArray;
-    lodash.stubFalse = stubFalse;
-    lodash.stubObject = stubObject;
-    lodash.stubString = stubString;
-    lodash.stubTrue = stubTrue;
-    lodash.multiply = multiply;
-    lodash.nth = nth;
-    lodash.noConflict = noConflict;
-    lodash.noop = noop;
-    lodash.now = now;
-    lodash.pad = pad;
-    lodash.padEnd = padEnd;
-    lodash.padStart = padStart;
-    lodash.parseInt = parseInt;
-    lodash.random = random;
-    lodash.reduce = reduce;
-    lodash.reduceRight = reduceRight;
-    lodash.repeat = repeat;
-    lodash.replace = replace;
-    lodash.result = result;
-    lodash.round = round;
-    lodash.runInContext = runInContext;
-    lodash.sample = sample;
-    lodash.size = size;
-    lodash.snakeCase = snakeCase;
-    lodash.some = some;
-    lodash.sortedIndex = sortedIndex;
-    lodash.sortedIndexBy = sortedIndexBy;
-    lodash.sortedIndexOf = sortedIndexOf;
-    lodash.sortedLastIndex = sortedLastIndex;
-    lodash.sortedLastIndexBy = sortedLastIndexBy;
-    lodash.sortedLastIndexOf = sortedLastIndexOf;
-    lodash.startCase = startCase;
-    lodash.startsWith = startsWith;
-    lodash.subtract = subtract;
-    lodash.sum = sum;
-    lodash.sumBy = sumBy;
-    lodash.template = template;
-    lodash.times = times;
-    lodash.toFinite = toFinite;
-    lodash.toInteger = toInteger;
-    lodash.toLength = toLength;
-    lodash.toLower = toLower;
-    lodash.toNumber = toNumber;
-    lodash.toSafeInteger = toSafeInteger;
-    lodash.toString = toString;
-    lodash.toUpper = toUpper;
-    lodash.trim = trim;
-    lodash.trimEnd = trimEnd;
-    lodash.trimStart = trimStart;
-    lodash.truncate = truncate;
-    lodash.unescape = unescape;
-    lodash.uniqueId = uniqueId;
-    lodash.upperCase = upperCase;
-    lodash.upperFirst = upperFirst;
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("div", { staticClass: "row", attrs: { id: "rowLogo" } }, [
-        _c("div", { staticClass: "col colLogo" }, [
-          _c("div", { staticClass: "row" }, [
-            _c(
-              "div",
-              {
-                staticClass:
-                  "col col-12 d-flex justify-content-start align-items-center",
-              },
-              [_c("img", { attrs: { src: this.$logoSrc, id: "imgLogo" } })]
-            ),
-          ]),
-        ]),
-      ]),
-      _vm._v(" "),
-      _c("apart-navbar", {
-        attrs: {
-          marginTopApart: 30,
-          name: "Dades personals",
-          emoticon: "fa fa-solid fa-user",
-        },
-        nativeOn: {
-          click: function ($event) {
-            return _vm.changeSection(_vm.personalData)
-          },
-        },
-      }),
-      _vm._v(" "),
-      _c("apart-navbar", {
-        attrs: {
-          marginTopApart: 60,
-          name: "Localització",
-          emoticon: "fa fa-map-marker",
-        },
-        nativeOn: {
-          click: function ($event) {
-            return _vm.changeSection(_vm.locate)
-          },
-        },
-      }),
-      _vm._v(" "),
-      _c("apart-navbar", {
-        attrs: {
-          marginTopApart: 60,
-          name: "Agències",
-          emoticon: "fa fa-solid fa-car-side",
-        },
-        nativeOn: {
-          click: function ($event) {
-            return _vm.changeSection(_vm.agency)
-          },
-        },
-      }),
-      _vm._v(" "),
-      _c("apart-navbar", {
-        attrs: {
-          marginTopApart: 60,
-          name: "Emergencia",
-          emoticon: "fas fa-ambulance",
-        },
-        nativeOn: {
-          click: function ($event) {
-            return _vm.changeSection(_vm.emergency)
-          },
-        },
-      }),
-      _vm._v(" "),
-      _c("apart-navbar", {
-        attrs: {
-          marginTopApart: 60,
-          name: "Nota comuna",
-          emoticon: "fa fa-sticky-note-o",
-        },
-        nativeOn: {
-          click: function ($event) {
-            return _vm.changeSection(_vm.communeNote)
-          },
-        },
-      }),
-      _vm._v(" "),
-      _vm.show == false
-        ? _c("apart-navbar", {
-            attrs: {
-              marginTopApart: 60,
-              name: "Relacionar Expedient",
-              emoticon: "fa fa-solid fa-book",
-            },
-            nativeOn: {
-              click: function ($event) {
-                return _vm.changeSection(_vm.relationExpedient)
-              },
-            },
-          })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.show == false
-        ? _c("apart-navbar", {
-            attrs: {
-              marginTopApart: 140,
-              name: "Vídeo interactiu",
-              emoticon: "fas fa-video",
-              video: "",
-            },
-            nativeOn: {
-              click: function ($event) {
-                return _vm.changeSection(_vm.interactiveVideo)
-              },
-            },
-          })
-        : _vm._e(),
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    // Add aliases.
-    lodash.each = forEach;
-    lodash.eachRight = forEachRight;
-    lodash.first = head;
-
-    mixin(lodash, (function() {
-      var source = {};
-      baseForOwn(lodash, function(func, methodName) {
-        if (!hasOwnProperty.call(lodash.prototype, methodName)) {
-          source[methodName] = func;
-        }
-      });
-      return source;
-    }()), { 'chain': false });
-
-    /*------------------------------------------------------------------------*/
-
-    /**
-     * The semantic version number.
-     *
-     * @static
-     * @memberOf _
-     * @type {string}
-     */
-    lodash.VERSION = VERSION;
-
-<<<<<<< HEAD
-    // Assign default placeholders.
-    arrayEach(['bind', 'bindKey', 'curry', 'curryRight', 'partial', 'partialRight'], function(methodName) {
-      lodash[methodName].placeholder = lodash;
-    });
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c(
-      "div",
-      { staticClass: "col colSection colAgency", class: _vm.colReturn },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
-            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
-          [
-            _c("div", { staticClass: "col col-10" }, [
-              _c(
-                "div",
-                { style: _vm.styleDivAgencia, attrs: { id: "agenciaListDiv" } },
-                [
-                  _c(
-                    "div",
-                    {
-                      staticClass: "container-fluid",
-                      attrs: { id: "containerAgencia" },
-                    },
-                    _vm._l(_vm.selectMarks, function (selectMark) {
-                      return _c("list-agency-section", {
-                        key: selectMark,
-                        attrs: { agencies: _vm.agencies, idAgency: selectMark },
-                      })
-                    }),
-                    1
-                  ),
-                ]
-              ),
-            ]),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass:
-                  "col col-2 d-flex justify-content-center align-items-end",
-              },
-              [
-                _c(
-                  "button",
-                  {
-                    staticClass: "button buttonNormal",
-                    class:
-                      _vm.disabledButtonMap == true ? "buttonDisabled" : "",
-                    attrs: { type: "button", disabled: _vm.disabledButtonMap },
-                    on: { click: _vm.buttonClickMap },
-                  },
-                  [_vm._v("Mapa")]
-                ),
-              ]
-            ),
-          ]
-        ),
-      ]
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
-    arrayEach(['drop', 'take'], function(methodName, index) {
-      LazyWrapper.prototype[methodName] = function(n) {
-        n = n === undefined ? 1 : nativeMax(toInteger(n), 0);
-
-        var result = (this.__filtered__ && !index)
-          ? new LazyWrapper(this)
-          : this.clone();
-
-        if (result.__filtered__) {
-          result.__takeCount__ = nativeMin(n, result.__takeCount__);
-        } else {
-          result.__views__.push({
-            'size': nativeMin(n, MAX_ARRAY_LENGTH),
-            'type': methodName + (result.__dir__ < 0 ? 'Right' : '')
-          });
-        }
-        return result;
-      };
-
-      LazyWrapper.prototype[methodName + 'Right'] = function(n) {
-        return this.reverse()[methodName](n).reverse();
-      };
-    });
-
-    // Add `LazyWrapper` methods that accept an `iteratee` value.
-    arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-      var type = index + 1,
-          isFilter = type == LAZY_FILTER_FLAG || type == LAZY_WHILE_FLAG;
-
-      LazyWrapper.prototype[methodName] = function(iteratee) {
-        var result = this.clone();
-        result.__iteratees__.push({
-          'iteratee': getIteratee(iteratee, 3),
-          'type': type
-        });
-        result.__filtered__ = result.__filtered__ || isFilter;
-        return result;
-      };
-    });
-
-    // Add `LazyWrapper` methods for `_.head` and `_.last`.
-    arrayEach(['head', 'last'], function(methodName, index) {
-      var takeName = 'take' + (index ? 'Right' : '');
-
-      LazyWrapper.prototype[methodName] = function() {
-        return this[takeName](1).value()[0];
-      };
-    });
-
-    // Add `LazyWrapper` methods for `_.initial` and `_.tail`.
-    arrayEach(['initial', 'tail'], function(methodName, index) {
-      var dropName = 'drop' + (index ? '' : 'Right');
-
-<<<<<<< HEAD
-      LazyWrapper.prototype[methodName] = function() {
-        return this.__filtered__ ? new LazyWrapper(this) : this[dropName](1);
-      };
-    });
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c(
-      "div",
-      { staticClass: "col colSection colCommuneNote", class: _vm.colReturn },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
-            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "row", staticStyle: { "margin-top": "20px" } },
-          [
-            _c("div", { staticClass: "col" }, [
-              _c("div", { staticClass: "form-floating" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.notaComuna,
-                      expression: "notaComuna",
-                    },
-                  ],
-                  staticClass: "form-control",
-                  staticStyle: { height: "200px", resize: "none" },
-                  attrs: {
-                    id: "textAreaCommuneNote",
-                    disabled: _vm.disabledNotaComuna,
-                  },
-                  domProps: { value: _vm.notaComuna },
-                  on: {
-                    click: _vm.startTime,
-                    input: function ($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.notaComuna = $event.target.value
-                    },
-                  },
-                }),
-              ]),
-            ]),
-          ]
-        ),
-      ]
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    LazyWrapper.prototype.compact = function() {
-      return this.filter(identity);
-    };
-
-    LazyWrapper.prototype.find = function(predicate) {
-      return this.filter(predicate).head();
-    };
-
-    LazyWrapper.prototype.findLast = function(predicate) {
-      return this.reverse().find(predicate);
-    };
-
-    LazyWrapper.prototype.invokeMap = baseRest(function(path, args) {
-      if (typeof path == 'function') {
-        return new LazyWrapper(this);
-      }
-      return this.map(function(value) {
-        return baseInvoke(value, path, args);
-      });
-    });
-
-<<<<<<< HEAD
-    LazyWrapper.prototype.reject = function(predicate) {
-      return this.filter(negate(getIteratee(predicate)));
-    };
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c(
-      "div",
-      { staticClass: "col colSection colEmergency", class: _vm.colReturn },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
-            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "row" }, [
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: this.$tipusEmergencia,
-                  idSelect: this.$tipusEmergenciaId,
-                  arrayElements: _vm.tipusEmergencia,
-                  show: _vm.show,
-                },
-              }),
-            ],
-            1
-          ),
-        ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "row", staticStyle: { "margin-bottom": "50px" } },
-          [
-            _c(
-              "div",
-              { staticClass: "col" },
-              [
-                _c("data-select", {
-                  attrs: {
-                    name: this.$incidents,
-                    idSelect: this.$incidentsId,
-                    arrayElements: _vm.incidents,
-                    show: _vm.show,
-                  },
-                }),
-              ],
-              1
-            ),
-          ]
-        ),
-        _vm._v(" "),
-        _c("data-emergency", {
-          attrs: { firstText: "Codi", secondText: _vm.incident.codi },
-        }),
-        _vm._v(" "),
-        _c("data-emergency", {
-          attrs: {
-            firstText: "Descripcio",
-            secondText: _vm.incident.descripcio,
-          },
-        }),
-        _vm._v(" "),
-        _c("data-emergency", {
-          attrs: { firstText: "Definicio", secondText: _vm.incident.definicio },
-        }),
-        _vm._v(" "),
-        _c("data-emergency", {
-          attrs: {
-            firstText: "Instrucions",
-            secondText: _vm.incident.instrucions,
-          },
-        }),
-      ],
-      1
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    LazyWrapper.prototype.slice = function(start, end) {
-      start = toInteger(start);
-
-      var result = this;
-      if (result.__filtered__ && (start > 0 || end < 0)) {
-        return new LazyWrapper(result);
-      }
-      if (start < 0) {
-        result = result.takeRight(-start);
-      } else if (start) {
-        result = result.drop(start);
-      }
-      if (end !== undefined) {
-        end = toInteger(end);
-        result = end < 0 ? result.dropRight(-end) : result.take(end - start);
-      }
-      return result;
-    };
-
-    LazyWrapper.prototype.takeRightWhile = function(predicate) {
-      return this.reverse().takeWhile(predicate).reverse();
-    };
-
-    LazyWrapper.prototype.toArray = function() {
-      return this.take(MAX_ARRAY_LENGTH);
-    };
-
-    // Add `LazyWrapper` methods to `lodash.prototype`.
-    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
-          isTaker = /^(?:head|last)$/.test(methodName),
-          lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
-          retUnwrapped = isTaker || /^find/.test(methodName);
-
-      if (!lodashFunc) {
-        return;
-      }
-      lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
-            args = isTaker ? [1] : arguments,
-            isLazy = value instanceof LazyWrapper,
-            iteratee = args[0],
-            useLazy = isLazy || isArray(value);
-
-        var interceptor = function(value) {
-          var result = lodashFunc.apply(lodash, arrayPush([value], args));
-          return (isTaker && chainAll) ? result[0] : result;
-        };
-
-        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-          // Avoid lazy use if the iteratee has a "length" value other than `1`.
-          isLazy = useLazy = false;
-        }
-        var chainAll = this.__chain__,
-            isHybrid = !!this.__actions__.length,
-            isUnwrapped = retUnwrapped && !chainAll,
-            onlyLazy = isLazy && !isHybrid;
-
-        if (!retUnwrapped && useLazy) {
-          value = onlyLazy ? value : new LazyWrapper(this);
-          var result = func.apply(value, args);
-          result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
-          return new LodashWrapper(result, chainAll);
-        }
-        if (isUnwrapped && onlyLazy) {
-          return func.apply(this, args);
-        }
-        result = this.thru(interceptor);
-        return isUnwrapped ? (isTaker ? result.value()[0] : result.value()) : result;
-      };
-    });
-
-    // Add `Array` methods to `lodash.prototype`.
-    arrayEach(['pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName],
-          chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          retUnwrapped = /^(?:pop|shift)$/.test(methodName);
-
-      lodash.prototype[methodName] = function() {
-        var args = arguments;
-        if (retUnwrapped && !this.__chain__) {
-          var value = this.value();
-          return func.apply(isArray(value) ? value : [], args);
-        }
-        return this[chainName](function(value) {
-          return func.apply(isArray(value) ? value : [], args);
-        });
-      };
-    });
-
-    // Map minified method names to their real names.
-    baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-      var lodashFunc = lodash[methodName];
-      if (lodashFunc) {
-        var key = lodashFunc.name + '';
-        if (!hasOwnProperty.call(realNames, key)) {
-          realNames[key] = [];
-        }
-        realNames[key].push({ 'name': methodName, 'func': lodashFunc });
-      }
-    });
-
-    realNames[createHybrid(undefined, WRAP_BIND_KEY_FLAG).name] = [{
-      'name': 'wrapper',
-      'func': undefined
-    }];
-
-    // Add methods to `LazyWrapper`.
-    LazyWrapper.prototype.clone = lazyClone;
-    LazyWrapper.prototype.reverse = lazyReverse;
-    LazyWrapper.prototype.value = lazyValue;
-
-<<<<<<< HEAD
-    // Add chain sequence methods to the `lodash` wrapper.
-    lodash.prototype.at = wrapperAt;
-    lodash.prototype.chain = wrapperChain;
-    lodash.prototype.commit = wrapperCommit;
-    lodash.prototype.next = wrapperNext;
-    lodash.prototype.plant = wrapperPlant;
-    lodash.prototype.reverse = wrapperReverse;
-    lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c(
-      "div",
-      {
-        staticClass: "col colSection colLocation",
-        class: _vm.colReturn,
-        style: { "margin-top": _vm.marginTopLocation + "px" },
-      },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col colTitle" }, [
-            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("data-check", {
-          attrs: {
-            name: this.$checkCatalonia,
-            idCheck: this.$checkCatalunya,
-            show: _vm.show,
-            tipusLocalitzacioSelect: _vm.tipusLocalitzacioSelect,
-            disabledCheck: _vm.disabledCheck,
-            checked: "",
-          },
-        }),
-        _vm._v(" "),
-        _vm.checkedCataluna
-          ? _c("div", { staticClass: "row" }, [
-              _c(
-                "div",
-                { staticClass: "col" },
-                [
-                  _c("data-select", {
-                    attrs: {
-                      name: this.$provincia,
-                      idSelect: this.$provinciaLocation,
-                      arrayElements: _vm.provincies,
-                      show: _vm.show,
-                      small: "",
-                    },
-                  }),
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "col" },
-                [
-                  _c("data-select", {
-                    attrs: {
-                      name: this.$comarca,
-                      idSelect: this.$comarcaLocation,
-                      arrayElements: _vm.comarques,
-                      show: _vm.show,
-                      small: "",
-                    },
-                  }),
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "col" },
-                [
-                  _c("data-select", {
-                    attrs: {
-                      name: this.$municipi,
-                      idSelect: this.$municipiLocation,
-                      arrayElements: _vm.municipis,
-                      show: _vm.show,
-                      small: "",
-                    },
-                  }),
-                ],
-                1
-              ),
-            ])
-          : _vm._e(),
-        _vm._v(" "),
-        _c("data-select", {
-          staticStyle: { "margin-top": "30px", marginBottom: "20px" },
-          attrs: {
-            name: this.$tipusLocalitzacio,
-            idSelect: this.$tipusLocalitzacioId,
-            arrayElements: _vm.tipusLocalitzacio,
-            show: _vm.show,
-          },
-        }),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            style:
-              _vm.checkedCataluna == false
-                ? "display: block;"
-                : "display: none;",
-          },
-          [
-            _c("data-select", {
-              attrs: {
-                name: this.$provincia,
-                idSelect: this.$provinciaSelectProvincia,
-                arrayElements: _vm.otrasProvincias,
-                show: _vm.show,
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Municipi",
-                idInput: this.$inputProvinciaMunicipi,
-                valor: _vm.municipiNomShow,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            style:
-              _vm.tipusLocalitzacioSelect == 1
-                ? "display: block;"
-                : "display: none;",
-          },
-          [
-            _c("data-input", {
-              attrs: {
-                name: "Tipus de via",
-                idInput: this.$inputTipusDeVia,
-                valor: _vm.tipusDeViaShow,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Nom",
-                idInput: this.$inputNom,
-                valor: _vm.nomShow,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Número",
-                idInput: this.$inputNumero,
-                valor: _vm.numeroShow,
-                show: _vm.show,
-                small: "",
-                number: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Escala",
-                idInput: this.$inputEscala,
-                valor: _vm.escalaShow,
-                show: _vm.show,
-                small: "",
-                number: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Pis",
-                idInput: this.$inputPis,
-                valor: _vm.pisShow,
-                show: _vm.show,
-                small: "",
-                number: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Porta",
-                idInput: this.$inputPorta,
-                valor: _vm.portaShow,
-                show: _vm.show,
-                small: "",
-                number: "",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            style:
-              _vm.tipusLocalitzacioSelect == 4
-                ? "display: block;"
-                : "display: none;",
-          },
-          [
-            _c("data-input", {
-              attrs: {
-                name: "Nom carretera",
-                idInput: this.$inputNomCarretera,
-                valor: _vm.nomCarreteraShow,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Punt kilomètric ",
-                idInput: this.$inputPuntKilometric,
-                valor: _vm.puntKilometricShow,
-                show: _vm.show,
-                small: "",
-                number: "",
-              },
-            }),
-            _vm._v(" "),
-            _c("data-input", {
-              attrs: {
-                name: "Sentit",
-                idInput: this.$inputSentit,
-                valor: _vm.sentitShow,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          {
-            style:
-              _vm.tipusLocalitzacioSelect == 2
-                ? "display: block;"
-                : "display: none;",
-          },
-          [
-            _c("data-input", {
-              attrs: {
-                name: "Nom",
-                idInput: this.$inputNomPuntSingular,
-                valor: _vm.nomPuntSingular,
-                show: _vm.show,
-                small: "",
-              },
-            }),
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
-          [
-            _c("div", { staticClass: "col" }, [
-              _c("div", { staticClass: "form-floating" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.detalls,
-                      expression: "detalls",
-                    },
-                  ],
-                  staticClass: "form-control",
-                  staticStyle: { height: "130px", resize: "none" },
-                  attrs: {
-                    id: this.$textAreaDetalls,
-                    disabled: _vm.disabledDetalls,
-                  },
-                  domProps: { value: _vm.detalls },
-                  on: {
-                    click: _vm.startTime,
-                    input: function ($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.detalls = $event.target.value
-                    },
-                  },
-                }),
-                _vm._v(" "),
-                _c("label", { attrs: { for: this.$textAreaDetalls } }, [
-                  _vm._v("Detalls"),
-                ]),
-              ]),
-            ]),
-          ]
-        ),
-      ],
-      1
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-    // Add lazy aliases.
-    lodash.prototype.first = lodash.prototype.head;
-
-    if (symIterator) {
-      lodash.prototype[symIterator] = wrapperToIterator;
-    }
-    return lodash;
-  });
-
-  /*--------------------------------------------------------------------------*/
-
-  // Export lodash.
-  var _ = runInContext();
-
-  // Some AMD build optimizers, like r.js, check for condition patterns like:
-  if (true) {
-    // Expose Lodash on the global object to prevent errors when Lodash is
-    // loaded by a script tag in the presence of an AMD loader.
-    // See http://requirejs.org/docs/errors.html#mismatch for more details.
-    // Use `_.noConflict` to remove Lodash from the global object.
-    root._ = _;
-
-    // Define as an anonymous module so, through path mapping, it can be
-    // referenced as the "underscore" module.
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-      return _;
-    }).call(exports, __webpack_require__, exports, module),
-		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  }
-  // Check for `exports` after `define` in case a build optimizer adds it.
-  else {}
-}.call(this));
-
-
-/***/ }),
-
-/***/ "./resources/sass/app.scss":
-/*!*********************************!*\
-  !*** ./resources/sass/app.scss ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-<<<<<<< HEAD
-// extracted by mini-css-extract-plugin
-=======
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row d-flex justify-content-center" }, [
-    _c(
-      "div",
-      { staticClass: "col colSection colPersonalDates", class: _vm.colReturn },
-      [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col colTitle" }, [
-            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("data-input", {
-          attrs: {
-            name: "Telefon",
-            idInput: this.$inputTelefon,
-            show: _vm.show,
-            valor: _vm.telefonShow,
-            small: "",
-            number: "",
-          },
-        }),
-        _vm._v(" "),
-        _c("data-input", {
-          attrs: {
-            name: "Procedencia",
-            idInput: this.$inputProcedencia,
-            show: _vm.show,
-            valor: this.procedenciaShow,
-            small: "",
-          },
-        }),
-        _vm._v(" "),
-        _c("div", { staticClass: "row" }, [
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: this.$provincia,
-                  idSelect: this.$provinciaPersonal,
-                  arrayElements: _vm.provincies,
-                  show: _vm.show,
-                },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: this.$comarca,
-                  idSelect: this.$comarcaPersonal,
-                  arrayElements: _vm.comarques,
-                  show: _vm.show,
-                },
-              }),
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "div",
-            { staticClass: "col" },
-            [
-              _c("data-select", {
-                attrs: {
-                  name: this.$municipi,
-                  idSelect: this.$municipiPersonal,
-                  arrayElements: _vm.municipis,
-                  show: _vm.show,
-                },
-              }),
-            ],
-            1
-          ),
-        ]),
-        _vm._v(" "),
-        _c("data-input", {
-          attrs: {
-            name: "Adreça",
-            idInput: this.$inputAdreca,
-            show: _vm.show,
-            valor: _vm.adrecaShow,
-            small: "",
-          },
-        }),
-        _vm._v(" "),
-        _c("data-input", {
-          attrs: {
-            name: "Origen llamada",
-            idInput: this.$inputOrigen,
-            show: _vm.show,
-            valor: _vm.origenShow,
-            small: "",
-          },
-        }),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
-          [
-            _c("div", { staticClass: "col" }, [
-              _c("div", { staticClass: "form-floating" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.antecedentes,
-                      expression: "antecedentes",
-                    },
-                  ],
-                  staticClass: "form-control",
-                  staticStyle: { height: "130px", resize: "none" },
-                  attrs: {
-                    id: "textAreaAntecedents",
-                    disabled: _vm.disabledAntecedents,
-                  },
-                  domProps: { value: _vm.antecedentes },
-                  on: {
-                    click: _vm.startTime,
-                    input: function ($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.antecedentes = $event.target.value
-                    },
-                  },
-                }),
-                _vm._v(" "),
-                _c("label", { attrs: { for: "textAreaAntecedents" } }, [
-                  _vm._v("Antecedents"),
-                ]),
-              ]),
-            ]),
-          ]
-        ),
-        _vm._v(" "),
-        _c("data-check", {
-          style:
-            _vm.showCheckSaveInformation == true && _vm.show == false
-              ? "display: block;"
-              : "display: none;",
-          attrs: {
-            name: "Guardar informació",
-            idCheck: this.$checkSaveInformation,
-            checked: "",
-          },
-        }),
-      ],
-      1
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-
-/***/ }),
-
-<<<<<<< HEAD
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
-/***/ ((module) => {
-=======
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a&":
-/*!*****************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/sections/RelationModalSection.vue?vue&type=template&id=3f10f43a& ***!
-  \*****************************************************************************************************************************************************************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "relationModal" } }, [
-    _c(
-      "div",
-      {
-        staticClass: "d-flex align-items-center justify-content-center",
-        attrs: { id: "closeModal" },
-        on: { click: _vm.clickCloseModal },
-      },
-      [_c("i", { staticClass: "fa fa-times fa-lg" })]
-    ),
-    _vm._v(" "),
-    _vm.showTable == false
-      ? _c("div", { attrs: { id: "divMessageAnyExpedient" } }, [
-          _c("p", { attrs: { id: "messageAnyExpedient" } }, [
-            _vm._v(
-              "No hay expedientes disponibles con los que los puedas relacionar"
-            ),
-          ]),
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.showTable
-      ? _c("div", { attrs: { id: "divTableExpedient" } }, [
-          _c("table", { staticClass: "table table-hover" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.expedients, function (expedient) {
-                return _c("tr", { key: expedient.id }, [
-                  _c("th", { attrs: { scope: "row" } }, [
-                    _vm._v(_vm._s(expedient.id)),
-                  ]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(expedient.data_creacio))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(expedient.data_ultima_modificacio))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(expedient.estat_expedient.estat))]),
-                  _vm._v(" "),
-                  _c("td", [
-                    _c(
-                      "button",
-                      {
-                        ref: "btns",
-                        refInFor: true,
-                        staticClass: "button buttonNormal",
-                        attrs: { id: expedient.id, type: "button" },
-                        on: {
-                          click: function ($event) {
-                            return _vm.btnRelacionarClick(expedient.id)
-                          },
-                        },
-                      },
-                      [_vm._v("Relacionar")]
-                    ),
-                  ]),
-                ])
-              }),
-              0
-            ),
-          ]),
-        ])
-      : _vm._e(),
-  ])
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("ID")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Data Creació")]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [
-          _vm._v("Data última Modificació"),
-        ]),
-        _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Estats expedients")]),
-      ]),
-    ])
-  },
-]
-render._withStripped = true
-
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-<<<<<<< HEAD
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-=======
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* binding */ render),
-/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
-/* harmony export */ });
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col col-4" }),
-    _vm._v(" "),
-    _c("div", { staticClass: "col col-6 col colHelpBox p-0 d-flex" }, [
-      _c(
-        "div",
-        { staticClass: "container-fluid", attrs: { id: "containerHelpBox" } },
-        [
-          _vm._l(_vm.audios, function (audio) {
-            return _c("help-box-question", {
-              key: audio.id,
-              attrs: { url: audio.url, text: audio.text },
-            })
-          }),
-          _vm._v(" "),
-          _c("div", { attrs: { id: "divSpinnerHelpBox" } }, [
-            _vm.loaded == false
-              ? _c(
-                  "div",
-                  {
-                    staticClass: "spinner-border spinner",
-                    attrs: { role: "status" },
-                  },
-                  [
-                    _c("span", { staticClass: "sr-only" }, [
-                      _vm._v("Loading..."),
-                    ]),
-                  ]
-                )
-              : _vm._e(),
-          ]),
-          _vm._v(" "),
-          _vm.anyAudio
-            ? _c("div", { attrs: { id: "messageAnyAudio" } }, [
-                _vm._v(
-                  "\n                There is no audio for this part\n            "
-                ),
-              ])
-            : _vm._e(),
-        ],
-        2
-      ),
-    ]),
-  ])
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 }
 Item.prototype.run = function () {
     this.fun.apply(null, this.array);
@@ -44223,47 +28531,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-<<<<<<< HEAD
 /* harmony import */ var _ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=template&id=299e239e& */ "./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&");
 /* harmony import */ var _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-=======
-var render = function () {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      {
-        staticClass:
-          "col col-10 d-flex align-items-center justify-content-start colQuestionHelpBox",
-      },
-      [
-        _c("p", { staticClass: "pQuestionHelpBox" }, [
-          _vm._v(" " + _vm._s(_vm.text)),
-        ]),
-      ]
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass:
-          "col col-2 d-flex align-items-center justify-content-center colAudioHelpBox",
-      },
-      [
-        _c("div", { staticClass: "divAudio", on: { click: _vm.clickAudio } }, [
-          _c("i", { staticClass: "fas fa-volume-up fa-lg" }),
-        ]),
-      ]
-    ),
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
->>>>>>> e2baaf3b70cc3d165b4ec3147321dff6cc077d14
 
 
 
@@ -44289,6 +28559,45 @@ component.options.__file = "resources/js/components/ExampleComponent.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue":
+/*!**********************************************************************!*\
+  !*** ./resources/js/components/gestionUsuarios/UsuarisComponent.vue ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UsuarisComponent.vue?vue&type=template&id=5a1f9a37& */ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37&");
+/* harmony import */ var _UsuarisComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UsuarisComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _UsuarisComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__.render,
+  _UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/gestionUsuarios/UsuarisComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************!*\
   !*** ./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
@@ -44305,6 +28614,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UsuarisComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./UsuarisComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UsuarisComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&":
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e& ***!
@@ -44318,6 +28643,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ExampleComponent.vue?vue&type=template&id=299e239e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37&":
+/*!*****************************************************************************************************!*\
+  !*** ./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37& ***!
+  \*****************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UsuarisComponent_vue_vue_type_template_id_5a1f9a37___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./UsuarisComponent.vue?vue&type=template&id=5a1f9a37& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37&");
 
 
 /***/ }),
@@ -44362,6 +28704,1252 @@ var staticRenderFns = [
         ]),
       ]),
     ])
+  },
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37&":
+/*!********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/gestionUsuarios/UsuarisComponent.vue?vue&type=template&id=5a1f9a37& ***!
+  \********************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass:
+        "container-fluid w-100 h-100 d-flex flex-column justify-content-start",
+    },
+    [
+      _c(
+        "div",
+        {
+          staticClass: "card container mt-5 mb-5 w-100 rounded",
+          staticStyle: {
+            "background-color": "#F2A0A0",
+            "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+            outline: "none",
+            border: "none",
+          },
+        },
+        [
+          _c("div", { staticClass: "card-body" }, [
+            _c("h5", { staticClass: "card-title mb-4" }, [
+              _vm._v("Cerca per filtres"),
+            ]),
+            _vm._v(" "),
+            _c("form", [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "d-flex flex-row justify-content-between align-items-center w-100",
+                },
+                [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "col-8 d-flex justify-content-start align-items-center",
+                    },
+                    [
+                      _c(
+                        "select",
+                        {
+                          staticClass: "form-select",
+                          attrs: { id: "selectPerfil", name: "selectPerfil" },
+                          on: {
+                            change: function ($event) {
+                              return _vm.updateForm(
+                                "selectPerfil",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        },
+                        [
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "0" },
+                              domProps: {
+                                selected: _vm.datosUsuario.selectPerfil === 0,
+                              },
+                            },
+                            [_vm._v("Tots els perfils")]
+                          ),
+                          _vm._v(" "),
+                          _vm._l(_vm.perfiles, function (perfilBuscar) {
+                            return _c(
+                              "option",
+                              {
+                                key: perfilBuscar.id,
+                                domProps: {
+                                  value: perfilBuscar.id,
+                                  selected:
+                                    _vm.datosUsuario.selectPerfil ==
+                                    perfilBuscar.id,
+                                },
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(perfilBuscar.nom) +
+                                    "\n                            "
+                                ),
+                              ]
+                            )
+                          }),
+                        ],
+                        2
+                      ),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "col-2 d-flex justify-content-center align-items-center",
+                    },
+                    [
+                      _c("input", {
+                        staticClass: "form-check-input float-end m-2 p-0",
+                        attrs: {
+                          type: "checkbox",
+                          id: "activoBuscar",
+                          name: "activoBuscar",
+                        },
+                        domProps: { checked: _vm.datosUsuario.activoBuscar },
+                        on: {
+                          change: function ($event) {
+                            return _vm.updateForm(
+                              "activoBuscar",
+                              $event.target.checked
+                            )
+                          },
+                        },
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "label",
+                        {
+                          staticClass: "form-check-label",
+                          attrs: { for: "activoBuscar" },
+                        },
+                        [_vm._v("Actiu")]
+                      ),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass:
+                        "col-1 d-flex justify-content-center align-items-center float-end",
+                    },
+                    [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-secondary",
+                          staticStyle: {
+                            "background-color": "#636AF2",
+                            outline: "none",
+                            border: "none",
+                          },
+                          attrs: { type: "submit" },
+                          on: {
+                            click: function ($event) {
+                              return _vm.selectUsuariosByParams()
+                            },
+                          },
+                        },
+                        [
+                          _c("i", {
+                            staticClass: "fa fa-search",
+                            attrs: { "aria-hidden": "true" },
+                          }),
+                        ]
+                      ),
+                    ]
+                  ),
+                ]
+              ),
+            ]),
+          ]),
+        ]
+      ),
+      _vm._v(" "),
+      _vm.usuariosByParams.length
+        ? _c("div", { staticClass: "container p-0" }, [
+            _c(
+              "div",
+              {
+                staticClass: "card mb-5 rounded",
+                staticStyle: {
+                  "background-color": "#F2C49B",
+                  "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+                  outline: "none",
+                  border: "none",
+                },
+              },
+              [
+                _c("div", { staticClass: "card-body" }, [
+                  _c("table", { staticClass: "container table table-white" }, [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(_vm.usuariosByParams, function (usuario) {
+                        return _c("tr", { key: usuario.id }, [
+                          _c("td", { staticClass: "col-2" }, [
+                            _vm._v(_vm._s(usuario.codi)),
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "col-3" }, [
+                            _vm._v(_vm._s(usuario.codi)),
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "col-3" }, [
+                            _vm._v(_vm._s(usuario.codi)),
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "col-1" }, [
+                            _c("div", { staticClass: "form-check" }, [
+                              _c("input", {
+                                staticClass: "form-check-input",
+                                attrs: {
+                                  type: "checkbox",
+                                  id: "usuarioActivo",
+                                  disabled: "",
+                                },
+                                domProps: { checked: usuario.actiu },
+                              }),
+                            ]),
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "col-4" }, [
+                            _vm._v(_vm._s(usuario.perfil.nom)),
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "col-2" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "d-flex flex-row justify-content-center align-items-center",
+                              },
+                              [
+                                _c("div", { staticClass: "float-end me-2" }, [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass:
+                                        "btn btn-secondary d-flex justify-content-center align-items-center flex-row",
+                                      staticStyle: {
+                                        "background-color": "#636AF2",
+                                        outline: "none",
+                                        border: "none",
+                                      },
+                                      attrs: { type: "submit" },
+                                      on: {
+                                        click: function ($event) {
+                                          return _vm.editUsuario(usuario)
+                                        },
+                                      },
+                                    },
+                                    [_c("i", { staticClass: "fas fa-edit" })]
+                                  ),
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "float-end" }, [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass:
+                                        "btn btn-danger d-flex justify-content-center align-items-center flex-row",
+                                      staticStyle: {
+                                        "background-color": "#D962A3",
+                                        outline: "none",
+                                        border: "none",
+                                      },
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function ($event) {
+                                          return _vm.modalDeleteUsuario(usuario)
+                                        },
+                                      },
+                                    },
+                                    [_c("i", { staticClass: "fas fa-trash" })]
+                                  ),
+                                ]),
+                              ]
+                            ),
+                          ]),
+                        ])
+                      }),
+                      0
+                    ),
+                  ]),
+                ]),
+              ]
+            ),
+          ])
+        : !_vm.usuariosByParams.length && _vm.filtros
+        ? _c("div", [_vm._m(2)])
+        : !_vm.usuariosByParams.length && !_vm.filtros
+        ? _c("div", { staticClass: "container p-0" }, [
+            !_vm.usuarios.length
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "card container rounded",
+                    staticStyle: {
+                      "background-color": "#F2C49B",
+                      "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+                      outline: "none",
+                      border: "none",
+                    },
+                  },
+                  [_vm._m(3)]
+                )
+              : _c(
+                  "div",
+                  {
+                    staticClass: "card container mb-5 rounded",
+                    staticStyle: {
+                      "background-color": "#F2C49B",
+                      "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+                      outline: "none",
+                      border: "none",
+                    },
+                  },
+                  [
+                    _c(
+                      "div",
+                      { staticClass: "card-body background-color: #F2C49B;" },
+                      [
+                        _c(
+                          "table",
+                          { staticClass: "container table table-white" },
+                          [
+                            _vm._m(4),
+                            _vm._v(" "),
+                            _c(
+                              "tbody",
+                              _vm._l(_vm.usuarios, function (usuario) {
+                                return _c("tr", { key: usuario.id }, [
+                                  _c("td", { staticClass: "col-2" }, [
+                                    _vm._v(_vm._s(usuario.codi)),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticClass: "col-3" }, [
+                                    _vm._v(_vm._s(usuario.nom)),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticClass: "col-3" }, [
+                                    _vm._v(_vm._s(usuario.cognoms)),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticClass: "col-1" }, [
+                                    _c("div", { staticClass: "form-check" }, [
+                                      _c("input", {
+                                        staticClass: "form-check-input",
+                                        attrs: {
+                                          type: "checkbox",
+                                          id: "usuarioActivo",
+                                          disabled: "",
+                                        },
+                                        domProps: { checked: usuario.actiu },
+                                      }),
+                                    ]),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticClass: "col-4" }, [
+                                    _vm._v(_vm._s(usuario.perfil.nom)),
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("td", { staticClass: "col-2" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "d-flex flex-row justify-content-center align-items-center",
+                                      },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticClass: "float-end me-2" },
+                                          [
+                                            _c(
+                                              "button",
+                                              {
+                                                staticClass:
+                                                  "btn btn-secondary d-flex justify-content-center align-items-center flex-row",
+                                                staticStyle: {
+                                                  "background-color": "#636AF2",
+                                                  outline: "none",
+                                                  border: "none",
+                                                },
+                                                attrs: { type: "submit" },
+                                                on: {
+                                                  click: function ($event) {
+                                                    return _vm.editUsuario(
+                                                      usuario
+                                                    )
+                                                  },
+                                                },
+                                              },
+                                              [
+                                                _c("i", {
+                                                  staticClass: "fas fa-edit",
+                                                }),
+                                              ]
+                                            ),
+                                          ]
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "div",
+                                          { staticClass: "float-end" },
+                                          [
+                                            _c(
+                                              "button",
+                                              {
+                                                staticClass:
+                                                  "btn btn-danger d-flex justify-content-center align-items-center flex-row",
+                                                staticStyle: {
+                                                  "background-color": "#D962A3",
+                                                  outline: "none",
+                                                  border: "none",
+                                                },
+                                                attrs: { type: "button" },
+                                                on: {
+                                                  click: function ($event) {
+                                                    return _vm.modalDeleteUsuario(
+                                                      usuario
+                                                    )
+                                                  },
+                                                },
+                                              },
+                                              [
+                                                _c("i", {
+                                                  staticClass: "fas fa-trash",
+                                                }),
+                                              ]
+                                            ),
+                                          ]
+                                        ),
+                                      ]
+                                    ),
+                                  ]),
+                                ])
+                              }),
+                              0
+                            ),
+                          ]
+                        ),
+                      ]
+                    ),
+                  ]
+                ),
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass:
+            "plus2 btn btn-primary position-absolute end-0 bottom-0 m-5",
+          staticStyle: {
+            "background-color": "#636AF2",
+            "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+            outline: "none",
+            border: "none",
+          },
+          on: {
+            click: function ($event) {
+              return _vm.createUsuario()
+            },
+          },
+        },
+        [
+          _c("i", {
+            staticClass: "fa fa-plus-circle me-1",
+            attrs: { "aria-hidden": "true" },
+          }),
+          _vm._v("\n        Crear Usuari\n    "),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: { id: "modalDestroy", tabindex: "-1" },
+        },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog modal-dialog-centered",
+              staticStyle: {
+                "background-color": "transparent",
+                outline: "none",
+                border: "none",
+              },
+            },
+            [
+              _c(
+                "div",
+                {
+                  staticClass: "modal-content",
+                  staticStyle: {
+                    "background-color": "transparent",
+                    outline: "none",
+                    border: "none",
+                  },
+                },
+                [
+                  _vm._m(5),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-body",
+                      staticStyle: {
+                        "background-color": "#F2A0A0",
+                        border: "none",
+                      },
+                    },
+                    [
+                      _vm._v(
+                        "\n                    Estás segur que vols desactivar l'usuari " +
+                          _vm._s(_vm.usuario.codi) +
+                          "?\n                "
+                      ),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-footer",
+                      staticStyle: {
+                        "background-color": "#f28787",
+                        border: "none",
+                      },
+                    },
+                    [
+                      _vm._m(6),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn",
+                          staticStyle: {
+                            color: "white",
+                            "background-color": "#636AF2",
+                            outline: "none",
+                            border: "none",
+                          },
+                          on: {
+                            click: function ($event) {
+                              return _vm.deleteUsuario()
+                            },
+                          },
+                        },
+                        [
+                          _c("i", { staticClass: "fas fa-trash me-1" }),
+                          _vm._v(
+                            "\n                        Desactivar\n                    "
+                          ),
+                        ]
+                      ),
+                    ]
+                  ),
+                ]
+              ),
+            ]
+          ),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "modal fade", attrs: { id: "modalIM", tabindex: "-1" } },
+        [
+          _c(
+            "div",
+            {
+              staticClass: "modal-dialog modal-xl modal-dialog-centered",
+              staticStyle: {
+                "background-color": "transparent",
+                outline: "none",
+                border: "none",
+              },
+            },
+            [
+              _c(
+                "div",
+                {
+                  staticClass: "modal-content",
+                  staticStyle: {
+                    "background-color": "transparent",
+                    outline: "none",
+                    border: "none",
+                  },
+                },
+                [
+                  _vm._m(7),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-body",
+                      staticStyle: {
+                        "background-color": "#F2A0A0",
+                        outline: "none",
+                        border: "none",
+                      },
+                    },
+                    [
+                      _c("form", [
+                        _c("div", { staticClass: "form-group row mt-3 mb-3" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-sm-1 col-form-label",
+                              attrs: { for: "codi" },
+                            },
+                            [_vm._v("Codi")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-11" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.usuario.codi,
+                                  expression: "usuario.codi",
+                                },
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "codi",
+                                name: "codi",
+                                autofocus: "",
+                                required: "",
+                              },
+                              domProps: { value: _vm.usuario.codi },
+                              on: {
+                                input: function ($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.usuario,
+                                    "codi",
+                                    $event.target.value
+                                  )
+                                },
+                              },
+                            }),
+                          ]),
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.insert,
+                                expression: "insert",
+                              },
+                            ],
+                            staticClass: "form-group row mt-3 mb-3",
+                          },
+                          [
+                            _c(
+                              "label",
+                              {
+                                staticClass: "col-sm-1 col-form-label",
+                                attrs: { for: "contrassenya" },
+                              },
+                              [_vm._v("Contrassenya")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "col-sm-11" }, [
+                              _c("input", {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.usuario.contrassenya,
+                                    expression: "usuario.contrassenya",
+                                  },
+                                ],
+                                staticClass: "form-control",
+                                attrs: {
+                                  type: "text",
+                                  id: "contrassenya",
+                                  name: "contrassenya",
+                                },
+                                domProps: { value: _vm.usuario.contrassenya },
+                                on: {
+                                  input: function ($event) {
+                                    if ($event.target.composing) {
+                                      return
+                                    }
+                                    _vm.$set(
+                                      _vm.usuario,
+                                      "contrassenya",
+                                      $event.target.value
+                                    )
+                                  },
+                                },
+                              }),
+                            ]),
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row mt-3 mb-3" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-sm-1 col-form-label",
+                              attrs: { for: "nom" },
+                            },
+                            [_vm._v("Nom")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-11" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.usuario.nom,
+                                  expression: "usuario.nom",
+                                },
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "text", id: "nom", name: "nom" },
+                              domProps: { value: _vm.usuario.nom },
+                              on: {
+                                input: function ($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.usuario,
+                                    "nom",
+                                    $event.target.value
+                                  )
+                                },
+                              },
+                            }),
+                          ]),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row mt-3 mb-3" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-sm-1 col-form-label",
+                              attrs: { for: "cognoms" },
+                            },
+                            [_vm._v("Cognoms")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-11" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.usuario.cognoms,
+                                  expression: "usuario.cognoms",
+                                },
+                              ],
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "cognoms",
+                                name: "cognoms",
+                              },
+                              domProps: { value: _vm.usuario.cognoms },
+                              on: {
+                                input: function ($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.usuario,
+                                    "cognoms",
+                                    $event.target.value
+                                  )
+                                },
+                              },
+                            }),
+                          ]),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row mt-3 mb-3" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-sm-1 col-form-label",
+                              attrs: { for: "perfil" },
+                            },
+                            [_vm._v("Perfil")]
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "col-sm-11" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.id_perfil,
+                                    expression: "id_perfil",
+                                  },
+                                ],
+                                staticClass: "form-select",
+                                attrs: { id: "perfil", name: "perfil" },
+                                on: {
+                                  change: function ($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call(
+                                        $event.target.options,
+                                        function (o) {
+                                          return o.selected
+                                        }
+                                      )
+                                      .map(function (o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.id_perfil = $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  },
+                                },
+                              },
+                              _vm._l(_vm.perfiles, function (perfil) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: perfil.id,
+                                    domProps: { value: perfil.id },
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                                        " +
+                                        _vm._s(perfil.nom) +
+                                        "\n                                    "
+                                    ),
+                                  ]
+                                )
+                              }),
+                              0
+                            ),
+                          ]),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group row mt-3 mb-3" }, [
+                          _c(
+                            "label",
+                            {
+                              staticClass: "col-sm-1 col-form-label",
+                              attrs: { for: "activoInsertar" },
+                            },
+                            [_vm._v("Activo")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            {
+                              staticClass:
+                                "col-sm-11 d-flex align-items-center",
+                            },
+                            [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "custom-control custom-checkbox",
+                                },
+                                [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.usuario.actiu,
+                                        expression: "usuario.actiu",
+                                      },
+                                    ],
+                                    staticClass: "form-check-input",
+                                    attrs: {
+                                      type: "checkbox",
+                                      id: "activoInsertar",
+                                      name: "activoInsertar",
+                                    },
+                                    domProps: {
+                                      checked: Array.isArray(_vm.usuario.actiu)
+                                        ? _vm._i(_vm.usuario.actiu, null) > -1
+                                        : _vm.usuario.actiu,
+                                    },
+                                    on: {
+                                      change: function ($event) {
+                                        var $$a = _vm.usuario.actiu,
+                                          $$el = $event.target,
+                                          $$c = $$el.checked ? true : false
+                                        if (Array.isArray($$a)) {
+                                          var $$v = null,
+                                            $$i = _vm._i($$a, $$v)
+                                          if ($$el.checked) {
+                                            $$i < 0 &&
+                                              _vm.$set(
+                                                _vm.usuario,
+                                                "actiu",
+                                                $$a.concat([$$v])
+                                              )
+                                          } else {
+                                            $$i > -1 &&
+                                              _vm.$set(
+                                                _vm.usuario,
+                                                "actiu",
+                                                $$a
+                                                  .slice(0, $$i)
+                                                  .concat($$a.slice($$i + 1))
+                                              )
+                                          }
+                                        } else {
+                                          _vm.$set(_vm.usuario, "actiu", $$c)
+                                        }
+                                      },
+                                    },
+                                  }),
+                                ]
+                              ),
+                            ]
+                          ),
+                        ]),
+                      ]),
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "modal-footer",
+                      staticStyle: {
+                        "background-color": "#f28787",
+                        outline: "none",
+                        border: "none",
+                      },
+                    },
+                    [
+                      _vm._m(8),
+                      _vm._v(" "),
+                      _vm.insert
+                        ? _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger",
+                              staticStyle: {
+                                "background-color": "#636AF2",
+                                outline: "none",
+                                border: "none",
+                              },
+                              attrs: { type: "submit" },
+                              on: {
+                                click: function ($event) {
+                                  return _vm.insertUsuario()
+                                },
+                              },
+                            },
+                            [
+                              _c("i", {
+                                staticClass: "fa fa-check",
+                                attrs: { "aria-hidden": "true" },
+                              }),
+                              _vm._v(
+                                "\n                        Afegir\n                    "
+                              ),
+                            ]
+                          )
+                        : _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-danger",
+                              staticStyle: {
+                                "background-color": "#636AF2",
+                                outline: "none",
+                                border: "none",
+                              },
+                              attrs: { type: "submit" },
+                              on: {
+                                click: function ($event) {
+                                  return _vm.updateUsuario()
+                                },
+                              },
+                            },
+                            [
+                              _c("i", {
+                                staticClass: "fa fa-check",
+                                attrs: { "aria-hidden": "true" },
+                              }),
+                              _vm._v(
+                                "\n                        Modificar\n                    "
+                              ),
+                            ]
+                          ),
+                    ]
+                  ),
+                ]
+              ),
+            ]
+          ),
+        ]
+      ),
+    ]
+  )
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      { staticClass: "col-1 d-flex justify-content-start align-items-center" },
+      [
+        _c(
+          "label",
+          { staticClass: "form-check-label", attrs: { for: "selectPerfil" } },
+          [_vm._v("Perfil")]
+        ),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Codi")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Nom")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cognoms")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Actiu")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Perfil")]),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "card container rounded",
+        staticStyle: {
+          "background-color": "#F2C49B",
+          "box-shadow": "rgba(0, 0, 0, 0.2) 0px 20px 30px",
+          outline: "none",
+          border: "none",
+        },
+      },
+      [
+        _c("div", { staticClass: "card-body" }, [
+          _c(
+            "div",
+            {
+              staticClass:
+                "alert alert-light d-flex justify-content-center align-items-center p-4",
+              staticStyle: {
+                color: "white",
+                "background-color": "#D755D9",
+                outline: "none",
+                border: "none",
+              },
+              attrs: { role: "alert" },
+            },
+            [
+              _vm._v(
+                "\n                    No hi ha usuaris per la búsqueda especificada!\n                "
+              ),
+            ]
+          ),
+        ]),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body" }, [
+      _c(
+        "div",
+        {
+          staticClass:
+            "alert alert-light d-flex justify-content-center align-items-center p-4",
+          staticStyle: {
+            color: "white",
+            "background-color": "#D755D9",
+            outline: "none",
+            border: "none",
+          },
+          attrs: { role: "alert" },
+        },
+        [
+          _vm._v(
+            "\n                    No hi ha usuaris per la búsqueda especificada!\n                "
+          ),
+        ]
+      ),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Codi")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Nom")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Cognoms")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Actiu")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Perfil")]),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "modal-header",
+        staticStyle: { "background-color": "#f28787", border: "none" },
+      },
+      [
+        _c("h5", { staticClass: "modal-title" }, [_vm._v("Desactivar usuari")]),
+        _vm._v(" "),
+        _c("button", {
+          staticClass: "btn-close",
+          attrs: {
+            type: "button",
+            "data-bs-dismiss": "modal",
+            "aria-label": "Close",
+          },
+        }),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-secondary",
+        staticStyle: { outline: "none", border: "none" },
+        attrs: { type: "button", "data-bs-dismiss": "modal" },
+      },
+      [
+        _c("i", {
+          staticClass: "fa fa-times me-1",
+          attrs: { "aria-hidden": "true" },
+        }),
+        _vm._v("\n                        Tancar\n                    "),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass: "modal-header",
+        staticStyle: {
+          "background-color": "#f28787",
+          outline: "none",
+          border: "none",
+        },
+      },
+      [
+        _c("h5", { staticClass: "modal-title" }, [_vm._v("Usuari")]),
+        _vm._v(" "),
+        _c("button", {
+          staticClass: "btn-close",
+          attrs: {
+            type: "button",
+            "data-bs-dismiss": "modal",
+            "aria-label": "Close",
+          },
+        }),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-secondary",
+        attrs: { type: "button", "data-bs-dismiss": "modal" },
+      },
+      [
+        _c("i", {
+          staticClass: "fa fa-times me-1",
+          attrs: { "aria-hidden": "true" },
+        }),
+        _vm._v("\n                        Tancar\n                    "),
+      ]
+    )
   },
 ]
 render._withStripped = true

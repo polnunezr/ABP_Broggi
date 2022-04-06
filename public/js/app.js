@@ -7421,13 +7421,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       //0000-00-00 00:00:00
 
 
+      var fecha = this.finalDates.fecha;
+      var fechaSplit = fecha.split("/");
+      var data_creacio = "";
+      fecha = fechaSplit[2] + "-" + fechaSplit[1] + "-" + fechaSplit[0];
+      data_creacio = fecha + " " + this.finalDates.hora;
+
       if (this.finalDates.expedientId != null) {
         this.objectPost.expedients.id = this.finalDates.expedientId;
       } else {
-        var fecha = this.finalDates.fecha;
-        var fechaSplit = fecha.split("/");
-        fecha = fechaSplit[2] + "-" + fechaSplit[1] + "-" + fechaSplit[0];
-        this.objectPost.expedients.data_creacio = fecha + " " + this.finalDates.hora;
+        this.objectPost.expedients.data_creacio = data_creacio;
         this.objectPost.expedients.data_ultima_modificacio = fecha + " " + this.finalDates.hora;
         this.objectPost.expedients.estats_expedients_id = 1;
       } //cartes_trucades
@@ -7452,10 +7455,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
         this.objectPost.cartes_trucades.codi_trucada = "CT_" + codiTrucadaBig;
       } else {
         this.objectPost.cartes_trucades.codi_trucada = "CT_1";
-      }
+      } // this.objectPost.cartes_trucades.data_hora= this.objectPost.expedients.data_creacio //Cuando creas solo
 
-      this.objectPost.cartes_trucades.data_hora = this.objectPost.expedients.data_creacio; //Cuando creas solo
 
+      this.objectPost.cartes_trucades.data_hora = data_creacio;
       this.objectPost.cartes_trucades.temps_trucada = this.finalDates.timeSeconds;
       this.objectPost.cartes_trucades.dades_personals_id = null; //Obtener response
 

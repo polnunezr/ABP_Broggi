@@ -29,7 +29,7 @@
 
                 labels: label,
                 datasets: [{
-                    label: 'Nº expedients fets per dia',
+                    label: label,
                     data: data,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
@@ -72,7 +72,7 @@
 
                 labels: label2,
                 datasets: [{
-                    label: 'Nº per cada tipus accident',
+                    label: label2,
                     data: data2,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',

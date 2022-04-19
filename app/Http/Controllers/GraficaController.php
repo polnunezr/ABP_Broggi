@@ -28,13 +28,14 @@ class GraficaController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_incidents.descripcio')
                 ->where('tipus_incidents.descripcio', '=', $incident->descripcio);
+
             $countIncidents[] = $carta->count();
         }
 
         $dates = Expedient::select('data_creacio')->distinct(DATE('data_creacio'))
             ->orderBy('data_creacio')->get();
         foreach ($dates as $data) {
-            $datas[] = $data->data_creacio;
+            $datas[] =  date('d-m-Y', strtotime($data->data_creacio));
             $expedients = Expedient::select('data_creacio')->where('data_creacio', '=', $data->data_creacio);
             $count[] = $expedients->count();
         }

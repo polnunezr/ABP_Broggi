@@ -11,6 +11,8 @@ use App\Models\Provincia;
 use App\Models\TipusLocalitzacio;
 use App\Models\Incident;
 use App\Models\TipusIncident;
+use App\Models\CartesTrucadesHasAgencies;
+use App\Models\Agencia;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use App\Http\Resources\CartesTrucadesResource;
@@ -314,10 +316,32 @@ class CartaTrucadaController extends Controller
 
         $incidentShow = json_encode($incidentShow);
 
+        //Agencies
+        $agencies = Agencia::all();
+        $agenciesShow = CartesTrucadesHasAgencies::where("cartes_trucades_id","=",$cartaTrucadaShow->id)->get();
+        if(count($agenciesShow) == 0) {
+            $agenciesShow = json_encode(null);
+        }
+        else {
+            $agenciaShowArray = [];
+            foreach($agenciesShow as $agenciaShow) {
+                $nom = "";
+                foreach($agencies as $agencia) {
+                    if($agencia->id == $agenciaShow->agencies_id) {
+                        $nom = $agencia->nom;
+                    }
+                }
+                $agenciaShow = ["id" => $agenciaShow->agencies_id, "nom" => $nom];
+                // $agenciaShow = json_encode($agenciesShow);
+                array_push($agenciaShowArray, $agenciaShow);
+            }
+            $agenciesShow = json_encode($agenciaShowArray);
+        }
+
 
         //$cartaTrucadaShow = CartesTrucadesResource::collection($cartaTrucadaShow);
         return view("cartaTrucada.show",compact("cartaTrucadaShow","dadaPersonalShow","localitzacioTrucadaShow","localitzacioShow"
-        ,"tipusLocalitzacioShow","incidentShow"));
+        ,"tipusLocalitzacioShow","incidentShow","agenciesShow"));
 
     }
 

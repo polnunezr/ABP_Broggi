@@ -21,9 +21,16 @@
                 <div class="col col-10">
                     <!--<textarea v-on:click="startTime" class="form-control" id="textAreaAgency"></textarea>-->
                     <div id="agenciaListDiv" :style="styleDivAgencia">
-                        <div class="container-fluid" id="containerAgencia">
+                        <div class="container-fluid" id="containerAgencia" v-if="this.show == false">
                             <list-agency-section v-for="selectMark in selectMarks" :key="selectMark"
-                            :agencies="agencies" :idAgency="selectMark">
+                            :agencies="agencies" :idAgency="selectMark" :show="show" :agenciaShow="null">
+
+                            </list-agency-section>
+                        </div>
+
+                        <div class="container-fluid" id="containerAgencia" v-else>
+                            <list-agency-section v-for="agenciaShow in agenciesShow" :key="agenciaShow.id"
+                            :agencies="null" :idAgency="null" :show="show" :agenciaShow="agenciaShow">
 
                             </list-agency-section>
                         </div>
@@ -44,15 +51,19 @@
 <script>
     export default {
         props: {
-            show: {
-                type: [Boolean],
-                require: true
-            },
             selectMarks: {
                 type: [Array],
                 require: true
             },
             agencies: {
+                type: [Array],
+                require: true
+            },
+            show: {
+                type: [Boolean],
+                require: true
+            },
+            agenciesShow: {
                 type: [Array],
                 require: true
             }

@@ -14,6 +14,7 @@
                         :localitzacioShow="{{ $localitzacioShow }}"
                         :tipusLocalitzacioShow="{{ $tipusLocalitzacioShow }}"
                         :incidentShow="{{ $incidentShow }}"
+                        :agenciesShow="{{ $agenciesShow }}"
                         ></carta-trucada>
     </div>
 

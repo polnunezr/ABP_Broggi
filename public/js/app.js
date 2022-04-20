@@ -5610,6 +5610,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     show: {
@@ -5647,6 +5648,7 @@ __webpack_require__.r(__webpack_exports__);
       localitzacioShow: null,
       tipusLocalitzacioShow: null,
       incidentShow: null,
+      agenciesShow: null,
       expedientCheck: false,
       loading: null,
       loadingSmall: false
@@ -5654,14 +5656,15 @@ __webpack_require__.r(__webpack_exports__);
   },
   created: function created() {
     if (this.show) {
-      this.loading = false;
-      console.log(this.$attrs['cartatrucadashow']);
+      this.loading = false; // console.log(this.$attrs['cartatrucadashow'])
+
       this.cartaTrucadaShow = this.$attrs['cartatrucadashow'];
       this.dadaPersonalShow = this.$attrs['dadapersonalshow'];
       this.localitzacioTrucadaShow = this.$attrs['localitzaciotrucadashow'];
       this.localitzacioShow = this.$attrs['localitzacioshow'];
       this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow'];
       this.incidentShow = this.$attrs['incidentshow'];
+      this.agenciesShow = this.$attrs['agenciesshow'];
     } else {
       this.loading = true;
     }
@@ -6844,17 +6847,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
-    show: {
-      type: [Boolean],
-      require: true
-    },
     selectMarks: {
       type: [Array],
       require: true
     },
     agencies: {
+      type: [Array],
+      require: true
+    },
+    show: {
+      type: [Boolean],
+      require: true
+    },
+    agenciesShow: {
       type: [Array],
       require: true
     }
@@ -8017,6 +8031,14 @@ __webpack_require__.r(__webpack_exports__);
     agencies: {
       type: [Array],
       require: true
+    },
+    show: {
+      type: [Boolean],
+      require: true
+    },
+    agenciaShow: {
+      type: [Object],
+      require: true
     }
   },
   data: function data() {
@@ -8025,10 +8047,14 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    for (var i = 0; i < this.agencies.length; i++) {
-      if (this.agencies[i].id == this.idAgency) {
-        this.name = this.agencies[i].nom;
+    if (this.show == false) {
+      for (var i = 0; i < this.agencies.length; i++) {
+        if (this.agencies[i].id == this.idAgency) {
+          this.name = this.agencies[i].nom;
+        }
       }
+    } else {
+      this.name = this.agenciaShow.nom;
     }
   },
   methods: {
@@ -37742,6 +37768,7 @@ var render = function () {
                             selectMarks: _vm.selectMarks,
                             agencies: _vm.agencies,
                             show: _vm.show,
+                            agenciesShow: _vm.agenciesShow,
                           },
                         }),
                       ],
@@ -38795,20 +38822,45 @@ var render = function () {
                 "div",
                 { style: _vm.styleDivAgencia, attrs: { id: "agenciaListDiv" } },
                 [
-                  _c(
-                    "div",
-                    {
-                      staticClass: "container-fluid",
-                      attrs: { id: "containerAgencia" },
-                    },
-                    _vm._l(_vm.selectMarks, function (selectMark) {
-                      return _c("list-agency-section", {
-                        key: selectMark,
-                        attrs: { agencies: _vm.agencies, idAgency: selectMark },
-                      })
-                    }),
-                    1
-                  ),
+                  this.show == false
+                    ? _c(
+                        "div",
+                        {
+                          staticClass: "container-fluid",
+                          attrs: { id: "containerAgencia" },
+                        },
+                        _vm._l(_vm.selectMarks, function (selectMark) {
+                          return _c("list-agency-section", {
+                            key: selectMark,
+                            attrs: {
+                              agencies: _vm.agencies,
+                              idAgency: selectMark,
+                              show: _vm.show,
+                              agenciaShow: null,
+                            },
+                          })
+                        }),
+                        1
+                      )
+                    : _c(
+                        "div",
+                        {
+                          staticClass: "container-fluid",
+                          attrs: { id: "containerAgencia" },
+                        },
+                        _vm._l(_vm.agenciesShow, function (agenciaShow) {
+                          return _c("list-agency-section", {
+                            key: agenciaShow.id,
+                            attrs: {
+                              agencies: null,
+                              idAgency: null,
+                              show: _vm.show,
+                              agenciaShow: agenciaShow,
+                            },
+                          })
+                        }),
+                        1
+                      ),
                 ]
               ),
             ]),
@@ -39158,7 +39210,14 @@ var render = function () {
       {
         staticClass: "col col-2 d-flex justify-content-end align-items-center",
       },
-      [_c("i", { staticClass: "fa fa-trash-o", on: { click: _vm.clickTrash } })]
+      [
+        this.show == false
+          ? _c("i", {
+              staticClass: "fa fa-trash-o",
+              on: { click: _vm.clickTrash },
+            })
+          : _vm._e(),
+      ]
     ),
     _vm._v(" "),
     _vm._m(0),

@@ -39,7 +39,8 @@
                             :tipusLocalitzacioShow="tipusLocalitzacioShow" :show="show"></location-section>
                         </div>
                         <div v-bind:style="selectSection == agency ? 'display: block;' : 'display: none;'">
-                            <agency-section :selectMarks = "selectMarks" :agencies="agencies" :show="show"></agency-section>
+                            <agency-section :selectMarks = "selectMarks" :agencies="agencies" :show="show"
+                            :agenciesShow="agenciesShow"></agency-section>
                         </div>
                         <div v-bind:style="selectSection == emergency ? 'display: block;' : 'display: none;'">
                             <emergency-section :incidentShow="incidentShow" :show="show"></emergency-section>
@@ -107,6 +108,7 @@
                 localitzacioShow: null,
                 tipusLocalitzacioShow: null,
                 incidentShow: null,
+                agenciesShow: null,
 
                 expedientCheck: false,
 
@@ -118,13 +120,14 @@
 
             if(this.show) {
                 this.loading = false
-                console.log(this.$attrs['cartatrucadashow'])
+                // console.log(this.$attrs['cartatrucadashow'])
                 this.cartaTrucadaShow = this.$attrs['cartatrucadashow']
                 this.dadaPersonalShow = this.$attrs['dadapersonalshow']
                 this.localitzacioTrucadaShow = this.$attrs['localitzaciotrucadashow']
                 this.localitzacioShow = this.$attrs['localitzacioshow']
                 this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow']
                 this.incidentShow = this.$attrs['incidentshow']
+                this.agenciesShow = this.$attrs['agenciesshow']
             }
             else {
                 this.loading = true

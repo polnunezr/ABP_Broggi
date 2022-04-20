@@ -4,7 +4,7 @@
             <label class="labelAgenciaList">{{name}}</label>
         </div>
         <div class="col col-2 d-flex justify-content-end align-items-center">
-            <i class="fa fa-trash-o" v-on:click="clickTrash"></i>
+            <i class="fa fa-trash-o" v-on:click="clickTrash" v-if="this.show == false"></i>
         </div>
         <div class="col col-12">
             <hr class="hrAgencia">
@@ -22,6 +22,14 @@
             agencies: {
                 type: [Array],
                 require: true
+            },
+            show: {
+                type: [Boolean],
+                require: true
+            },
+            agenciaShow: {
+                type: [Object],
+                require: true
             }
         },
         data() {
@@ -30,12 +38,17 @@
             }
         },
         created() {
-
-            for(let i = 0; i < this.agencies.length; i++) {
-                if(this.agencies[i].id == this.idAgency) {
-                    this.name = this.agencies[i].nom
+            if(this.show == false) {
+                for(let i = 0; i < this.agencies.length; i++) {
+                    if(this.agencies[i].id == this.idAgency) {
+                        this.name = this.agencies[i].nom
+                    }
                 }
             }
+            else {
+                this.name = this.agenciaShow.nom
+            }
+
         },
         methods: {
             clickTrash() {

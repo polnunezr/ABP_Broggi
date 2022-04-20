@@ -3,8 +3,13 @@
         <div class="col colSection colRelationSection"
         v-bind:class="colReturn">
             <div class="row">
+                <div class="col colTitle">
+                    <h4 v-text="title"></h4>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 40px">
                 <div class="col">
-                    <button type="button" class="button buttonNormal" v-on:click="clickRelation">Relacionar expedient</button>
+                    <button type="button" class="button buttonNormal" v-on:click="clickRelation">Relacionar</button>
                 </div>
             </div>
             <div class="row" style="margin-top:40px">
@@ -29,6 +34,7 @@
     export default {
         data() {
             return {
+                title: "Relacionar expedient",
                 expedients:[],
                 idClick: null,
                 relation: false,

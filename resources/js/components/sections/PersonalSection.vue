@@ -177,10 +177,13 @@
             updateDatosPersonals() {
                 let meThis = this
                 this.dadesPersonals = []
+                // this.$eventLoad.$emit("loading",true);
                 axios
                     .get("/dades_personals")
                     .then(response => {
                         meThis.dadesPersonals = response.data
+                        console.log("cargado")
+                        meThis.$eventLoad.$emit("loading",false)
                     })
                     .catch(error => {
                         console.log(error)

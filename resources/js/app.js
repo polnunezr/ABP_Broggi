@@ -37,6 +37,8 @@ personalData: "Dades Personals",
 //Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
 Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg"
 
+Vue.prototype.$loadSrc="http://daw.abp-politecnics.com/daw03/filesSVG/load.svg"
+
 Vue.prototype.$dadesPersonals="Dades Personals"
 Vue.prototype.$locate="Localitzacio"
 Vue.prototype.$agency="Agencies"
@@ -173,7 +175,7 @@ Vue.prototype.$eventHelpBox = new Vue()
 
 Vue.prototype.$eventShow = new Vue()
 
-
+Vue.prototype.$eventLoad = new Vue()
 
 
 
@@ -182,6 +184,8 @@ Vue.prototype.$eventShow = new Vue()
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', require('./components/CartaTrucada.vue').default);
+
+Vue.component('load-page', require('./components/LoadPage.vue').default);
 
 Vue.component('background-decoration-izquierda', require('./components/background-decoration/BackgroundDecorationIzquierda.vue').default);
 

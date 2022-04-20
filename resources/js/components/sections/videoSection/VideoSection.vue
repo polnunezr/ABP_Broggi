@@ -1,6 +1,6 @@
 <template>
     <div class="row d-flex">
-        <div class="col col-11 colCard colVideo d-flex justify-content-center align-items-center">
+        <div class="col col-11 colCard d-flex justify-content-center align-items-center">
             <div id="containerVideo">
                 <backdrop-video></backdrop-video>
                 <backdrop-refresh></backdrop-refresh>

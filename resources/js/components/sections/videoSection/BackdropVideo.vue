@@ -8,9 +8,12 @@
             </div>
             <div class="row">
 
-                <backdrop-video-button answerText="SI" v-on:click.native="yesButton" ></backdrop-video-button>
+                <!--<backdrop-video-button answerText="SI" v-on:click.native="yesButton" ></backdrop-video-button>
+                <backdrop-video-button answerText="NO" v-on:click.native="noButton"></backdrop-video-button>-->
 
-                <backdrop-video-button answerText="NO" v-on:click.native="noButton"></backdrop-video-button>
+                <backdrop-video-button answerText="SI"></backdrop-video-button>
+
+                <backdrop-video-button answerText="NO"></backdrop-video-button>
 
 
             </div>
@@ -47,6 +50,15 @@
             this.$eventVideo.$on("change-backdrop-video", title => {
                 this.title = title
                 this.showBackdrop = true
+            })
+
+            this.$eventVideo.$on("click-button", answerText => {
+                if(answerText == "SI") {
+                    this.yesButton()
+                }
+                else {
+                    this.noButton()
+                }
             })
         }
 

@@ -116,6 +116,9 @@
         },
         methods: {
             getCartesTrucada() {
+
+                this.$eventLoad.$emit("loadingSmallChange",true)
+
                 this.disabledButton = true
                 let vueThis = this
 
@@ -322,28 +325,13 @@
                 switch(this.objectPost.cartes_trucades.tipus_localitzacions_id) {
                     case 1: //Carrers
                         //tipus de via + nom
-                        this.objectPost.cartes_trucades.descripcio_localitzacio = ""
+                        //saveTipusLocate
                         let carrerDescripcio = [this.finalDates.carrertipusDeVia,this.finalDates.carrerNom]
-                        for(let i = 0; i < carrerDescripcio.length; i++) {
-                            if(this.objectPost.cartes_trucades.descripcio_localitzacio == "" && carrerDescripcio[i] != null) {
-                                this.objectPost.cartes_trucades.descripcio_localitzacio = carrerDescripcio[i]
-                            }
-                            else if(this.objectPost.cartes_trucades.descripcio_localitzacio != "" && carrerDescripcio[i] != null) {
-                                this.objectPost.cartes_trucades.descripcio_localitzacio = this.objectPost.cartes_trucades.descripcio_localitzacio + ", " + carrerDescripcio[i]
-                            }
-                        }
+                        this.objectPost.cartes_trucades.descripcio_localitzacio = this.saveTipusLocate(carrerDescripcio)
 
                         //Numero + escala + pis + porta
-                        this.objectPost.cartes_trucades.detall_localitzacio = ""
                         let carrerDetall = [this.finalDates.carrerNumero,this.finalDates.carrerEscala,this.finalDates.carrerPis,this.finalDates.carrerPorta]
-                        for(let i = 0; i < carrerDetall.length; i++) {
-                            if(this.objectPost.cartes_trucades.detall_localitzacio == "" && carrerDetall[i] != null) {
-                                this.objectPost.cartes_trucades.detall_localitzacio = carrerDetall[i]
-                            }
-                            else if(this.objectPost.cartes_trucades.detall_localitzacio != "" && carrerDetall[i] != null) {
-                                this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carrerDetall[i]
-                            }
-                        }
+                        this.objectPost.cartes_trucades.detall_localitzacio = this.saveTipusLocate(carrerDetall)
 
                         break;
                     case 2: //Punt Singular
@@ -363,16 +351,8 @@
                         this.objectPost.cartes_trucades.descripcio_localitzacio  = this.finalDates.carreteraNom
 
                         //Punt kilometric + sentit
-                        this.objectPost.cartes_trucades.detall_localitzacio = ""
                         let carreteraDetall = [this.finalDates.carreteraPuntKilometric,this.finalDates.carreteraSentit]
-                        for(let i = 0; i < carreteraDetall.length; i++) {
-                            if(this.objectPost.cartes_trucades.detall_localitzacio == "" && carreteraDetall[i] != null) {
-                                this.objectPost.cartes_trucades.detall_localitzacio = carreteraDetall[i]
-                            }
-                            else if(this.objectPost.cartes_trucades.detall_localitzacio != "" && carreteraDetall[i] != null) {
-                                this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carreteraDetall[i]
-                            }
-                        }
+                        this.objectPost.cartes_trucades.detall_localitzacio = this.saveTipusLocate(carreteraDetall)
 
                         break;
                     case 5: //Provincia
@@ -423,6 +403,8 @@
 
                 let vueThis = this
 
+                // debugger;
+
                 if(insertCartaTrucada) {
                     axios
                     .post("/cartes_trucades_view",vueThis.objectPost)
@@ -440,6 +422,7 @@
                         vueThis.clearAll();
                         vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
                         vueThis.disabledButton = false;
+                        vueThis.$eventLoad.$emit("loadingSmallChange",false)
 
                     }).catch(function(error) {
                         console.log(error.response.status)
@@ -452,24 +435,30 @@
                         }
                         ]
                         );
-                        vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                        // vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
                         vueThis.disabledButton = false;
+                        vueThis.$eventLoad.$emit("loadingSmallChange",false)
                     })
                 }
                 else {
                     this.$eventAlert.$emit("open-alert",mensajeAlert);
-                    this.$eventPersonal.$emit("update-personal-dates","personal-dates");
+                    // this.$eventPersonal.$emit("update-personal-dates","personal-dates");
                     this.disabledButton = false;
+                    this.$eventLoad.$emit("loadingSmallChange",false)
                 }
+
+
 
 
                 // debugger;
             },
             clickCancel() {
+                this.$eventLoad.$emit("loadingSmallChange",true)
                 this.disabledButton = true
                 this.clearAll();
                 this.$eventPersonal.$emit("update-personal-dates","personal-dates");
                 this.disabledButton = false
+                this.$eventLoad.$emit("loadingSmallChange",false)
             },
             clearAll() {
                 this.$eventClear.$emit("clear-input-text","input");
@@ -495,6 +484,28 @@
 
                 //Vaciar select mark
                 this.$eventClear.$emit("clear-select-mark","select-mark");
+            },
+            saveTipusLocate(arrayTipus) {
+                let localitzacio = ""
+                for(let i = 0; i < arrayTipus.length; i++) {
+                    if(localitzacio == "") {
+                        if(arrayTipus[i] != null) {
+                            localitzacio = arrayTipus[i]
+                        }
+                        else {
+                            localitzacio = " "
+                        }
+                    }
+                    else {
+                        if(arrayTipus[i] != null) {
+                            localitzacio = localitzacio + ", " + arrayTipus[i]
+                        }
+                        else {
+                            localitzacio = localitzacio + ", "
+                        }
+                    }
+                }
+                return localitzacio;
             }
         },
         mounted() {

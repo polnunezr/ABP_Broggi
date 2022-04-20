@@ -5603,6 +5603,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     show: {
@@ -5639,11 +5646,15 @@ __webpack_require__.r(__webpack_exports__);
       localitzacioTrucadaShow: null,
       localitzacioShow: null,
       tipusLocalitzacioShow: null,
-      incidentShow: null
+      incidentShow: null,
+      expedientCheck: false,
+      loading: null,
+      loadingSmall: false
     };
   },
   created: function created() {
     if (this.show) {
+      this.loading = false;
       console.log(this.$attrs['cartatrucadashow']);
       this.cartaTrucadaShow = this.$attrs['cartatrucadashow'];
       this.dadaPersonalShow = this.$attrs['dadapersonalshow'];
@@ -5651,6 +5662,8 @@ __webpack_require__.r(__webpack_exports__);
       this.localitzacioShow = this.$attrs['localitzacioshow'];
       this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow'];
       this.incidentShow = this.$attrs['incidentshow'];
+    } else {
+      this.loading = true;
     }
   },
   mounted: function mounted() {
@@ -5677,13 +5690,18 @@ __webpack_require__.r(__webpack_exports__);
 
       _this.$eventExpedient.$emit("obtener-id-incident", "incident");
 
-      var expedientCheck = false;
+      _this.expedientCheck = false;
       axios.get("/expedients").then(function (response) {
         for (var i = 0; i < response.data.length; i++) {
           for (var j = 0; j < response.data[i].cartesTrucada.length; j++) {
+            // console.log(".")
+            // console.log(vueThis.expedientCheck)
+            // console.log(response.data[i].cartesTrucada[j].telefon)
+            // console.log(vueThis.telefon)
+            // console.log(".")
             if ((response.data[i].cartesTrucada[j].telefon == vueThis.telefon && response.data[i].cartesTrucada[j].telefon != null || response.data[i].cartesTrucada[j].municipis_id == vueThis.municipiLocation && response.data[i].cartesTrucada[j].municipis_id != null || response.data[i].cartesTrucada[j].incidents_id == vueThis.incident && response.data[i].cartesTrucada[j].incidents_id != null) && vueThis.expedientCheck == false) {
               vueThis.expedients.push(response.data[i]);
-              vueThis.expedientCheck = true;
+              vueThis.expedientCheck = true; // console.log("entro")
             }
           }
 
@@ -5770,12 +5788,103 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventFinal.$on("obtener-id-agencies", function (message) {
       _this.$eventFinal.$emit("recojer-id-agencies", _this.selectMarks);
+    });
+    this.$eventLoad.$on("loading", function (valor) {
+      _this.loading = valor;
+    });
+    this.$eventLoad.$on("loadingSmallChange", function (valor) {
+      _this.loadingSmall = valor;
     }); // this.$eventAlert.$on("get-section-selected", message => {
     //     debugger;
     //     let a = 4
     //     if(a == 4) {
     //     }
     // })
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    small: Boolean
+  },
+  data: function data() {
+    return {
+      divLoadLogo: {
+        position: "absolute",
+        top: "calc(40% - 125px)",
+        left: "calc(50% - 123.26px)" //193.25px - 71px cuando haya espacio blanco
+
+      },
+      divLoadLogoSmall: {
+        position: "absolute",
+        top: "calc(40% - 62.5px)",
+        left: "calc(50% - 63.375px)" //96.625px - 35px cuando haya espacio blanco
+
+      },
+      //1.014
+      //0.9861111111111111
+      imgLogoLoad: {
+        width: "246.52",
+        height: "250px"
+      },
+      imgLogoLoadSmall: {
+        width: "126.75px",
+        height: "125px"
+      },
+      divimgLoad: {
+        position: "absolute",
+        top: "calc(60% - 24.15625px)",
+        left: "calc(50% - 96.625px)"
+      },
+      divimgLoadSmall: {
+        position: "absolute",
+        top: "calc(51% - 12.078125px)",
+        left: "calc(50% - 48.3125px)"
+      },
+      //0.25
+      imgLoad: {
+        width: "193.25px",
+        height: "48.3125px"
+      },
+      imgLoadSmall: {
+        width: "96.625px",
+        height: "24.15625px"
+      }
+    };
   }
 });
 
@@ -7299,6 +7408,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
     getCartesTrucada: function getCartesTrucada() {
       var _this = this;
 
+      this.$eventLoad.$emit("loadingSmallChange", true);
       this.disabledButton = true;
       var vueThis = this;
       axios.get("/cartes_trucades").then(function (response) {
@@ -7480,29 +7590,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
         case 1:
           //Carrers
           //tipus de via + nom
-          this.objectPost.cartes_trucades.descripcio_localitzacio = "";
+          //saveTipusLocate
           var carrerDescripcio = [this.finalDates.carrertipusDeVia, this.finalDates.carrerNom];
+          this.objectPost.cartes_trucades.descripcio_localitzacio = this.saveTipusLocate(carrerDescripcio); //Numero + escala + pis + porta
 
-          for (var _i = 0; _i < carrerDescripcio.length; _i++) {
-            if (this.objectPost.cartes_trucades.descripcio_localitzacio == "" && carrerDescripcio[_i] != null) {
-              this.objectPost.cartes_trucades.descripcio_localitzacio = carrerDescripcio[_i];
-            } else if (this.objectPost.cartes_trucades.descripcio_localitzacio != "" && carrerDescripcio[_i] != null) {
-              this.objectPost.cartes_trucades.descripcio_localitzacio = this.objectPost.cartes_trucades.descripcio_localitzacio + ", " + carrerDescripcio[_i];
-            }
-          } //Numero + escala + pis + porta
-
-
-          this.objectPost.cartes_trucades.detall_localitzacio = "";
           var carrerDetall = [this.finalDates.carrerNumero, this.finalDates.carrerEscala, this.finalDates.carrerPis, this.finalDates.carrerPorta];
-
-          for (var _i2 = 0; _i2 < carrerDetall.length; _i2++) {
-            if (this.objectPost.cartes_trucades.detall_localitzacio == "" && carrerDetall[_i2] != null) {
-              this.objectPost.cartes_trucades.detall_localitzacio = carrerDetall[_i2];
-            } else if (this.objectPost.cartes_trucades.detall_localitzacio != "" && carrerDetall[_i2] != null) {
-              this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carrerDetall[_i2];
-            }
-          }
-
+          this.objectPost.cartes_trucades.detall_localitzacio = this.saveTipusLocate(carrerDetall);
           break;
 
         case 2:
@@ -7522,17 +7615,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
           //Nom carretera
           this.objectPost.cartes_trucades.descripcio_localitzacio = this.finalDates.carreteraNom; //Punt kilometric + sentit
 
-          this.objectPost.cartes_trucades.detall_localitzacio = "";
           var carreteraDetall = [this.finalDates.carreteraPuntKilometric, this.finalDates.carreteraSentit];
-
-          for (var _i3 = 0; _i3 < carreteraDetall.length; _i3++) {
-            if (this.objectPost.cartes_trucades.detall_localitzacio == "" && carreteraDetall[_i3] != null) {
-              this.objectPost.cartes_trucades.detall_localitzacio = carreteraDetall[_i3];
-            } else if (this.objectPost.cartes_trucades.detall_localitzacio != "" && carreteraDetall[_i3] != null) {
-              this.objectPost.cartes_trucades.detall_localitzacio = this.objectPost.cartes_trucades.detall_localitzacio + ", " + carreteraDetall[_i3];
-            }
-          }
-
+          this.objectPost.cartes_trucades.detall_localitzacio = this.saveTipusLocate(carreteraDetall);
           break;
 
         case 5:
@@ -7572,7 +7656,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       //Agencies
 
       this.objectPost.cartes_trucades_has_agencies.agenciesId = this.finalDates.selectMarks;
-      var vueThis = this;
+      var vueThis = this; // debugger;
 
       if (insertCartaTrucada) {
         axios.post("/cartes_trucades_view", vueThis.objectPost).then(function (response) {
@@ -7584,28 +7668,33 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
           vueThis.clearAll();
           vueThis.$eventPersonal.$emit("update-personal-dates", "personal-dates");
           vueThis.disabledButton = false;
+          vueThis.$eventLoad.$emit("loadingSmallChange", false);
         })["catch"](function (error) {
           console.log(error.response.status);
           console.log(_typeof(error.response.data.error));
           vueThis.$eventAlert.$emit("open-alert", [{
             id: 1,
             text: error.response.data.error
-          }]);
-          vueThis.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+          }]); // vueThis.$eventPersonal.$emit("update-personal-dates","personal-dates");
+
           vueThis.disabledButton = false;
+          vueThis.$eventLoad.$emit("loadingSmallChange", false);
         });
       } else {
-        this.$eventAlert.$emit("open-alert", mensajeAlert);
-        this.$eventPersonal.$emit("update-personal-dates", "personal-dates");
+        this.$eventAlert.$emit("open-alert", mensajeAlert); // this.$eventPersonal.$emit("update-personal-dates","personal-dates");
+
         this.disabledButton = false;
+        this.$eventLoad.$emit("loadingSmallChange", false);
       } // debugger;
 
     },
     clickCancel: function clickCancel() {
+      this.$eventLoad.$emit("loadingSmallChange", true);
       this.disabledButton = true;
       this.clearAll();
       this.$eventPersonal.$emit("update-personal-dates", "personal-dates");
       this.disabledButton = false;
+      this.$eventLoad.$emit("loadingSmallChange", false);
     },
     clearAll: function clearAll() {
       this.$eventClear.$emit("clear-input-text", "input");
@@ -7630,6 +7719,27 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
       this.objectPost.dades_personals.id = null; //Vaciar select mark
 
       this.$eventClear.$emit("clear-select-mark", "select-mark");
+    },
+    saveTipusLocate: function saveTipusLocate(arrayTipus) {
+      var localitzacio = "";
+
+      for (var i = 0; i < arrayTipus.length; i++) {
+        if (localitzacio == "") {
+          if (arrayTipus[i] != null) {
+            localitzacio = arrayTipus[i];
+          } else {
+            localitzacio = " ";
+          }
+        } else {
+          if (arrayTipus[i] != null) {
+            localitzacio = localitzacio + ", " + arrayTipus[i];
+          } else {
+            localitzacio = localitzacio + ", ";
+          }
+        }
+      }
+
+      return localitzacio;
     }
   },
   mounted: function mounted() {
@@ -8799,9 +8909,12 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       var meThis = this;
-      this.dadesPersonals = [];
+      this.dadesPersonals = []; // this.$eventLoad.$emit("loading",true);
+
       axios.get("/dades_personals").then(function (response) {
         meThis.dadesPersonals = response.data;
+        console.log("cargado");
+        meThis.$eventLoad.$emit("loading", false);
       })["catch"](function (error) {
         console.log(error);
       })["finally"](function () {
@@ -9121,9 +9234,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      title: "Relacionar expedient",
       expedients: [],
       idClick: null,
       relation: false,
@@ -9674,6 +9793,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -9701,6 +9823,13 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventVideo.$on("change-backdrop-video", function (title) {
       _this.title = title;
       _this.showBackdrop = true;
+    });
+    this.$eventVideo.$on("click-button", function (answerText) {
+      if (answerText == "SI") {
+        _this.yesButton();
+      } else {
+        _this.noButton();
+      }
     });
   }
 });
@@ -9731,6 +9860,11 @@ __webpack_require__.r(__webpack_exports__);
     answerText: {
       type: [String],
       require: true
+    }
+  },
+  methods: {
+    clickButton: function clickButton() {
+      this.$eventVideo.$emit("click-button", this.answerText);
     }
   }
 });
@@ -10089,6 +10223,7 @@ personalData: "Dades Personals",
 //Vue.prototype.$logoSrc="http://daw.abp-politecnics.com/daw03/images/logo/LogoHorizontal.svg"
 
 Vue.prototype.$logoSrc = "http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg";
+Vue.prototype.$loadSrc = "http://daw.abp-politecnics.com/daw03/filesSVG/load.svg";
 Vue.prototype.$dadesPersonals = "Dades Personals";
 Vue.prototype.$locate = "Localitzacio";
 Vue.prototype.$agency = "Agencies";
@@ -10176,9 +10311,11 @@ Vue.prototype.$eventExpedient = new Vue();
 Vue.prototype.$eventPersonal = new Vue();
 Vue.prototype.$eventMap = new Vue();
 Vue.prototype.$eventHelpBox = new Vue();
-Vue.prototype.$eventShow = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.prototype.$eventShow = new Vue();
+Vue.prototype.$eventLoad = new Vue(); // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('carta-trucada', (__webpack_require__(/*! ./components/CartaTrucada.vue */ "./resources/js/components/CartaTrucada.vue")["default"]));
+Vue.component('load-page', (__webpack_require__(/*! ./components/LoadPage.vue */ "./resources/js/components/LoadPage.vue")["default"]));
 Vue.component('background-decoration-izquierda', (__webpack_require__(/*! ./components/background-decoration/BackgroundDecorationIzquierda.vue */ "./resources/js/components/background-decoration/BackgroundDecorationIzquierda.vue")["default"]));
 Vue.component('background-decoration-derecha', (__webpack_require__(/*! ./components/background-decoration/BackgroundDecorationDerecha.vue */ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue")["default"]));
 Vue.component('help-box-icon', (__webpack_require__(/*! ./components/sections/helpBox/helpBoxIcon.vue */ "./resources/js/components/sections/helpBox/helpBoxIcon.vue")["default"]));
@@ -35264,6 +35401,45 @@ component.options.__file = "resources/js/components/CartaTrucada.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/LoadPage.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/LoadPage.vue ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LoadPage.vue?vue&type=template&id=cc230900& */ "./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900&");
+/* harmony import */ var _LoadPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LoadPage.vue?vue&type=script&lang=js& */ "./resources/js/components/LoadPage.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _LoadPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__.render,
+  _LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/LoadPage.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue":
 /*!***************************************************************************************!*\
   !*** ./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue ***!
@@ -36411,6 +36587,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/LoadPage.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/LoadPage.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LoadPage.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadPage_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************!*\
   !*** ./resources/js/components/background-decoration/BackgroundDecorationDerecha.vue?vue&type=script&lang=js& ***!
@@ -36888,6 +37080,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CartaTrucada_vue_vue_type_template_id_d9780308___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CartaTrucada.vue?vue&type=template&id=d9780308& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CartaTrucada.vue?vue&type=template&id=d9780308&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900& ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LoadPage_vue_vue_type_template_id_cc230900___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LoadPage.vue?vue&type=template&id=cc230900& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900&");
 
 
 /***/ }),
@@ -37418,188 +37627,275 @@ var render = function () {
       }),
       _vm._v(" "),
       _vm.selectSection != _vm.interactiveVideo && _vm.show == false
-        ? _c("finish-section")
+        ? _c("finish-section", {
+            style: _vm.loading == false ? "display: block;" : "display: none;",
+          })
         : _vm._e(),
       _vm._v(" "),
-      _c("div", { staticClass: "container-fluid" }, [
-        _c(
-          "div",
-          { staticClass: "row" },
-          [
+      _vm.loading == true ? _c("load-page") : _vm._e(),
+      _vm._v(" "),
+      _vm.loadingSmall == true
+        ? _c("load-page", { attrs: { small: "" } })
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "div",
+        { style: _vm.loading == false ? "display: block;" : "display: none;" },
+        [
+          _c("div", { staticClass: "container-fluid" }, [
             _c(
               "div",
-              { staticClass: "col col-2 colCard colNavBarHorizontal" },
-              [_c("tab-apart", { attrs: { show: _vm.show } })],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                class:
-                  _vm.selectSection != _vm.interactiveVideo
-                    ? "col col-7 colCard"
-                    : "col col-10 colCard",
-              },
+              { staticClass: "row" },
               [
-                _vm.selectSection != _vm.interactiveVideo &&
-                _vm.alertShow == true
-                  ? _c(
+                _c(
+                  "div",
+                  { staticClass: "col col-2 colCard colNavBarHorizontal" },
+                  [_c("tab-apart", { attrs: { show: _vm.show } })],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    class:
+                      _vm.selectSection != _vm.interactiveVideo
+                        ? "col col-7 colCard"
+                        : "col col-10 colCard",
+                    style:
+                      _vm.loadingSmall == false
+                        ? "display: block;"
+                        : "display: none;",
+                  },
+                  [
+                    _vm.selectSection != _vm.interactiveVideo &&
+                    _vm.alertShow == true
+                      ? _c(
+                          "div",
+                          [
+                            _c("alert-section", {
+                              attrs: {
+                                mensajeAlert: _vm.mensajeAlert,
+                                alertDanger: _vm.alertDanger,
+                                selectSectionCreate: _vm.selectSection,
+                              },
+                            }),
+                          ],
+                          1
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c(
                       "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.personalData
+                            ? "display: block;"
+                            : "display: none;",
+                      },
                       [
-                        _c("alert-section", {
+                        _c("personal-section", {
                           attrs: {
-                            mensajeAlert: _vm.mensajeAlert,
-                            alertDanger: _vm.alertDanger,
-                            selectSectionCreate: _vm.selectSection,
+                            cartaTrucadaShow: _vm.cartaTrucadaShow,
+                            dadaPersonalShow: _vm.dadaPersonalShow,
+                            localitzacioTrucadaShow:
+                              _vm.localitzacioTrucadaShow,
+                            show: _vm.show,
                           },
                         }),
                       ],
                       1
-                    )
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.locate
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [
+                        _c("location-section", {
+                          attrs: {
+                            marginTopLocation: _vm.marginTopLocation,
+                            cartaTrucadaShow: _vm.cartaTrucadaShow,
+                            localitzacioShow: _vm.localitzacioShow,
+                            tipusLocalitzacioShow: _vm.tipusLocalitzacioShow,
+                            show: _vm.show,
+                          },
+                        }),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.agency
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [
+                        _c("agency-section", {
+                          attrs: {
+                            selectMarks: _vm.selectMarks,
+                            agencies: _vm.agencies,
+                            show: _vm.show,
+                          },
+                        }),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.emergency
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [
+                        _c("emergency-section", {
+                          attrs: {
+                            incidentShow: _vm.incidentShow,
+                            show: _vm.show,
+                          },
+                        }),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.communeNote
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [
+                        _c("commune-note-section", {
+                          attrs: {
+                            cartaTrucadaShow: _vm.cartaTrucadaShow,
+                            show: _vm.show,
+                          },
+                        }),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.relationExpedient &&
+                          _vm.show == false
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [_c("relation-section")],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        style:
+                          _vm.selectSection == _vm.interactiveVideo &&
+                          _vm.show == false
+                            ? "display: block;"
+                            : "display: none;",
+                      },
+                      [_c("video-section")],
+                      1
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _vm.selectSection != _vm.interactiveVideo
+                  ? _c("time-section", {
+                      style:
+                        _vm.loadingSmall == false
+                          ? "display: block;"
+                          : "display: none;",
+                      attrs: {
+                        cartaTrucadaShow: _vm.cartaTrucadaShow,
+                        show: _vm.show,
+                      },
+                    })
                   : _vm._e(),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.personalData
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("personal-section", {
-                      attrs: {
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        dadaPersonalShow: _vm.dadaPersonalShow,
-                        localitzacioTrucadaShow: _vm.localitzacioTrucadaShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.locate
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("location-section", {
-                      attrs: {
-                        marginTopLocation: _vm.marginTopLocation,
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        localitzacioShow: _vm.localitzacioShow,
-                        tipusLocalitzacioShow: _vm.tipusLocalitzacioShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.agency
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("agency-section", {
-                      attrs: {
-                        selectMarks: _vm.selectMarks,
-                        agencies: _vm.agencies,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.emergency
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("emergency-section", {
-                      attrs: { incidentShow: _vm.incidentShow, show: _vm.show },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.communeNote
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [
-                    _c("commune-note-section", {
-                      attrs: {
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        show: _vm.show,
-                      },
-                    }),
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.relationExpedient &&
-                      _vm.show == false
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [_c("relation-section")],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    style:
-                      _vm.selectSection == _vm.interactiveVideo &&
-                      _vm.show == false
-                        ? "display: block;"
-                        : "display: none;",
-                  },
-                  [_c("video-section")],
-                  1
-                ),
-              ]
+              ],
+              1
             ),
-            _vm._v(" "),
-            _vm.selectSection != _vm.interactiveVideo
-              ? _c("time-section", {
-                  attrs: {
-                    cartaTrucadaShow: _vm.cartaTrucadaShow,
-                    show: _vm.show,
-                  },
-                })
-              : _vm._e(),
-          ],
-          1
-        ),
-      ]),
+          ]),
+        ]
+      ),
     ],
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/LoadPage.vue?vue&type=template&id=cc230900& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { attrs: { id: "divLoad" } }, [
+    _vm.small == false
+      ? _c("div", { style: _vm.divLoadLogo, attrs: { id: "divLoadLogo" } }, [
+          _c("img", {
+            style: _vm.imgLogoLoad,
+            attrs: { src: this.$logoSrc, id: "imgLogoLoad" },
+          }),
+        ])
+      : _c(
+          "div",
+          { style: _vm.divLoadLogoSmall, attrs: { id: "divLoadLogoSmall" } },
+          [
+            _c("img", {
+              style: _vm.imgLogoLoadSmall,
+              attrs: { src: this.$logoSrc, id: "imgLogoLoadSmall" },
+            }),
+          ]
+        ),
+    _vm._v(" "),
+    _vm.small == false
+      ? _c("div", { style: _vm.divimgLoad, attrs: { id: "divimgLoad" } }, [
+          _c("img", {
+            style: _vm.imgLoad,
+            attrs: { src: this.$loadSrc, id: "imgLoad" },
+          }),
+        ])
+      : _c(
+          "div",
+          { style: _vm.divimgLoadSmall, attrs: { id: "divimgLoadSmall" } },
+          [
+            _c("img", {
+              style: _vm.imgLoadSmall,
+              attrs: { src: this.$loadSrc, id: "imgLoadSmall" },
+            }),
+          ]
+        ),
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -39573,18 +39869,28 @@ var render = function () {
       },
       [
         _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col" }, [
-            _c(
-              "button",
-              {
-                staticClass: "button buttonNormal",
-                attrs: { type: "button" },
-                on: { click: _vm.clickRelation },
-              },
-              [_vm._v("Relacionar expedient")]
-            ),
+          _c("div", { staticClass: "col colTitle" }, [
+            _c("h4", { domProps: { textContent: _vm._s(_vm.title) } }),
           ]),
         ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "row", staticStyle: { "margin-top": "40px" } },
+          [
+            _c("div", { staticClass: "col" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "button buttonNormal",
+                  attrs: { type: "button" },
+                  on: { click: _vm.clickRelation },
+                },
+                [_vm._v("Relacionar")]
+              ),
+            ]),
+          ]
+        ),
         _vm._v(" "),
         _c(
           "div",
@@ -39955,23 +40261,9 @@ var render = function () {
           "div",
           { staticClass: "row" },
           [
-            _c("backdrop-video-button", {
-              attrs: { answerText: "SI" },
-              nativeOn: {
-                click: function ($event) {
-                  return _vm.yesButton.apply(null, arguments)
-                },
-              },
-            }),
+            _c("backdrop-video-button", { attrs: { answerText: "SI" } }),
             _vm._v(" "),
-            _c("backdrop-video-button", {
-              attrs: { answerText: "NO" },
-              nativeOn: {
-                click: function ($event) {
-                  return _vm.noButton.apply(null, arguments)
-                },
-              },
-            }),
+            _c("backdrop-video-button", { attrs: { answerText: "NO" } }),
           ],
           1
         ),
@@ -40029,6 +40321,7 @@ var render = function () {
         {
           staticClass:
             "questions d-flex align-items-center justify-content-center",
+          on: { click: _vm.clickButton },
         },
         [_c("p", { staticClass: "answers" }, [_vm._v(_vm._s(_vm.answerText))])]
       ),
@@ -40107,7 +40400,7 @@ var render = function () {
       "div",
       {
         staticClass:
-          "col col-11 colCard colVideo d-flex justify-content-center align-items-center",
+          "col col-11 colCard d-flex justify-content-center align-items-center",
       },
       [
         _c(

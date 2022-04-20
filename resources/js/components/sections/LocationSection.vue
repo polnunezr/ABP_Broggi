@@ -385,6 +385,10 @@
                 this.disabledCheck = valor
             })
 
+            this.$eventExpedient.$on("obtener-id-tipus-location", message => {
+                this.$eventExpedient.$emit("recojer-id-tipus-location",this.tipusLocalitzacioSelect);
+            })
+
         }
     }
 </script>

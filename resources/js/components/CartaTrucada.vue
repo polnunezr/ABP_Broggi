@@ -58,8 +58,9 @@
 
                     </div>
 
-                    <time-section v-if="selectSection != interactiveVideo" :cartaTrucadaShow="cartaTrucadaShow" :show="show"
-                    v-bind:style="loadingSmall == false ? 'display: block;' : 'display: none;'"></time-section>
+                    <time-section :cartaTrucadaShow="cartaTrucadaShow" :show="show"
+                        v-bind:style="(loadingSmall == false) && (selectSection != interactiveVideo)? 'display: block;' : 'display: none;'">
+                    </time-section>
 
 
                 </div>
@@ -95,6 +96,7 @@
                 mensajeAlert: [],
                 marginTopLocation: 30,
                 telefon: null,
+                tipusLocation: null,
                 municipiLocation: null,
                 incident: null,
                 mapOpen: false,
@@ -154,10 +156,23 @@
 
                 this.expedients = []
 
+                this.telefon = null
+                this.municipiLocation = null
+                this.incident = null
+
                 //telefon
                 this.$eventExpedient.$emit("obtener-telefono","telefono");
-                //municipi locate
-                this.$eventExpedient.$emit("obtener-id-municipi-location","municipilocation");
+
+                //tipusLocate
+                this.$eventExpedient.$emit("obtener-id-tipus-location","tipusLocation");
+
+                if(this.tipusLocation != null) {
+                    if(this.tipusLocation != 5) {
+                        //municipi locate
+                        this.$eventExpedient.$emit("obtener-id-municipi-location","municipilocation");
+                    }
+                }
+
                 //emergency
                 this.$eventExpedient.$emit("obtener-id-incident","incident");
 
@@ -238,6 +253,15 @@
                 }
                 else {
                     this.telefon = null
+                }
+            })
+
+            this.$eventExpedient.$on("recojer-id-tipus-location", tipusLocation => {
+                if(tipusLocation == 0) {
+                    this.tipusLocation = null
+                }
+                else {
+                    this.tipusLocation = tipusLocation
                 }
             })
 

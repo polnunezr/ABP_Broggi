@@ -5611,6 +5611,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     show: {
@@ -5635,6 +5636,7 @@ __webpack_require__.r(__webpack_exports__);
       mensajeAlert: [],
       marginTopLocation: 30,
       telefon: null,
+      tipusLocation: null,
       municipiLocation: null,
       incident: null,
       mapOpen: false,
@@ -5683,12 +5685,22 @@ __webpack_require__.r(__webpack_exports__);
     this.$eventRelation.$on("open-valor-modal", function (message) {
       _this.backdropRelationOpen = true;
       var vueThis = _this;
-      _this.expedients = []; //telefon
+      _this.expedients = [];
+      _this.telefon = null;
+      _this.municipiLocation = null;
+      _this.incident = null; //telefon
 
-      _this.$eventExpedient.$emit("obtener-telefono", "telefono"); //municipi locate
+      _this.$eventExpedient.$emit("obtener-telefono", "telefono"); //tipusLocate
 
 
-      _this.$eventExpedient.$emit("obtener-id-municipi-location", "municipilocation"); //emergency
+      _this.$eventExpedient.$emit("obtener-id-tipus-location", "tipusLocation");
+
+      if (_this.tipusLocation != null) {
+        if (_this.tipusLocation != 5) {
+          //municipi locate
+          _this.$eventExpedient.$emit("obtener-id-municipi-location", "municipilocation");
+        }
+      } //emergency
 
 
       _this.$eventExpedient.$emit("obtener-id-incident", "incident");
@@ -5749,6 +5761,13 @@ __webpack_require__.r(__webpack_exports__);
         _this.telefon = telefono;
       } else {
         _this.telefon = null;
+      }
+    });
+    this.$eventExpedient.$on("recojer-id-tipus-location", function (tipusLocation) {
+      if (tipusLocation == 0) {
+        _this.tipusLocation = null;
+      } else {
+        _this.tipusLocation = tipusLocation;
       }
     });
     this.$eventExpedient.$on("recojer-id-municipi-location", function (municipiLocation) {
@@ -8440,6 +8459,9 @@ __webpack_require__.r(__webpack_exports__);
     });
     this.$eventShow.$on("change-select-disabled", function (valor) {
       _this2.disabledCheck = valor;
+    });
+    this.$eventExpedient.$on("obtener-id-tipus-location", function (message) {
+      _this2.$eventExpedient.$emit("recojer-id-tipus-location", _this2.tipusLocalitzacioSelect);
     });
   }
 });
@@ -37841,18 +37863,17 @@ var render = function () {
                   ]
                 ),
                 _vm._v(" "),
-                _vm.selectSection != _vm.interactiveVideo
-                  ? _c("time-section", {
-                      style:
-                        _vm.loadingSmall == false
-                          ? "display: block;"
-                          : "display: none;",
-                      attrs: {
-                        cartaTrucadaShow: _vm.cartaTrucadaShow,
-                        show: _vm.show,
-                      },
-                    })
-                  : _vm._e(),
+                _c("time-section", {
+                  style:
+                    _vm.loadingSmall == false &&
+                    _vm.selectSection != _vm.interactiveVideo
+                      ? "display: block;"
+                      : "display: none;",
+                  attrs: {
+                    cartaTrucadaShow: _vm.cartaTrucadaShow,
+                    show: _vm.show,
+                  },
+                }),
               ],
               1
             ),

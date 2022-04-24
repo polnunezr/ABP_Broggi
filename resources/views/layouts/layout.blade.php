@@ -14,37 +14,38 @@
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
 <link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
-
+  <!-- Bootstrap CSS -->    
+  <!-- Style -->
 <title>@yield('titol')</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-fixed-top  navbar-expand-lg navbar-dark" id="">
-        <a class="navbar-brand" href="/ABP_Pol_Nunez/public/"><img
-                src="https://raw.githubusercontent.com/polnunezr/ABP_Broggi/main/LogoVertical.svg" alt="tag" height="75"
-                width="175">
-        </a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+    <div id="wrapper">
+   <div class="overlay"></div>   
+        <!-- Sidebar -->
+    <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
+     <ul class="nav sidebar-nav">
+       <div class="sidebar-header">
+       <div class="sidebar-brand">
+         <a href="">Brand</a></div></div>
+       <li><a href="{{ url('../expedient') }}">Expedients</a></li>
+       <li><a href="{{ url('../grafica') }}">Grafiques</a></li>
+       <li><a href="#events"></a></li>
+       <li><a href="">Usuaris</a></li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        Dades mestres
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url('/expedient') }} ">Expedient</a>
-                        <a class="dropdown-item" href="{{ url('/grafica') }} ">Grafica</a>
+  </nav>
+        <!-- /#sidebar-wrapper -->
 
-
-
-                    </div>
-                </li>
-
-            </ul>
-
-        </div>
-    </nav>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+    			<span class="hamb-middle"></span>
+				<span class="hamb-bottom"></span>
+            </button>
+ 
+    </div>
+    <!-- /#wrapper -->
     <div class="container">
         @yield('name')
     </div>
@@ -54,12 +55,41 @@
     <script>
         yield('script')
     </script>
-    <script src="https://unpkg.com/feather-icons"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+<script>
+    $(document).ready(function() {
+    var trigger = $('.hamburger'),
+        overlay = $('.overlay'),
+        isClosed = false;
 
+    trigger.click(function() {
+        hamburger_cross();
+    });
+
+    function hamburger_cross() {
+
+        if (isClosed == true) {
+            overlay.hide();
+            trigger.removeClass('is-open');
+            trigger.addClass('is-closed');
+            isClosed = false;
+        } else {
+            overlay.show();
+            trigger.removeClass('is-closed');
+            trigger.addClass('is-open');
+            isClosed = true;
+        }
+    }
+
+    $('[data-toggle="offcanvas"]').click(function() {
+        $('#wrapper').toggleClass('toggled');
+    });
+});
+</script>
     <script src="https://kit.fontawesome.com/606a75912f.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
-    </script>
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
     </script>

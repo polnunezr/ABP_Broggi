@@ -32,7 +32,7 @@ class GraficaController extends Controller
             $countIncidents[] = $carta->count();
         }
 
-        $dates = Expedient::select('data_creacio')->distinct(DATE('data_creacio'))
+        $dates = Expedient::select('data_creacio')->groupBy(('data_creacio'))
             ->orderBy('data_creacio')->get();
         foreach ($dates as $data) {
             $datas[] =  date('d-m-Y', strtotime($data->data_creacio));

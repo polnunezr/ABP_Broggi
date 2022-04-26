@@ -14,14 +14,14 @@
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 
 <link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
-  <!-- Bootstrap CSS -->    
+  <!-- Bootstrap CSS -->
   <!-- Style -->
 <title>@yield('titol')</title>
 </head>
 
 <body>
     <div id="wrapper">
-   <div class="overlay"></div>   
+   <div class="overlay"></div>
         <!-- Sidebar -->
     <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
      <ul class="nav sidebar-nav">
@@ -31,9 +31,14 @@
        <li><a href="{{ url('../expedient') }}">Expedients</a></li>
        <li><a href="{{ url('../grafica') }}">Grafiques</a></li>
        <li><a href="#events"></a></li>
-       <li><a href="">Usuaris</a></li>
+       <li><a href="{{ url('../usuaris') }}">Usuaris</a></li></ul>
+       <div class="position-absolute bottom-0 start-0">
+        <button type="button" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+    </div>
 
-  </nav>
+    </nav>
+
+
         <!-- /#sidebar-wrapper -->
 
         <!-- Page Content -->
@@ -43,9 +48,9 @@
     			<span class="hamb-middle"></span>
 				<span class="hamb-bottom"></span>
             </button>
- 
+
     </div>
-    <!-- /#wrapper -->
+    </div>
     <div class="container">
         @yield('name')
     </div>
@@ -89,7 +94,7 @@
 });
 </script>
     <script src="https://kit.fontawesome.com/606a75912f.js" crossorigin="anonymous"></script>
-  
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
     </script>

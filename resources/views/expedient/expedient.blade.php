@@ -1,7 +1,6 @@
 @extends('layouts.layout')
 @section('titol', 'xx')
 @section('name')
-<a href="{{ url('/public') }} "class="btn btn-info" role="button"><i class="fa-solid fa-arrow-left-long"></i> </a>
     <form action="{{ action([App\Http\Controllers\ExpedientController::class, 'index']) }}" method="GET">
 
         <h3>Filtres</h3>

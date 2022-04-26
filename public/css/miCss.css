@@ -223,11 +223,11 @@ html {
 }
 
 a[href*="../expedient"]::before {
-    content: "\e202" !important;
+    content: "\f481" !important;
 }
 
 a[href*="../expedient"]::before {
-    content: "\e202" !important;
+    content: "\f481" !important;
 }
 
 a[href*="../grafica"]::before {
@@ -242,37 +242,14 @@ a[href*="#team"]::before {
     content: "\f0c0" !important;
 }
 
-a[href*="#works"]::before {
-    content: "\f0b1" !important;
+a[href*="../usuaris"]::before {
+    content: "\f0c0" !important;
+}
+a[href*="../usuaris"]::before {
+    content: "\f0c0" !important;
 }
 
-a[href*="#pictures"]::before {
-    content: "\f03e" !important;
-}
 
-a[href*="#videos"]::before {
-    content: "\f03d" !important;
-}
-
-a[href*="#books"]::before {
-    content: "\f02d" !important;
-}
-
-a[href*="#art"]::before {
-    content: "\f1fc" !important;
-}
-
-a[href*="#awards"]::before {
-    content: "\f02e" !important;
-}
-
-a[href*="#services"]::before {
-    content: "\f013" !important;
-}
-
-a[href*="#contact"]::before {
-    content: "\f086" !important;
-}
 
 
 /*-------------------------------*/

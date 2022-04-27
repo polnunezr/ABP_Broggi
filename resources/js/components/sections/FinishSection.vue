@@ -9,6 +9,12 @@
 
 <script>
     export default {
+        props: {
+            user: {
+                type: [Object],
+                require: true
+            }
+        },
         data() {
             return {
                 finalDates: {
@@ -47,7 +53,6 @@
                     hora: null,
                     tiempo: null,
                     timeSeconds: null,
-                    operador: null,
 
                     expedientId: null,
                     dadaPersonalId: null,
@@ -192,7 +197,6 @@
                 this.$eventFinal.$emit("obtener-fecha","fecha");
                 this.$eventFinal.$emit("obtener-hora","hora");
                 this.$eventFinal.$emit("obtener-tiempo","tiempo");
-                this.$eventFinal.$emit("obtener-operador","operador");
                 this.$eventFinal.$emit("obtener-tiempo-segundos","timeSeconds");
 
                 //Expedient relation
@@ -395,7 +399,7 @@
 
                 this.objectPost.cartes_trucades.expedients_id = null//Obtener response | cuando se crea uno
 
-                this.objectPost.cartes_trucades.usuaris_id = 1 //Provisional
+                this.objectPost.cartes_trucades.usuaris_id = this.user.id
 
                 //Agencies
 
@@ -799,10 +803,6 @@
                 this.finalDates.timeSeconds = timeSeconds
             })
 
-
-            this.$eventFinal.$on("recojer-operador", operador => {
-                this.finalDates.operador = operador
-            })
 
             //Relation expedient
 

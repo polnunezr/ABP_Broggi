@@ -15,6 +15,8 @@
                         :tipusLocalitzacioShow="{{ $tipusLocalitzacioShow }}"
                         :incidentShow="{{ $incidentShow }}"
                         :agenciesShow="{{ $agenciesShow }}"
+                        :userShow="{{ $userShow }}"
+                        logOutShow="{{ url($logOutUrlShow) }}"
                         ></carta-trucada>
     </div>
 

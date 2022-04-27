@@ -4,7 +4,7 @@
 
 @section("container")
     <div>
-        <carta-trucada :show="false"></carta-trucada>
+        <carta-trucada :show="false" logOutRoute="{{ route('menu') }}" :user="{{ $user }}"></carta-trucada>
     </div>
 
 @endsection

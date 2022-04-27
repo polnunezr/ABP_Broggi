@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\CartaTrucada;
 use App\Models\CartaController;
@@ -15,9 +15,12 @@ use App\Models\Incident;
 use App\Models\TipusIncident;
 use App\Models\CartesTrucadesHasAgencies;
 use App\Models\Agencia;
+use App\Models\Perfil;
+use App\Models\Usuari;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use App\Http\Resources\CartesTrucadesResource;
+
 
 class CartaTrucadaController extends Controller
 {
@@ -28,7 +31,16 @@ class CartaTrucadaController extends Controller
      */
     public function index()
     {
-        return view("cartaTrucada.index");
+        $userObject = Auth::user();
+        $perfil = Perfil::where("id","=",$userObject->perfils_id)->get();
+        $perfilNom = $perfil[0]->nom;
+        $user = [
+            "id" => $userObject->id,
+            "perfil_nom" => $perfilNom,
+            "codi" => $userObject->codi
+        ];
+        $user = json_encode($user);
+        return view("cartaTrucada.index",compact("user"));
         // Route::view('/cartes_trucades',"cartaTrucada.index");
     }
 
@@ -343,10 +355,28 @@ class CartaTrucadaController extends Controller
             $agenciesShow = json_encode($agenciaShowArray);
         }
 
+        //Usuari
+
+        // $userObject = Auth::user();
+        $userObject = Usuari::where("id","=",$cartaTrucadaShow->usuaris_id)->get();
+        $userObject = $userObject[0];
+        $perfil = Perfil::where("id","=",$userObject->perfils_id)->get();
+        $perfilNom = $perfil[0]->nom;
+        $userShow = [
+            "id" => $userObject->id,
+            "perfil_nom" => $perfilNom,
+            "codi" => $userObject->codi
+        ];
+        $userShow = json_encode($userShow);
+
+        $idExpedient = $cartaTrucadaShow->expedients_id;
+
+        $logOutUrlShow ="/expedients_controller/" . strval($idExpedient);
+
 
         //$cartaTrucadaShow = CartesTrucadesResource::collection($cartaTrucadaShow);
         return view("cartaTrucada.show",compact("cartaTrucadaShow","dadaPersonalShow","localitzacioTrucadaShow","localitzacioShow"
-        ,"tipusLocalitzacioShow","incidentShow","agenciesShow"));
+        ,"tipusLocalitzacioShow","incidentShow","agenciesShow","userShow","logOutUrlShow"));
 
     }
 

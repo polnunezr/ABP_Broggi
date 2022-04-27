@@ -107,7 +107,7 @@ class ExpedientController extends Controller
      * @param  \App\Models\Expedient  $expedient
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, Expedient $expedient)
+    public function show(Request $request, Expedient $expedients_controller)
     {
         //
         $tipusLoc = TipusLocalitzacio::all();
@@ -131,7 +131,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)->orderBy('codi_trucada')
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
             //var_dump($hola);
@@ -141,7 +141,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('cartes_trucades.codi_trucada', '=', $id)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -151,7 +151,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -162,7 +162,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -172,7 +172,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -183,7 +183,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -193,7 +193,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
@@ -205,7 +205,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
@@ -217,7 +217,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
@@ -230,7 +230,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
@@ -242,7 +242,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
@@ -254,7 +254,7 @@ class ExpedientController extends Controller
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->orderBy('codi_trucada')
@@ -266,7 +266,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
@@ -277,7 +277,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -287,7 +287,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_localitzacions.tipus', '=', $tipusLocs)
 
                 ->orderBy('codi_trucada')
@@ -299,7 +299,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -309,7 +309,7 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
@@ -318,13 +318,13 @@ class ExpedientController extends Controller
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')
                 ->join('tipus_incidents', 'incidents.classes_incidents_id', '=', 'tipus_incidents.id')
                 ->select('tipus_localitzacions.tipus', 'codi_trucada', 'data_hora', 'tipus_incidents.descripcio', 'telefon', 'expedients_id')
-                ->where('cartes_trucades.expedients_id', '=', $expedient->id)
+                ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)
                 ->where('tipus_incidents.descripcio', '=', $tipusEmgs)
                 ->orderBy('codi_trucada')
                 ->paginate(5);
         }
 
-        return view('cartes.carta', compact('tipusLoc', 'tipusEmg', 'cartes', 'id', 'fecha', 'tipusEmgs', 'tipusLocs', 'tel', 'expedient'));
+        return view('cartes.carta', compact('tipusLoc', 'tipusEmg', 'cartes', 'id', 'fecha', 'tipusEmgs', 'tipusLocs', 'tel', 'expedients_controller'));
 
         // return redirect()->route("cartes_trucades_controller.show", ['cartes_trucades_controller' => $id]);
     }

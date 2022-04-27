@@ -1,10 +1,10 @@
 @extends('layouts.layout')
 @section('titol', 'xx')
 @section('name')
-<a href="{{ url('/expedient') }} " class="btn btn-info" role="button"><i class="fa-solid fa-arrow-left-long"></i></a>
+<a href="{{ url('/expedients_controller') }} " class="btn btn-info" role="button"><i class="fa-solid fa-arrow-left-long"></i></a>
     <h3>Filtres</h3>
     <form
-        action="{{ action([App\Http\Controllers\ExpedientController::class, 'show'], ['expedient' => $expedient->id]) }}"
+        action="{{ action([App\Http\Controllers\ExpedientController::class, 'show'], ['expedients_controller' => $expedients_controller->id]) }}"
         method="GET">
         @csrf
         <div class="row">

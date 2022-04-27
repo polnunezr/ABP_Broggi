@@ -2,10 +2,10 @@
     <div class="col col-3 colTimeExit">
 
         <div class="row">
-            <div class="col col-4">
-                <button type="button" class="button buttonNormal">Sortir</button>
+            <div class="col col-3">
+                <button type="button" class="button buttonNormal" v-on:click="clickSalir">Sortir</button>
             </div>
-            <div class="col-6 colSection colTime">
+            <div class="col-7 colSection colTime">
 
                 <data-time titleData="Data" :data="data" first></data-time>
 
@@ -13,7 +13,7 @@
 
                 <data-time titleData="Temps" :data="time"></data-time>
 
-                <data-time titleData="Operador" :data="operador"></data-time>
+                <data-time :titleData="perfil" :data="codi"></data-time>
 
             </div>
         </div>
@@ -30,6 +30,14 @@
                 type: [Object],
                 require: true
             },
+            logOutRoute: {
+                type:[String],
+                require: true
+            },
+            user: {
+                type:[Object],
+                require: true
+            },
             show: {
                 type: [Boolean],
                 require: true
@@ -41,15 +49,21 @@
                 start: false,
                 data: "08/03/2022",
                 hora: "16:28:00",
-                operador: "001",
                 timeSeconds: 0,
                 intervalTime: null,
                 helpBoxOpen: false,
-                selectTab: 1
+                selectTab: 1,
+                codi: null,
+                perfil: null
             }
         },
         created() {
+
+            this.codi = this.user.codi
+            this.perfil = this.user.perfil_nom
+
             if(!this.show) {
+
                 let today = new Date();
                 let dia = today.getDate();
                 if(dia <= 9) {
@@ -89,6 +103,10 @@
                     second = "0" + second
                 }
                 this.hora = hour + ":" + minut+":"+second
+            },
+            clickSalir() {
+                // axios.get(route("menu"))
+                window.location.href = this.logOutRoute
             }
         },
         mounted() {
@@ -148,10 +166,6 @@
 
             this.$eventFinal.$on("obtener-tiempo", message => {
                 this.$eventFinal.$emit("recojer-tiempo",this.time);
-            })
-
-            this.$eventFinal.$on("obtener-operador", message => {
-                this.$eventFinal.$emit("recojer-operador",this.operador);
             })
 
             this.$eventFinal.$on("obtener-tiempo-segundos", message => {

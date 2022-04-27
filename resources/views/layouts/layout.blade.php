@@ -37,7 +37,7 @@
                         Dades mestres
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url('/expedient') }} ">Expedient</a>
+                        <a class="dropdown-item" href="{{ url('/expedients_controller') }} ">Expedient</a>
                         <a class="dropdown-item" href="{{ url('/grafica') }} ">Grafica</a>
 
 

@@ -1,8 +1,8 @@
 <template>
     <div class="row">
-        <div class="col col-4">
+        <div class="col col-3">
         </div>
-        <div class="col col-6 col colHelpBox p-0 d-flex">
+        <div class="col col-7 col colHelpBox p-0 d-flex">
             <div class="container-fluid" id="containerHelpBox">
                 <help-box-question v-for="audio in audios" :key="audio.id"
                 :url="audio.url" :text="audio.text">

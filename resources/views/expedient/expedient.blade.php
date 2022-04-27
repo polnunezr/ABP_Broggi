@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @section('titol', 'xx')
 @section('name')
-<a href="{{ url('/public') }} "class="btn" role="button"><i class="fa-solid fa-arrow-left-long"></i> </a>
+<a href="{{ url('/menu') }} "class="btn" role="button"><i class="fa-solid fa-arrow-left-long"></i> </a>
     <form action="{{ action([App\Http\Controllers\ExpedientController::class, 'index']) }}" method="GET">
 
         <h3>Filtres</h3>
@@ -115,7 +115,7 @@
                                 <td>{{ $expedient->estat }}</td>
                                 <td>
                                     <form
-                                        action="{{ action([App\Http\Controllers\ExpedientController::class, 'show'], ['expedient' => $expedient->uid]) }}"
+                                        action="{{ action([App\Http\Controllers\ExpedientController::class, 'show'], ['expedients_controller' => $expedient->uid]) }}"
                                         method="GET">
 
                                         @csrf

@@ -31,11 +31,12 @@
        <div class="sidebar-header">
        <div class="sidebar-brand">
          <img src="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg" alt="" srcset=""></div></div>
-       <li><a href="{{ url('../expedients_controller') }}">Expedients</a></li>
-       <li><a href="{{ url('../grafica') }}">Grafiques</a></li>
-       <li><a href="{{ url('../usuaris_controller') }}">Usuaris</a></li></ul>
+       <li></li>
+       <li></li>
+       <li></li></ul>
        <div class="position-absolute bottom-0 start-0">
-        <button type="button" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+
+        <a href="{{url('/menu')}}">Menu</a>
     </div>
 
     </nav>

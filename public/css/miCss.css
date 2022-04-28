@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+body {
+    background-color: gainsboro;
+    font-family: "Lato", sans-serif;
+}
+nav {
+    background-color: #f2a0a0;
+}
+label,
+option,
+select,
+button,
+table,
+td,
+tr,
+th {
+    font-family: "Lato", sans-serif;
+}
+.btn {
+    background-color: #636AF2;
+    color: aliceblue;
+}
+.logo2
+{
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+}

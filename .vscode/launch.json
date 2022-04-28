@@ -11,10 +11,10 @@
             "port": 9003
         },
         {
-            "type": "pwa-chrome",
+            "name": "Launch Chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:80/projects/M12/projecte2/broggi/public",
+            "type": "pwa-chrome",
+            "url": "http://localhost:80/ABP_BROGGI/public",
             "webRoot": "${workspaceFolder}"
         }
     ]

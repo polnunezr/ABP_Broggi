@@ -7,7 +7,7 @@
        <div id="backdropRelation" v-if="backdropRelationOpen"></div>
         <relation-modal v-bind:style="modalOpen == true ? 'display: block;' : 'display: none;'" :expedients="expedients">
         </relation-modal>
-        <finish-section  v-if="(selectSection != interactiveVideo) && (show == false)"
+        <finish-section :user="user" v-if="(selectSection != interactiveVideo) && (show == false)"
         v-bind:style="loading == false ? 'display: block;' : 'display: none;'"></finish-section>
         <!--<background-decoration-derecha></background-decoration-derecha>-->
         <load-page v-if="loading == true"></load-page>
@@ -58,7 +58,7 @@
 
                     </div>
 
-                    <time-section :cartaTrucadaShow="cartaTrucadaShow" :show="show"
+                    <time-section :cartaTrucadaShow="cartaTrucadaShow" :show="show" :logOutRoute="logOutRoute" :user="user"
                         v-bind:style="(loadingSmall == false) && (selectSection != interactiveVideo)? 'display: block;' : 'display: none;'">
                     </time-section>
 
@@ -103,6 +103,8 @@
                 selectMarks: [],
                 agencies: [],
                 backdropRelationOpen: false,
+                logOutRoute: null,
+                user: null,
                 //Show
                 cartaTrucadaShow: null,
                 dadaPersonalShow: null,
@@ -115,7 +117,7 @@
                 expedientCheck: false,
 
                 loading: null,
-                loadingSmall: false
+                loadingSmall: false,
             }
         },
         created() {
@@ -130,9 +132,23 @@
                 this.tipusLocalitzacioShow = this.$attrs['tipuslocalitzacioshow']
                 this.incidentShow = this.$attrs['incidentshow']
                 this.agenciesShow = this.$attrs['agenciesshow']
+
+                this.user = this.$attrs['usershow']
+
+                this.logOutRoute = this.$attrs['logoutshow']
             }
             else {
                 this.loading = true
+                this.user = this.$attrs['user']
+
+                if(this.user.perfil_id == 1) {
+                    this.logOutRoute = this.$attrs['logoutrouteoperador']
+                }
+                else {
+                    this.logOutRoute = this.$attrs['logoutroute']
+                }
+
+                //console.log(typeof this.user)
             }
 
 

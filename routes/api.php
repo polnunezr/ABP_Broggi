@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CartaTrucadaController;
 use App\Http\Controllers\Api\CartaTrucadaView;
 use App\Http\Controllers\Api\AgenciaController;
 use App\Http\Controllers\Api\CartesTrucadesPartesController;
+use App\Http\Controllers\Api\UsuariController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,3 +48,8 @@ Route::apiResource("tipus_incidents", TipusIncidentController::class);
 Route::apiResource("provincies", ProvinciaController::class);
 
 Route::apiResource("comarques", ComarcaController::class);
+
+//Sebas
+
+// Ruta API 'resource' para el controlador 'UsuariController':
+Route::apiResource('usuaris', UsuariController::class);

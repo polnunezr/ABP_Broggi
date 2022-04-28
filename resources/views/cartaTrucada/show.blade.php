@@ -1,4 +1,4 @@
-@extends("plantillas.index")
+@extends("layouts.layoutCard.index")
 
 @section("title","Carta de trucada View")
 
@@ -15,6 +15,8 @@
                         :tipusLocalitzacioShow="{{ $tipusLocalitzacioShow }}"
                         :incidentShow="{{ $incidentShow }}"
                         :agenciesShow="{{ $agenciesShow }}"
+                        :userShow="{{ $userShow }}"
+                        logOutShow="{{ url($logOutUrlShow) }}"
                         ></carta-trucada>
     </div>
 

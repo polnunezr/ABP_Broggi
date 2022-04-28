@@ -12,43 +12,47 @@
 
 <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
-
-<link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
-
 <link rel="icon" href="http://daw.abp-politecnics.com/daw03/images/logo/logo.ico" sizes="32x32" type="image/png">
 
+<link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
+<link rel="stylesheet" href="{{ asset("css/app.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/all.css") }}">
+  <!-- Bootstrap CSS -->
+  <!-- Style -->
 <title>@yield('titol')</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-fixed-top  navbar-expand-lg navbar-dark" id="">
-        <div class="logo2">
-        <img
-            src="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg" alt="tag" height="45.25"
-                width="70">
-            </div>
+    <div id="wrapper">
+   <div class="overlay"></div>
+        <!-- Sidebar -->
+    <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
+     <ul class="nav sidebar-nav">
+       <div class="sidebar-header">
+       <div class="sidebar-brand">
+         <img src="http://daw.abp-politecnics.com/daw03/images/logo/cropp/logo.svg" alt="" srcset=""></div></div>
+       <li><a href="{{ url('../expedients_controller') }}">Expedients</a></li>
+       <li><a href="{{ url('../grafica') }}">Grafiques</a></li>
+       <li><a href="{{ url('../usuaris_controller') }}">Usuaris</a></li></ul>
+       <div class="position-absolute bottom-0 start-0">
+        <button type="button" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+    </div>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        Dades mestres
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ url('/expedients_controller') }} ">Expedient</a>
-                        <a class="dropdown-item" href="{{ url('/grafica') }} ">Grafica</a>
-
-
-
-                    </div>
-                </li>
-
-            </ul>
-
-        </div>
     </nav>
+
+
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <button type="button" class="hamburger animated fadeInLeft is-closed" data-toggle="offcanvas">
+                <span class="hamb-top"></span>
+    			<span class="hamb-middle"></span>
+				<span class="hamb-bottom"></span>
+            </button>
+
+    </div>
+    </div>
     <div class="container">
         @yield('name')
     </div>
@@ -58,12 +62,41 @@
     <script>
         yield('script')
     </script>
-    <script src="https://unpkg.com/feather-icons"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+<script>
+    $(document).ready(function() {
+    var trigger = $('.hamburger'),
+        overlay = $('.overlay'),
+        isClosed = false;
 
+    trigger.click(function() {
+        hamburger_cross();
+    });
+
+    function hamburger_cross() {
+
+        if (isClosed == true) {
+            overlay.hide();
+            trigger.removeClass('is-open');
+            trigger.addClass('is-closed');
+            isClosed = false;
+        } else {
+            overlay.show();
+            trigger.removeClass('is-closed');
+            trigger.addClass('is-open');
+            isClosed = true;
+        }
+    }
+
+    $('[data-toggle="offcanvas"]').click(function() {
+        $('#wrapper').toggleClass('toggled');
+    });
+});
+</script>
     <script src="https://kit.fontawesome.com/606a75912f.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
-    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
     </script>

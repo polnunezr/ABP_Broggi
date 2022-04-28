@@ -24,13 +24,7 @@ class ExpedientController extends Controller
         $fechaMod = $request->input('modicacio');
         //SQL
         $estats = EstatExpedient::all();
-        if (empty($numExpedient) && empty($fechaCreacio) && empty($fechaMod)) {
-            $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
-                ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
-                ->orderBy('expedients.id')
-                ->paginate(7)
-                ->withQueryString();
-        } else if (!empty($numExpedient)) {
+         if (!empty($numExpedient)) {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->where('expedients.id', '=', $numExpedient)
@@ -68,14 +62,20 @@ class ExpedientController extends Controller
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } else if (empty($numExpedient) && empty($fechaCreacio) && empty($fechaMod) && $estat != 'todos') {
+        } else if ( $estat != 'todos') {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->where('estats_expedients.estat', '=', $estat)
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        }
+        } else if (empty($numExpedient) && empty($fechaCreacio) && empty($fechaMod)) {
+            $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
+                ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
+                ->orderBy('expedients.id')
+                ->paginate(7)
+                ->withQueryString();
+        } 
 
         return view('expedient.expedient', compact('expedients', 'estats', 'numExpedient', 'fechaMod', 'fechaCreacio', 'estat'));
     }
@@ -325,10 +325,7 @@ class ExpedientController extends Controller
         }
 
         return view('cartes.carta', compact('tipusLoc', 'tipusEmg', 'cartes', 'id', 'fecha', 'tipusEmgs', 'tipusLocs', 'tel', 'expedients_controller'));
-
-        // return redirect()->route("cartes_trucades_controller.show", ['cartes_trucades_controller' => $id]);
     }
-
     /**
      * Show the form for editing the specified resource.
      *

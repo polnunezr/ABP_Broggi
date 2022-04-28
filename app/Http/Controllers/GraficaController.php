@@ -32,17 +32,22 @@ class GraficaController extends Controller
             $countIncidents[] = $carta->count();
         }
 
-        $dates = Expedient::select('data_creacio')->distinct(DATE('data_creacio'))
+        $dates = Expedient::select('data_creacio')
             ->orderBy('data_creacio')->get();
         foreach ($dates as $data) {
-
-                $datas[] =  date('d-m-Y', strtotime($data->data_creacio));
-
+            $datas[] =  date('d-m-Y', strtotime($data->data_creacio));
             $expedients = Expedient::select('data_creacio')->where('data_creacio', '=', $data->data_creacio);
             $count[] = $expedients->count();
         }
-        //var_dump($countIncidents);
-        return view('grafiques.grafica', compact('datas', 'count', 'tipus', 'countIncidents'));
+        $fecha = [];
+        for($i = 0; $i < count($datas);$i++) {
+        if (!in_array($datas[$i], $fecha))
+        {
+        $fecha[] = $datas[$i];
+        }
+    }
+
+        return view('grafiques.grafica', compact('fecha', 'count', 'tipus', 'countIncidents'));
     }
 
     /**

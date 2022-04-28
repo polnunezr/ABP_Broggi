@@ -17,7 +17,7 @@
         </div>
     </div>
     <script>
-        var label = {{ Js::from($datas) }};
+        var label = {{ Js::from($fecha) }};
         var data = {{ Js::from($count) }};
 
 

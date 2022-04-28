@@ -23,6 +23,7 @@ class ExpedientController extends Controller
         $estat = $request->input('estat');
         $fechaMod = $request->input('modicacio');
         //SQL
+        $h = 'hola';
         $estats = EstatExpedient::all();
          if (!empty($numExpedient)) {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
@@ -31,26 +32,18 @@ class ExpedientController extends Controller
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } else if (empty($numExpedient) && !empty($fechaCreacio) && $estat == 'todos') {
+        } else if (empty($numExpedient) && !empty($fechaCreacio) && empty($fechaMod) &&  $estat == 'todos') {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->where('expedients.data_creacio', 'like', '%' . $fechaCreacio . '%')
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } else if (empty($numExpedient) && !empty($fechaCreacio) && $estat != 'todos') {
+        } else if (empty($numExpedient) && !empty($fechaCreacio) && empty($fechaMod) &&  $estat != 'todos') {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->where('expedients.data_creacio', 'like', '%' . $fechaCreacio . '%')
                 ->where('estats_expedients.estat', '=', $estat)
-                ->orderBy('expedients.id')
-                ->paginate(7)
-                ->withQueryString();
-        } else if (empty($numExpedient) && !empty($fechaCreacio) && $estat == 'todos') {
-            $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
-                ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
-                ->where('expedients.data_creacio', 'like', '%' . $fechaCreacio . '%')
-                ->where('expedients.data_ultima_modificacio', 'like', '%' . $fechaMod . '%')
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
@@ -62,14 +55,32 @@ class ExpedientController extends Controller
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } else if ( $estat != 'todos') {
+        }  else if (empty($numExpedient) && !empty($fechaCreacio) && !empty($fechaMod) && $estat != 'todos') {
+            $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
+                ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
+                ->where('expedients.data_creacio', 'like', '%' . $fechaCreacio . '%')
+                ->where('expedients.data_ultima_modificacio', 'like', '%' . $fechaMod . '%')
+                ->where('estats_expedients.estat', '=', $estat)
+                ->orderBy('expedients.id')
+                ->paginate(7)
+                ->withQueryString();
+        }
+        else if (empty($numExpedient) && !empty($fechaCreacio) && !empty($fechaMod) && $estat == 'todos') {
+            $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
+                ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
+                ->where('expedients.data_creacio', 'like', '%' . $fechaCreacio . '%')
+                ->where('expedients.data_ultima_modificacio', 'like', '%' . $fechaMod . '%')
+                ->orderBy('expedients.id')
+                ->paginate(7)
+                ->withQueryString();
+        }  else if ( $estat != 'todos' && $estat != null) {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->where('estats_expedients.estat', '=', $estat)
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } else if (empty($numExpedient) && empty($fechaCreacio) && empty($fechaMod)) {
+        } else  {
             $expedients = Expedient::join('estats_expedients', 'estats_expedients_id', '=', 'estats_expedients.id')
                 ->select('expedients.id AS uid', 'estats_expedients.estat', 'expedients.data_creacio', 'expedients.data_ultima_modificacio')
                 ->orderBy('expedients.id')

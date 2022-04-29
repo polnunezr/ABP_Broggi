@@ -37,7 +37,6 @@ class GraficaController extends Controller
         foreach ($dates as $data) {
             $datas[] =  date('d-m-Y', strtotime($data->data_creacio));
             $dat =  date('Y-m-d', strtotime($data->data_creacio));
-            var_dump($dat);
             $expedients = Expedient::where('data_creacio', 'like','%'. $dat .'%');
             $count[] = $expedients->count();
         }

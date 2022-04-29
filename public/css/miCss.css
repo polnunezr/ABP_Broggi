@@ -222,29 +222,6 @@ html {
     padding-right: 5px;
 }
 
-a[href*="../expedients_controller"]::before {
-    content: "\f481" !important;
-}
-
-a[href*="../expedients_controller"]::before {
-    content: "\f481" !important;
-}
-
-a[href*="../grafica"]::before {
-    content: "\f1fe" !important;
-}
-
-a[href*="../grafica"]::before {
-    content: "\f1fe" !important;
-}
-
-a[href*="../usuaris_controller"]::before {
-    content: "\f0c0" !important;
-}
-
-a[href*="../usuaris_controller"]::before {
-    content: "\f0c0" !important;
-}
 
 
 /*-------------------------------*/

@@ -14,9 +14,10 @@
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 <link rel="icon" href="http://daw.abp-politecnics.com/daw03/images/logo/logo.ico" sizes="32x32" type="image/png">
 
-<link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
 <link rel="stylesheet" href="{{ asset("css/app.css") }}">
     <link rel="stylesheet" href="{{ asset("css/all.css") }}">
+    <link rel="stylesheet" href="{{ asset('css/miCss.css') }}">
+
   <!-- Bootstrap CSS -->
   <!-- Style -->
 <title>@yield('titol')</title>
@@ -36,7 +37,7 @@
        <li></li></ul>
        <div class="position-absolute bottom-0 start-0">
 
-        <a href="{{url('/menu')}}">Menu</a>
+        <i class="fa-solid fa-bars-filter"></i><a href="{{url('/menu')}}" style="text-decoration:none">Menu</a>
     </div>
 
     </nav>

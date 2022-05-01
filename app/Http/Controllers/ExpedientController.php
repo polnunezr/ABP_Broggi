@@ -86,7 +86,7 @@ class ExpedientController extends Controller
                 ->orderBy('expedients.id')
                 ->paginate(7)
                 ->withQueryString();
-        } 
+        }
 
         return view('expedient.expedient', compact('expedients', 'estats', 'numExpedient', 'fechaMod', 'fechaCreacio', 'estat'));
     }
@@ -143,7 +143,7 @@ class ExpedientController extends Controller
                 ->where('cartes_trucades.expedients_id', '=', $expedients_controller->id)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
-                
+
         } else if (!empty($id)) {
             //Funciona
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
@@ -154,7 +154,7 @@ class ExpedientController extends Controller
                 ->where('cartes_trucades.codi_trucada', '=', $id)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
-                
+
         } else  if (!empty($fecha) && empty($tel) && empty($id) && $tipusEmgs == 'todos' && $tipusLocs == 'todos') {
             //funciona
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id',)
@@ -165,7 +165,7 @@ class ExpedientController extends Controller
                 ->where('cartes_trucades.data_hora', 'like', '%' . $fecha . '%')->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
-                
+
         } else if (!empty($fecha) && !empty($tel) && $tipusEmgs == 'todo' && $tipusLocs == 'todo') {
             //funciona
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
@@ -177,7 +177,7 @@ class ExpedientController extends Controller
                 ->where('cartes_trucades.telefon', '=', $tel)->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
-                
+
         } else if (empty($fecha) && !empty($tel) && $tipusLocs == 'todos' && $tipusEmgs == 'todos') {
             //Funciona
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
@@ -322,7 +322,7 @@ class ExpedientController extends Controller
                 ->orderBy('codi_trucada')
                 ->paginate(5)
                 ->withQueryString();
-                
+
         } else if (!empty($fecha)  && $tipusEmgs != 'todos') {
             $cartes = CartaTrucada::join('tipus_localitzacions', 'cartes_trucades.tipus_localitzacions_id', '=', 'tipus_localitzacions.id')
                 ->join('incidents', 'cartes_trucades.incidents_id', '=', 'incidents.id')

@@ -36,7 +36,7 @@
 
                     <div class="form-group row">
                         <div class="col-sm-12 d-flex justify-content-end">
-                            <button type="submit" class="btn" style="background-color: #636AF2"><i class="fa fa-check"
+                            <button type="submit" class="btn" style="background-color: #636AF2 outline: none; border: none; box-shadow: none;"><i class="fa fa-check"
                                 aria-hidden="true"></i> Login</button>
                         </div>
                     </div>

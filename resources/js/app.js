@@ -8,6 +8,9 @@ const { message } = require('laravel-mix/src/Log');
 
 require('./bootstrap');
 
+var VuePaginate = require('vue-paginate');
+Vue.use(VuePaginate);
+
 window.Vue = require('vue').default;
 
 // Sebas jQuery:
@@ -182,7 +185,41 @@ Vue.prototype.$eventLoad = new Vue()
 
 //Sebas
 
-Vue.prototype.$eventUsuari = new Vue()
+// EventBus para enviar y recibir el estado de la variable 'load' al insertar un usuario:
+Vue.prototype.$eventUsuariMostrarLoadInsert = new Vue()
+
+// EventBus para enviar y recibir el estado de la variable 'load' al insertar un usuario:
+Vue.prototype.$eventUsuariOcultarLoadInsert = new Vue()
+
+// EventBus para enviar y recibir el estado de la variable 'load' al modificar un usuario:
+Vue.prototype.$eventUsuariMostrarLoadUpdate = new Vue()
+
+// EventBus para enviar y recibir el estado de la variable 'load' al modificar un usuario:
+Vue.prototype.$eventUsuariOcultarLoadUpdate = new Vue()
+
+// EventBus para enviar y recibir el estado de la variable 'load' al desactivar un usuario:
+Vue.prototype.$eventUsuariMostrarLoadDelete = new Vue()
+
+// EventBus para enviar y recibir el estado de la variable 'load' al desactivar un usuario:
+Vue.prototype.$eventUsuariOcultarLoadDelete = new Vue()
+
+// EventBus para recibir el estado de la variable 'isModal':
+Vue.prototype.$eventUsuariIsModal = new Vue()
+
+// EventBus para enviar el usuario que queremos modificar:
+Vue.prototype.$eventUsuariEdit = new Vue()
+
+// EventBus para enviar el usuario que queremos desactivar:
+Vue.prototype.$eventUsuariDelete = new Vue()
+
+// EventBus para enviar y recibir errores:
+Vue.prototype.$eventUsuariError = new Vue()
+
+// EventBus para enviar y recibir mensajes de confirmación:
+Vue.prototype.$eventUsuariMensaje = new Vue()
+
+// EventBus para refrescar la lista de usuarios:
+Vue.prototype.$eventUsuariRefrescar = new Vue()
 
 
 
@@ -257,9 +294,15 @@ Vue.component("data-select", require("./components/forms/DataSelect.vue").defaul
 // Le ponemos al componente de usuarios el nombre que usaremos como etiqueta:
 Vue.component('usuaris-component', require('./components/gestionUsuarios/UsuarisComponent.vue').default);
 
-Vue.component('modalIM-component', require('./components/gestionUsuarios/IMUsuariComponent.vue').default);
+// Le ponemos al componente que contiene los filtros de búsqueda el nombre que usaremos como etiqueta:
+Vue.component('buscar-component', require('./components/gestionUsuarios/BuscarComponent.vue').default);
 
-Vue.component('search-component', require('./components/gestionUsuarios/SearchComponent.vue').default);
+// Le ponemos al componente que contiene el modal para desactivar un usuario el nombre que usaremos como etiqueta:
+Vue.component('desactivar-component', require('./components/gestionUsuarios/DesactivarComponent.vue').default);
+
+// Le ponemos al componente que contiene el modal para insertar/modificar un usuario el nombre que usaremos como etiqueta:
+Vue.component('manipular-component', require('./components/gestionUsuarios/ManipularComponent.vue').default);
+
 
 const app = new Vue({
     el: '#app'

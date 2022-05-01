@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/usuaris_controller', UsuariController::class);
 
     // Ruta 'get' para el controlador 'UsuariController::class' para salir de la cuenta:
-    // Route::get('/logout', UsuariController::class);
+    Route::get('/logout', [UsuariController::class, 'logout'])->name('sortir');
 });
 
 

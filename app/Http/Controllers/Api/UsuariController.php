@@ -17,68 +17,9 @@ class UsuariController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        // $activo = ($request->input('activoBuscar') == 1);
-        // $selectPerfil = $request->input('selectPerfil');
-
-        // // Si la select tiene como opción 'Tots els usuaris':
-        // if($selectPerfil == 0)
-        // {
-        //     // Si se marca la checkbox:
-        //     if($activo)
-        //     {
-        //         // Buscaremos todos los cursos activos:
-        //         $usuarios = Usuari::where('actiu', '=', true)
-        //                         ->orderBy('nom', 'asc')
-        //                         ->paginate(6)
-        //                         ->withQueryString();
-        //     }
-        //     // Si no se marca la checkbox:
-        //     else
-        //     {
-        //         // Buscaremos todos los cursos:
-        //         $usuarios = Usuari::orderBy('nom', 'asc')
-        //                         ->paginate(6);
-        //     }
-        // }
-        // // Si en la 'select' se elige un ciclo:
-        // else
-        // {
-        //     // Si se marca la checkbox:
-        //     if($activo)
-        //     {
-        //         // Buscaremos todos los cursos del ciclo seleccionado
-        //         // que sean activos:
-        //         $usuarios = Usuari::where('actiu', '=', true)
-        //                         ->where('perfils_id', $selectPerfil)
-        //                         ->orderBy('nom', 'asc')
-        //                         ->paginate(6)
-        //                         ->withQueryString();
-        //     }
-        //     // Si no se marca la checkbox:
-        //     else
-        //     {
-        //         // Buscaremos todos los cursos del ciclo seleccionado:
-        //         $usuarios = Usuari::where('perfils_id', $selectPerfil)
-        //                         ->orderBy('nom', 'asc')
-        //                         ->paginate(6)
-        //                         ->withQueryString();
-        //     }
-        // }
-
-        // // Recogemos todos los cursos de la base de datos:
-
-        // $user = Auth::user();
-
-        // $usuarios = Usuari::where("id","!=",1)->get();
-        // $usuarios = Usuari::all();
-
-
-        // $request->flashInput('selectPerfil');
-
-        // Devolvemos un json con los cursos:
-        // return UsuariResource::collection($usuarios);
+        //
     }
 
     /**
@@ -139,7 +80,9 @@ class UsuariController extends Controller
 
     public function show($usuarioId)
     {
-        $usuarios = Usuari::where("id","!=",$usuarioId)->get();
+        // Recogemos todos los usuarios de la base de datos menos el
+        // usuario con el que hemos iniciado sesión:
+        $usuarios = Usuari::where("id", "!=", $usuarioId)->get();
 
         // Devolvemos un json con los cursos:
         return UsuariResource::collection($usuarios);

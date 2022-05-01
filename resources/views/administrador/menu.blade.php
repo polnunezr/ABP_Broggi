@@ -7,6 +7,15 @@
     {{-- Incluimos la decoración de fondo: --}}
     @include('partials.backgroundDecoration')
 
+    <div class="position-fixed end-0 top-0 m-3">
+        <!-- Botón para salir: -->
+        <button class="plus2 btn btn-primary"
+        style="z-index: 999; background-color: #636AF2; box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px; outline: none; border: none;"
+        onclick='window.location="{{ route("sortir") }}"'>
+            Sortir
+        </button>
+    </div>
+
     @if ($usuari->perfils_id == 2)
         <div class="container-fluid d-flex flex-row justify-content-around align-items-center w-100" style="height: 100vh;">
             <div class="card mb-3 d-flex justify-content-center align-items-center rounded"
@@ -18,7 +27,7 @@
                     </div>
                     <div class="col-md-8 d-flex justify-content-center align-items-center h-100">
                         <div class="card-body m-0 p-0 h-100 d-flex flex-column justify-content-center align-items-center w-100">
-                            <form action="{{ action([App\Http\Controllers\CartaTrucadaController::class, 'index']) }}" class="m-0 p-0 w-100" method="GET">
+                            <form action="{{ action([App\Http\Controllers\CartaTrucadaController::class, 'index']) }}" class="m-0 p-0 w-100" method="POST">
                                 @csrf
                                 <button type="submit" class="d-flex justify-content-center align-items-center w-100" style="background-color: transparent; outline: none; border: none; cursor: pointer;">
                                     <h5 class="card-title m-0 p-0 col-9 d-flex justift-content-start ps-3">Carta de trucada</h5>

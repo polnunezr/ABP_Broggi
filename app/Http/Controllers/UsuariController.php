@@ -94,79 +94,19 @@ class UsuariController extends Controller
      */
     public function index(Request $request)
     {
-        // Recogemos del formulario de búsqueda el checkbox 'activo'
-        // y la opción de la 'select':
-        // $activo = $request->input('activoBuscar');
-        // $selectPerfil = $request->input('selectPerfil');
-
-        // if($activo != null || $selectPerfil != null)
-        // {
-        //     // Si la select tiene como opción 'Tots els usuaris':
-        //     if($selectPerfil == 0)
-        //     {
-        //         // Si se marca la checkbox:
-        //         if($activo == "activo")
-        //         {
-        //             // Buscaremos todos los cursos activos:
-        //             $usuarios = Usuari::where('actiu', '=', true)
-        //                             ->orderBy('nom', 'asc')
-        //                             ->paginate(6)
-        //                             ->withQueryString();
-        //         }
-        //         // Si no se marca la checkbox:
-        //         else
-        //         {
-        //             // Buscaremos todos los cursos:
-        //             $usuarios = Usuari::orderBy('nom', 'asc')
-        //                             ->paginate(6);
-        //         }
-        //     }
-        //     // Si en la 'select' se elige un ciclo:
-        //     else
-        //     {
-        //         // Si se marca la checkbox:
-        //         if($activo == "activo")
-        //         {
-        //             // Buscaremos todos los cursos del ciclo seleccionado
-        //             // que sean activos:
-        //             $usuarios = Usuari::where('actiu', '=', true)
-        //                             ->where('perfils_id', $selectPerfil)
-        //                             ->orderBy('nom', 'asc')
-        //                             ->paginate(6)
-        //                             ->withQueryString();
-        //         }
-        //         // Si no se marca la checkbox:
-        //         else
-        //         {
-        //             // Buscaremos todos los cursos del ciclo seleccionado:
-        //             $usuarios = Usuari::where('perfils_id', $selectPerfil)
-        //                             ->orderBy('nom', 'asc')
-        //                             ->paginate(6)
-        //                             ->withQueryString();
-        //         }
-        //     }
-
-        //     $response = view('administrador.usuaris_vue', compact('perfiles', 'usuarios'));
-        // }
-        // else
-        // {
-        //     $response = view('administrador.usuaris_vue', compact('perfiles'), );
-        // }
-
         // Buscamos todos los perfiles para añadirlos como opciones
         // en la 'select' del formulario de búsqueda:
         $perfiles = Perfil::orderBy('nom', 'asc')
         ->get();
 
         $user = Auth::user();
-
-        $userAuthId = $user->id;
+        $authid = $user->id;
 
         // Para que al usar el buscador los valores que introducimos o seleccionamos se queden
         // en el input:
         $request->flash();
 
-        return view('administrador.usuaris_vue', compact('perfiles', 'userAuthId'));
+        return view('administrador.usuaris_vue', compact('perfiles', 'authid'));
     }
 
     /**

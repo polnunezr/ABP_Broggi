@@ -8,10 +8,10 @@ const { message } = require('laravel-mix/src/Log');
 
 require('./bootstrap');
 
+window.Vue = require('vue').default;
+
 var VuePaginate = require('vue-paginate');
 Vue.use(VuePaginate);
-
-window.Vue = require('vue').default;
 
 // Sebas jQuery:
 window.$ = window.jQuery = require('jquery')

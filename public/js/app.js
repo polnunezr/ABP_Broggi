@@ -5684,8 +5684,14 @@ __webpack_require__.r(__webpack_exports__);
       this.logOutRoute = this.$attrs['logoutshow'];
     } else {
       this.loading = true;
-      this.logOutRoute = this.$attrs['logoutroute'];
-      this.user = this.$attrs['user']; //console.log(typeof this.user)
+      this.user = this.$attrs['user'];
+
+      if (this.user.perfil_id == 1) {
+        this.logOutRoute = this.$attrs['logoutrouteoperador'];
+      } else {
+        this.logOutRoute = this.$attrs['logoutroute'];
+      } //console.log(typeof this.user)
+
     }
   },
   mounted: function mounted() {
@@ -8669,6 +8675,8 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
 
+      _this2.incident = _this2.incidents[0];
+
       _this2.$eventSelect.$emit("change-select-id-emergencia", 1);
 
       _this2.$eventSelect.$emit("change-select-id-incident", 1);
@@ -11626,10 +11634,11 @@ var _require = __webpack_require__(/*! laravel-mix/src/Log */ "./node_modules/la
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
+window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]);
+
 var VuePaginate = __webpack_require__(/*! vue-paginate */ "./node_modules/vue-paginate/dist/vue-paginate.js");
 
-Vue.use(VuePaginate);
-window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]); // Sebas jQuery:
+Vue.use(VuePaginate); // Sebas jQuery:
 
 window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /**

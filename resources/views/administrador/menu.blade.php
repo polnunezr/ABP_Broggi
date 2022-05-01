@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-md-8 d-flex justify-content-center align-items-center h-100">
                         <div class="card-body m-0 p-0 h-100 d-flex flex-column justify-content-center align-items-center w-100">
-                            <form action="{{ action([App\Http\Controllers\CartaTrucadaController::class, 'index']) }}" class="m-0 p-0 w-100" method="POST">
+                            <form action="{{ action([App\Http\Controllers\CartaTrucadaController::class, 'index']) }}" class="m-0 p-0 w-100" method="GET">
                                 @csrf
                                 <button type="submit" class="d-flex justify-content-center align-items-center w-100" style="background-color: transparent; outline: none; border: none; cursor: pointer;">
                                     <h5 class="card-title m-0 p-0 col-9 d-flex justift-content-start ps-3">Carta de trucada</h5>

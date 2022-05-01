@@ -36,6 +36,7 @@ class CartaTrucadaController extends Controller
         $perfilNom = $perfil[0]->nom;
         $user = [
             "id" => $userObject->id,
+            "perfil_id" => $userObject->perfils_id,
             "perfil_nom" => $perfilNom,
             "codi" => $userObject->codi
         ];

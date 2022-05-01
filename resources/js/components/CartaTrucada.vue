@@ -139,8 +139,14 @@
             }
             else {
                 this.loading = true
-                this.logOutRoute = this.$attrs['logoutroute']
                 this.user = this.$attrs['user']
+
+                if(this.user.perfil_id == 1) {
+                    this.logOutRoute = this.$attrs['logoutrouteoperador']
+                }
+                else {
+                    this.logOutRoute = this.$attrs['logoutroute']
+                }
 
                 //console.log(typeof this.user)
             }

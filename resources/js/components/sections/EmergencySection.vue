@@ -130,6 +130,8 @@
                     }
                 }
 
+                this.incident = this.incidents[0]
+
                 this.$eventSelect.$emit("change-select-id-emergencia",1)
                 this.$eventSelect.$emit("change-select-id-incident",1)
             })

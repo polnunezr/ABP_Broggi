@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-05-2022 a las 23:26:02
+-- Tiempo de generación: 02-05-2022 a las 00:42:26
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 8.0.13
 
@@ -573,6 +573,13 @@ CREATE TABLE `cartes_trucades` (
   `usuaris_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Volcado de datos para la tabla `cartes_trucades`
+--
+
+INSERT INTO `cartes_trucades` (`id`, `codi_trucada`, `data_hora`, `temps_trucada`, `dades_personals_id`, `telefon`, `procedencia_trucada`, `origen_trucada`, `nom_trucada`, `municipis_id_trucada`, `adreca_trucada`, `fora_catalunya`, `provincies_id`, `municipis_id`, `tipus_localitzacions_id`, `descripcio_localitzacio`, `detall_localitzacio`, `altres_ref_localitzacio`, `incidents_id`, `nota_comuna`, `expedients_id`, `usuaris_id`) VALUES
+(219, 'CT_1', '2022-05-02 00:38:39', 204, 40, '654543298', 'Cuidad', 'B-200', 'CT_1', 79, 'C. Ramon', 1, 1, 79, 1, 'estrecha, C. Ramon', '33, 2, 3, 2', 'Calle muy estrecha', 1, 'Persona herida', 228, 27);
+
 -- --------------------------------------------------------
 
 --
@@ -584,6 +591,14 @@ CREATE TABLE `cartes_trucades_has_agencies` (
   `agencies_id` int(11) NOT NULL,
   `estats_agencies_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `cartes_trucades_has_agencies`
+--
+
+INSERT INTO `cartes_trucades_has_agencies` (`cartes_trucades_id`, `agencies_id`, `estats_agencies_id`) VALUES
+(219, 95, 1),
+(219, 124, 1);
 
 -- --------------------------------------------------------
 
@@ -683,6 +698,13 @@ CREATE TABLE `dades_personals` (
   `antecedents` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Volcado de datos para la tabla `dades_personals`
+--
+
+INSERT INTO `dades_personals` (`id`, `telefon`, `adreca`, `antecedents`) VALUES
+(40, '654543298', 'C. Ramon', 'Peligro de incendio');
+
 -- --------------------------------------------------------
 
 --
@@ -737,6 +759,13 @@ CREATE TABLE `expedients` (
   `data_ultima_modificacio` datetime DEFAULT NULL,
   `estats_expedients_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `expedients`
+--
+
+INSERT INTO `expedients` (`id`, `data_creacio`, `data_ultima_modificacio`, `estats_expedients_id`) VALUES
+(228, '2022-05-02 00:38:39', '2022-05-02 00:38:39', 1);
 
 -- --------------------------------------------------------
 
@@ -2541,7 +2570,7 @@ ALTER TABLE `agencies`
 -- AUTO_INCREMENT de la tabla `cartes_trucades`
 --
 ALTER TABLE `cartes_trucades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=219;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=220;
 
 --
 -- AUTO_INCREMENT de la tabla `comarques`
@@ -2553,7 +2582,7 @@ ALTER TABLE `comarques`
 -- AUTO_INCREMENT de la tabla `dades_personals`
 --
 ALTER TABLE `dades_personals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `estats_agencies`
@@ -2571,7 +2600,7 @@ ALTER TABLE `estats_expedients`
 -- AUTO_INCREMENT de la tabla `expedients`
 --
 ALTER TABLE `expedients`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=228;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=229;
 
 --
 -- AUTO_INCREMENT de la tabla `incidents`
